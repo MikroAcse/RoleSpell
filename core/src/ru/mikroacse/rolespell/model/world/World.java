@@ -51,7 +51,17 @@ public class World {
     public Point getCellPosition(float x, float y) {
         return new Point(
                 (int) (x / getMapTileWidth()),
-                (int) (y / getMapTileHeight()) );
+                (int) (y / getMapTileHeight()));
+    }
+
+    public float getWeight(int x, int y) {
+        switch (getMeta(x, y)) {
+            case PATH:
+                return 0f;
+            case EMPTY:
+                return 100.0f;
+        }
+        return 0f;
     }
 
     public Meta getMeta(int x, int y) {
@@ -121,6 +131,7 @@ public class World {
     public enum Meta {
         SOLID,
         WATER,
+        PATH,
         EMPTY
     }
 }

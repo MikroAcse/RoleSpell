@@ -16,9 +16,6 @@ public class PathFinder {
     private GraphNode[] nodes;
     private List<AdjacencyListItem>[] adjacencyList;
 
-    private List<Cell> cells;
-    private PriorityQueue<GraphNode> open;
-
     public LinkedList<GraphNode> getPath(Graph mapGraph, int startingPoint, int endPoint) {
         this.graph = mapGraph;
         this.nodes = this.graph.getNodes();
@@ -41,40 +38,31 @@ public class PathFinder {
     }
 
     private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<GraphNode> path) {
-        cells = new ArrayList<>();
+        Cell[] cells = new Cell[graph.getNodes().length];
 
         // priority queue, which returns a cell with the smallest F cost;
         // if F costs of 2 or more cells are equal, the queue returns
         // a cell with the smallest H cost
-        open = new PriorityQueue<>((o1, o2) -> {
-            Cell cell1 = cells.get(o1.getNodeIndex());
-            Cell cell2 = cells.get(o2.getNodeIndex());
+        /*PriorityQueue<GraphNode> open = new PriorityQueue<>((o1, o2) -> {
+            if(cells[o1.getNodeIndex()].getFCost() == cells[o2.getNodeIndex()].getFCost()) {
+                return 0;
+            }
 
-            double f1 = cell1.getFCost();
-            double f2 = cell2.getFCost();
-
-            if (f1 != f2)
-                return f1 < f2 ? 1 : -1;
-
-            if (cell1.hCost != cell2.hCost)
-                return cell1.hCost < cell2.hCost ? 1 : -1;
-
-            return 0;
-        });
+            return (int) (cells[o1.getNodeIndex()].getFCost() - cells[o2.getNodeIndex()].getFCost());
+        });*/
+        ArrayList<GraphNode> open = new ArrayList<>();
 
         GraphNode start = nodes[indexNodeStart];
         GraphNode finish = nodes[indexNodeFinish];
 
-        // using "visited" variable instead of a list of the closed cells
         for (GraphNode node : nodes) {
+            // reset node state (open/closed)
             node.setVisited(false);
-        }
 
-        // calculate G and H costs
-        for (GraphNode node : nodes) {
+            // calculate G and H costs
             double hCost = heuristic(node, finish);
 
-            cells.add(new Cell(node, 0, hCost));
+            cells[node.getNodeIndex()] = new Cell(node, 0, hCost);
         }
 
         GraphNode current = start;
@@ -82,8 +70,38 @@ public class PathFinder {
 
         while (!open.isEmpty()) {
             // current cell = open cell with the lowest f cost
-            current = open.remove();
-            Cell currentCell = cells.get(current.getNodeIndex());
+            /*current = open.get(0);
+            for (int i = 0; i < open.size(); i++) {
+                if(cells[open.get(i).getNodeIndex()].getFCost() < cells[current.getNodeIndex()].getFCost()) {
+                    current = open.get(i);
+                }
+            }
+            open.remove(current);*/
+            open.sort((o1, o2) -> {
+                double f1 = cells[o1.getNodeIndex()].getFCost();
+                double f2 = cells[o2.getNodeIndex()].getFCost();
+
+                if(f1 != f2) {
+                    return f1 < f2? -1 : 1;
+                }
+
+                double h1 = cells[o1.getNodeIndex()].hCost;
+                double h2 = cells[o2.getNodeIndex()].hCost;
+
+                if(h1 != h2) {
+                    return h1 < h2? -1 : 1;
+                }
+
+                return 0;
+            });
+
+            //current = open.remove(0);
+            current = open.remove(0);
+
+            System.out.println(current + " " + cells[current.getNodeIndex()].getFCost());
+            System.out.println();
+
+            Cell currentCell = cells[current.getNodeIndex()];
 
             // set current cell as closed
             current.setVisited(true);
@@ -101,7 +119,7 @@ public class PathFinder {
                 // don't check already closed cells
                 if (neighbour.isVisited()) continue;
 
-                Cell neighbourCell = cells.get(neighbour.getNodeIndex());
+                Cell neighbourCell = cells[neighbour.getNodeIndex()];
 
                 // if not checked yet or new path from current cell is shorter
                 double newCost = currentCell.gCost + weight;
@@ -122,11 +140,13 @@ public class PathFinder {
             return;
         }
 
+        System.out.println();
+
         // build path
         path.add(current);
 
         while (current != start) {
-            current = cells.get(current.getNodeIndex()).parent;
+            current = cells[current.getNodeIndex()].parent;
 
             path.add(current);
         }
@@ -138,7 +158,7 @@ public class PathFinder {
         int dx = Math.abs(node.getCellX() - goal.getCellX());
         int dy = Math.abs(node.getCellY() - goal.getCellY());
 
-        return dx + dy;
+        return Math.max(dx, dy);
     }
 
     private class Cell {

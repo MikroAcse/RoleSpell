@@ -7,13 +7,12 @@ import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.GameModel;
 import ru.mikroacse.rolespell.model.ai.GraphBuilder;
 import ru.mikroacse.rolespell.model.ai.PathFinder;
-import ru.mikroacse.rolespell.model.ai.graph.AdjacencyListItem;
+import ru.mikroacse.rolespell.model.ai.PathFinder2;
 import ru.mikroacse.rolespell.model.ai.graph.Graph;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.WorldRenderer;
 
 import java.awt.*;
-import java.util.LinkedList;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -37,7 +36,7 @@ public class WorldController {
 
         System.out.println(plSpawnPoint);
         model.getPlayer().setPosition(plSpawnPoint.x, plSpawnPoint.y);
-}
+    }
 
     public void update() {
         if (inputAdapter.isJustTouched()) {
@@ -63,15 +62,13 @@ public class WorldController {
 
             int width = Math.abs(playerX - cellPosition.x);
             int height = Math.abs(playerY - cellPosition.y);
-            int distance = Math.max(width, height);
-
-            System.out.println(width + " " + height + " " + width * height + " " + distance + " " + playerX + " " + playerY);
+            int distance = Math.max(width, height) + 10;
 
             Rectangle rect = new Rectangle(
-                    Math.max(playerX - width, 0),
-                    Math.max(playerY - height, 0),
-                    width * 2 + 1,
-                    height * 2 + 1);
+                    Math.max(playerX - distance, 0),
+                    Math.max(playerY - distance, 0),
+                    distance * 2 + 1,
+                    distance * 2 + 1);
 
 
             PathFinder pathFinder = new PathFinder();
@@ -94,10 +91,10 @@ public class WorldController {
                             graph,
                             (int) (rect.height * (playerX - rect.x) + playerY - rect.y),
                             (int) (rect.height * (cellPosition.x - rect.x) + (cellPosition.y - rect.y))
-                    ) ) );
+                    )));
         }
 
-        if(model.getPath().size() > 0) {
+        if (model.getPath().size() > 0) {
             Point point = model.getPath().remove();
 
             TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();

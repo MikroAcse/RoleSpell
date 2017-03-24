@@ -71,7 +71,7 @@ public class WorldRenderer {
         player.setPosition(playerPosition.x, playerPosition.y);
         player.draw(batch);
 
-        if(model.isMoving) {
+        if (model.isMoving) {
             Point waypointPosition = mapToReal(model.getWaypoint().x, model.getWaypoint().y);
 
             waypoint.setPosition(waypointPosition.x, waypointPosition.y);
@@ -95,13 +95,13 @@ public class WorldRenderer {
     public Point mapToReal(int x, int y) {
         return new Point(
                 (int) (x * model.getWorld().getMapTileWidth()),
-                (int) (y * model.getWorld().getMapTileHeight()) );
+                (int) (y * model.getWorld().getMapTileHeight()));
     }
 
     public Point realToMap(int x, int y) {
         return new Point(
                 (int) (x / model.getWorld().getMapTileWidth()),
-                (int) (y / model.getWorld().getMapTileHeight()) );
+                (int) (y / model.getWorld().getMapTileHeight()));
     }
 
     public void resize(int width, int height) {

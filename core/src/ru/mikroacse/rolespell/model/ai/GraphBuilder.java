@@ -23,32 +23,43 @@ public class GraphBuilder {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
+                graph.setCellXY(i * height + j, i + startX, j + startY);
+            }
+        }
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 int x = i + startX;
                 int y = j + startY;
 
                 int cellIndex = getIndex(i, j, height);
-
-                graph.setCellXY(cellIndex, x, y);
 
                 if (!world.isTraversable(x, y))
                     continue;
 
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 cell.setTile(world.getMap().getTileSets().getTileSet(0).getTile(31));
-                world.getMapTileLayer(World.Layer.TOP).setCell(x, y, cell);
+                //world.getMapTileLayer(World.Layer.TOP).setCell(x, y, cell);
 
-                // LEFT/RIGHT/TOP/BOTTOM
-                if (i - 1 >= 0 && world.isTraversable(x - 1, y))
-                    addEdge(graph, cellIndex, getIndex(i - 1, j, height));
+                // LEFT
+                if (i - 1 >= 0 && world.isTraversable(x - 1, y)) {
+                    graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getWeight(x - 1, y));
+                }
 
-                if (i + 1 < width && world.isTraversable(x + 1, y))
-                    addEdge(graph, cellIndex, getIndex(i + 1, j, height));
+                // RIGHT
+                if (i + 1 < width && world.isTraversable(x + 1, y)) {
+                    graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getWeight(x + 1, y));
+                }
 
-                if (j + 1 < height && world.isTraversable(x, y + 1))
-                    addEdge(graph, cellIndex, getIndex(i, j + 1, height));
+                // BOTTOM
+                if (j - 1 >= 0 && world.isTraversable(x, y - 1)) {
+                    graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getWeight(x, y - 1));
+                }
 
-                if (j - 1 >= 0 && world.isTraversable(x, y - 1))
-                    addEdge(graph, cellIndex, getIndex(i, j - 1, height));
+                // TOP
+                if (j + 1 < height && world.isTraversable(x, y + 1)) {
+                    graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getWeight(x, y + 1));
+                }
             }
         }
 
@@ -57,9 +68,5 @@ public class GraphBuilder {
 
     private static int getIndex(int x, int y, int height) {
         return x * height + y;
-    }
-
-    private static void addEdge(Graph graph, int cell1Index, int cell2Index) {
-        graph.addEdge(cell1Index, cell2Index, 1);
     }
 }
