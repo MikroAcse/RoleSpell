@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.model.ai;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.ai.graph.Graph;
 import ru.mikroacse.rolespell.model.world.World;
@@ -37,29 +36,18 @@ public class GraphBuilder {
                 if (!world.isTraversable(x, y))
                     continue;
 
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                cell.setTile(world.getMap().getTileSets().getTileSet(0).getTile(31));
-                //world.getMapTileLayer(World.Layer.TOP).setCell(x, y, cell);
-
                 // LEFT
-                if (i - 1 >= 0 && world.isTraversable(x - 1, y)) {
+                if (i - 1 >= 0 && world.isTraversable(x - 1, y))
                     graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getWeight(x - 1, y));
-                }
-
                 // RIGHT
-                if (i + 1 < width && world.isTraversable(x + 1, y)) {
+                if (i + 1 < width && world.isTraversable(x + 1, y))
                     graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getWeight(x + 1, y));
-                }
-
                 // BOTTOM
-                if (j - 1 >= 0 && world.isTraversable(x, y - 1)) {
+                if (j - 1 >= 0 && world.isTraversable(x, y - 1))
                     graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getWeight(x, y - 1));
-                }
-
                 // TOP
-                if (j + 1 < height && world.isTraversable(x, y + 1)) {
+                if (j + 1 < height && world.isTraversable(x, y + 1))
                     graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getWeight(x, y + 1));
-                }
             }
         }
 

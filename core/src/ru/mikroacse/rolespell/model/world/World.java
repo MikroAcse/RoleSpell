@@ -55,23 +55,57 @@ public class World {
     }
 
     public float getWeight(int x, int y) {
-        switch (getMeta(x, y)) {
+        return getWeight(getMeta(x, y));
+    }
+
+    public float getWeight(Meta meta) {
+        switch (meta) {
             case PATH:
-                return 0f;
-            case EMPTY:
-                return 100.0f;
+                return 0.5f;
+            default:
+                return 1f;
         }
-        return 0f;
     }
 
     public Meta getMeta(int x, int y) {
-        // TODO: ...
-        TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) getMapLayer(Layer.META)).getCell(x, y);
+        TiledMapTileLayer.Cell cell = getCell(Layer.META, x, y);
 
         if (cell == null) {
             return Meta.EMPTY;
         }
+
         return Meta.valueOf((String) cell.getTile().getProperties().get("type"));
+    }
+
+    public TiledMapTileLayer.Cell getCell(Layer layer, int x, int y) {
+        return getMapTileLayer(layer).getCell(x, y);
+    }
+
+    public Point getNearestEmptyCell(Layer layer, int x, int y, int maxRadius) {
+        int radius = 0;
+
+        while (radius <= maxRadius) {
+            for (int i = -radius; i <= radius; i++) {
+                for (int j = -radius; j <= radius; j++) {
+                    if(i == 0 || i == radius || j == 0 || j == radius) {
+                        int cellX = x + i;
+                        int cellY = y + j;
+
+                        if(!isValidCoordinates(cellX, cellY))
+                            continue;
+
+                        TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
+
+                        if(cell == null)
+                            return new Point(cellX, cellY);
+                    }
+                }
+            }
+
+            radius++;
+        }
+
+        return null;
     }
 
     public boolean isTraversable(int x, int y) {
@@ -80,6 +114,10 @@ public class World {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public boolean isValidCoordinates(int x, int y) {
+        return x >= 0 && y >= 0 && x < getMapWidth() && y < getMapHeight();
     }
 
     public TiledMap getMap() {
@@ -122,6 +160,7 @@ public class World {
         SPAWNERS, // object layer with entities/entities spawn locations
         META, // meta layer for collisions markup
         TOP,
+        ADDITIONAL,
         OBJECTS,
         BOTTOM,
         LAYOUT,

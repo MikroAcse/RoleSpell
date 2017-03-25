@@ -84,24 +84,8 @@ public class Graph {
         }
     }
 
-    private void convertListToMatrix() {
-
-        if (nodes.length == 0 || nodes == null) {
-            return;
-        }
-
-        adjacencyMatrix = new double[adjacencyList.length][];
-
-        for (int i = 0; i < adjacencyList.length; i++) {
-            adjacencyMatrix[i] = new double[adjacencyList.length];
-
-            Iterator<AdjacencyListItem> iterator = adjacencyList[i].iterator();
-            while (iterator.hasNext()) {
-                AdjacencyListItem item = iterator.next();
-
-                adjacencyMatrix[i][item.getNode().getNodeIndex()] = item.getWeight();
-            }
-        }
+    public double getWeight(int nodeIndexA, int nodeIndexB) {
+        return adjacencyMatrix[nodeIndexA][nodeIndexB];
     }
 
     public LinkedList<AdjacencyListItem>[] getAdjacencyList() {

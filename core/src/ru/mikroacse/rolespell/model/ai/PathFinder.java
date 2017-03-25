@@ -3,9 +3,12 @@ package ru.mikroacse.rolespell.model.ai;
 import ru.mikroacse.rolespell.model.ai.graph.AdjacencyListItem;
 import ru.mikroacse.rolespell.model.ai.graph.Graph;
 import ru.mikroacse.rolespell.model.ai.graph.GraphNode;
+import ru.mikroacse.rolespell.model.ai.heuristic.PathFinderHeuristic;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,6 +18,12 @@ public class PathFinder {
     private Graph graph;
     private GraphNode[] nodes;
     private List<AdjacencyListItem>[] adjacencyList;
+
+    private PathFinderHeuristic heuristic;
+
+    public PathFinder(PathFinderHeuristic heuristic) {
+        this.heuristic = heuristic;
+    }
 
     public LinkedList<GraphNode> getPath(Graph mapGraph, int startingPoint, int endPoint) {
         this.graph = mapGraph;
@@ -40,6 +49,7 @@ public class PathFinder {
     private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<GraphNode> path) {
         Cell[] cells = new Cell[graph.getNodes().length];
 
+        // TODO: priority queue
         // priority queue, which returns a cell with the smallest F cost;
         // if F costs of 2 or more cells are equal, the queue returns
         // a cell with the smallest H cost
@@ -60,7 +70,7 @@ public class PathFinder {
             node.setVisited(false);
 
             // calculate G and H costs
-            double hCost = heuristic(node, finish);
+            double hCost = heuristic.get(node, finish);
 
             cells[node.getNodeIndex()] = new Cell(node, 0, hCost);
         }
@@ -81,15 +91,15 @@ public class PathFinder {
                 double f1 = cells[o1.getNodeIndex()].getFCost();
                 double f2 = cells[o2.getNodeIndex()].getFCost();
 
-                if(f1 != f2) {
-                    return f1 < f2? -1 : 1;
+                if (f1 != f2) {
+                    return f1 < f2 ? -1 : 1;
                 }
 
-                double h1 = cells[o1.getNodeIndex()].hCost;
-                double h2 = cells[o2.getNodeIndex()].hCost;
+                double h1 = cells[o1.getNodeIndex()].gCost;
+                double h2 = cells[o2.getNodeIndex()].gCost;
 
-                if(h1 != h2) {
-                    return h1 < h2? -1 : 1;
+                if (h1 != h2) {
+                    return h1 < h2 ? -1 : 1;
                 }
 
                 return 0;
@@ -97,9 +107,6 @@ public class PathFinder {
 
             //current = open.remove(0);
             current = open.remove(0);
-
-            System.out.println(current + " " + cells[current.getNodeIndex()].getFCost());
-            System.out.println();
 
             Cell currentCell = cells[current.getNodeIndex()];
 
@@ -123,6 +130,7 @@ public class PathFinder {
 
                 // if not checked yet or new path from current cell is shorter
                 double newCost = currentCell.gCost + weight;
+
                 if (!open.contains(neighbour) || newCost < neighbourCell.gCost) {
                     if (!open.contains(neighbour)) {
                         open.add(neighbour);
@@ -140,14 +148,11 @@ public class PathFinder {
             return;
         }
 
-        System.out.println();
-
         // build path
         path.add(current);
 
         while (current != start) {
             current = cells[current.getNodeIndex()].parent;
-
             path.add(current);
         }
 
@@ -158,24 +163,24 @@ public class PathFinder {
         int dx = Math.abs(node.getCellX() - goal.getCellX());
         int dy = Math.abs(node.getCellY() - goal.getCellY());
 
-        return Math.max(dx, dy);
+        return Math.min(dx, dy);
     }
 
-    private class Cell {
+    private final class Cell {
         GraphNode parent;
         double gCost;
         double hCost;
 
         GraphNode node;
 
-        Cell(GraphNode node, GraphNode parent, double gCost, double hCost) {
+        private Cell(GraphNode node, GraphNode parent, double gCost, double hCost) {
             this.node = node;
             this.parent = parent;
             this.gCost = gCost;
             this.hCost = hCost;
         }
 
-        Cell(GraphNode node, double gCost, double hCost) {
+        private Cell(GraphNode node, double gCost, double hCost) {
             this(node, null, gCost, hCost);
         }
 

@@ -10,7 +10,6 @@ import java.util.LinkedList;
  * Created by MikroAcse on 22.03.2017.
  */
 public class GameModel {
-    public boolean isMoving;
     private Point waypoint;
 
     private LinkedList<Point> path;
@@ -41,6 +40,10 @@ public class GameModel {
 
         player.x = Math.min(player.x, world.getMapWidth() - 1);
         player.y = Math.min(player.y, world.getMapHeight() - 1);
+    }
+
+    public boolean isMoving() {
+        return !path.isEmpty();
     }
 
     public Player getPlayer() {

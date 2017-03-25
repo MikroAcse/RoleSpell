@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import ru.mikroacse.rolespell.model.GameModel;
 import ru.mikroacse.rolespell.model.world.World;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -48,17 +50,16 @@ public class WorldRenderer {
     public void render(float delta) {
         Point playerPosition = mapToReal(model.getPlayer().x, model.getPlayer().y);
 
-        camera.position.x = 0;
-        camera.position.y = 0;
+        Vector2 cameraPos = new Vector2(playerPosition.x, playerPosition.y);
 
-        camera.position.x += playerPosition.x;
-        camera.position.y += playerPosition.y;
+        cameraPos.x = Math.min(cameraPos.x, model.getWorld().getMapRealWidth() - camera.viewportWidth / 2f);
+        cameraPos.y = Math.min(cameraPos.y, model.getWorld().getMapRealHeight() - camera.viewportHeight / 2f);
 
-        camera.position.x = Math.min(camera.position.x, model.getWorld().getMapRealWidth() - camera.viewportWidth / 2f);
-        camera.position.y = Math.min(camera.position.y, model.getWorld().getMapRealHeight() - camera.viewportHeight / 2f);
+        cameraPos.x = Math.max(cameraPos.x, camera.viewportWidth / 2f);
+        cameraPos.y = Math.max(cameraPos.y, camera.viewportHeight / 2f);
 
-        camera.position.x = Math.max(camera.position.x, camera.viewportWidth / 2f);
-        camera.position.y = Math.max(camera.position.y, camera.viewportHeight / 2f);
+        camera.position.x += (cameraPos.x - camera.position.x) / 10f;
+        camera.position.y += (cameraPos.y - camera.position.y) / 10f;
 
         camera.update();
 
@@ -71,11 +72,19 @@ public class WorldRenderer {
         player.setPosition(playerPosition.x, playerPosition.y);
         player.draw(batch);
 
-        if (model.isMoving) {
+        if (model.isMoving()) {
             Point waypointPosition = mapToReal(model.getWaypoint().x, model.getWaypoint().y);
 
             waypoint.setPosition(waypointPosition.x, waypointPosition.y);
             waypoint.draw(batch);
+
+            LinkedList<Point> path = model.getPath();
+            for (int i = 0; i < path.size() - 1; i++) {
+                Point pathPoint = path.get(i);
+                Point realPoint = mapToReal(pathPoint.x, pathPoint.y);
+
+                batch.draw(new Texture("data/path.png"), realPoint.x, realPoint.y);
+            }
         }
 
         batch.end();
