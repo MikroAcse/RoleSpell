@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 
 /**
@@ -7,15 +8,15 @@ import com.badlogic.gdx.InputAdapter;
  */
 public class WorldInputAdapter extends InputAdapter {
     private boolean isJustTouched;
-    private int mouseX;
-    private int mouseY;
+    private int touchMouseX;
+    private int touchMouseY;
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         isJustTouched = true;
 
-        mouseX = screenX;
-        mouseY = screenY;
+        touchMouseX = screenX;
+        touchMouseY = screenY;
         return true;
     }
 
@@ -24,11 +25,19 @@ public class WorldInputAdapter extends InputAdapter {
     }
 
     public int getMouseX() {
-        return mouseX;
+        return Gdx.input.getX();
     }
 
     public int getMouseY() {
-        return mouseY;
+        return Gdx.input.getY();
+    }
+
+    public int getTouchMouseX() {
+        return touchMouseX;
+    }
+
+    public int getTouchMouseY() {
+        return touchMouseY;
     }
 
     public boolean isJustTouched() {

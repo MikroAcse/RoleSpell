@@ -1,6 +1,5 @@
-package ru.mikroacse.rolespell.model.ai.graph;
+package ru.mikroacse.rolespell.model.pathfinding.graph;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Graph {
@@ -64,11 +63,7 @@ public class Graph {
 
         adjacencyMatrix[nodeIndexA][nodeIndexB] = 0;
 
-        Iterator<AdjacencyListItem> iterator = adjacencyList[nodeIndexA].iterator();
-
-        while (iterator.hasNext()) {
-            AdjacencyListItem item = iterator.next();
-
+        for (AdjacencyListItem item : adjacencyList[nodeIndexA]) {
             if (item.getNode().getNodeIndex() == nodeIndexB)
                 adjacencyList[nodeIndexA].remove();
         }

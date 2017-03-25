@@ -1,8 +1,8 @@
-package ru.mikroacse.rolespell.model.ai;
+package ru.mikroacse.rolespell.model.pathfinding;
 
 import com.badlogic.gdx.math.Rectangle;
-import ru.mikroacse.rolespell.model.ai.graph.Graph;
 import ru.mikroacse.rolespell.model.world.World;
+import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
 
 /**
  * Created by MikroAcse on 24.03.2017.

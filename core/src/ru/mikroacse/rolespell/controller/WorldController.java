@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.GameModel;
-import ru.mikroacse.rolespell.model.ai.GraphBuilder;
-import ru.mikroacse.rolespell.model.ai.PathFinder;
-import ru.mikroacse.rolespell.model.ai.graph.Graph;
-import ru.mikroacse.rolespell.model.ai.heuristic.ManhattanDistance;
+import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
+import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
+import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
+import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.WorldRenderer;
 
@@ -18,14 +18,10 @@ import java.util.LinkedList;
  * Created by MikroAcse on 22.03.2017.
  */
 public class WorldController {
-    public static float MOVING_SPEED = 10f; // cells per second
-
     private WorldRenderer renderer;
     private GameModel model;
 
     private WorldInputAdapter inputAdapter;
-
-    private float movingUpdate;
 
     public WorldController(WorldRenderer renderer, GameModel model) {
         this.renderer = renderer;
@@ -33,21 +29,14 @@ public class WorldController {
 
         inputAdapter = new WorldInputAdapter();
         Gdx.input.setInputProcessor(inputAdapter);
-
-        RectangleMapObject pl = (RectangleMapObject) model.getWorld().getMapLayer(World.Layer.SPAWNERS).getObjects().get("PLAYER");
-        Rectangle rect = pl.getRectangle();
-        Point plSpawnPoint = renderer.realToMap((int) rect.x, (int) rect.y);
-
-        System.out.println(plSpawnPoint);
-        model.getPlayer().setPosition(plSpawnPoint.x, plSpawnPoint.y);
     }
 
     public void update(float delta) {
         World world = model.getWorld();
 
         if (inputAdapter.isJustTouched()) {
-            int mouseX = inputAdapter.getMouseX();
-            int mouseY = inputAdapter.getMouseY();
+            int mouseX = inputAdapter.getTouchMouseX();
+            int mouseY = inputAdapter.getTouchMouseY();
 
             Point coordinates = renderer.globalToLocal(mouseX, mouseY);
             Point cellPosition = world.getCellPosition(coordinates.x, coordinates.y);
@@ -66,22 +55,7 @@ public class WorldController {
             }
         }
 
-        if (model.isMoving()) {
-            movingUpdate += MOVING_SPEED * delta;
-
-            Point point = null;
-            while (model.isMoving() && movingUpdate >= 1f) {
-                if (!model.getPath().isEmpty()) {
-                    point = model.getPath().remove();
-                }
-
-                movingUpdate -= 1f;
-            }
-
-            if (point != null) {
-                model.getPlayer().setPosition(point.x, point.y);
-            }
-        }
+        model.update(delta);
 
         inputAdapter.update();
     }
@@ -113,19 +87,17 @@ public class WorldController {
         LinkedList<Point> path = pathFinder.convertPathToCells(
                 pathFinder.getPath(
                         graph,
-                        (int) (rect.height * (playerX - rect.x) + playerY - rect.y),
+                        (int) (rect.height * (playerX - rect.x) + (playerY - rect.y)),
                         (int) (rect.height * (x - rect.x) + (y - rect.y))
                 ));
 
         if (path.size() > 1) {
             path.remove();
 
-            model.clearPath();
-            model.addPath(path);
+            model.getPlayer().clearPath();
+            model.getPlayer().addToPath(path);
 
             model.setWaypoint(x, y);
         }
-
-        movingUpdate = 0f;
     }
 }

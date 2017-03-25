@@ -6,12 +6,12 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import ru.mikroacse.rolespell.model.entities.Entity;
-import ru.mikroacse.rolespell.model.entities.EntityType;
+import ru.mikroacse.rolespell.model.entities.Player;
+import ru.mikroacse.rolespell.model.entities.core.Entity;
+import ru.mikroacse.rolespell.model.entities.core.EntityType;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,6 +20,8 @@ import java.util.List;
 public class World {
     private TiledMap map;
     private List<Entity> entities;
+
+    private Player player;
 
     public World(TiledMap map) {
         this.map = map;
@@ -34,15 +36,27 @@ public class World {
     private void initialize() {
         entities = new ArrayList<>();
 
-        Iterator<MapObject> it = getMapLayer(Layer.SPAWNERS).getObjects().iterator();
-
         // TODO: :/
-        while (it.hasNext()) {
-            RectangleMapObject object = (RectangleMapObject) it.next();
+        for (MapObject mapObject : getMapLayer(Layer.SPAWNERS).getObjects()) {
+            RectangleMapObject object = (RectangleMapObject) mapObject;
             Entity entity = EntityType.createEntity(EntityType.valueOf(object.getName()));
-            entity.type = EntityType.valueOf(object.getName());
 
-            entity.setPosition((int) object.getRectangle().x, (int) object.getRectangle().y);
+            if(entity.getType() == EntityType.PLAYER) {
+                player = (Player) entity;
+            }
+
+
+            if(entity == null) {
+                System.out.println("Null entity: " + object.getName());
+                continue;
+            }
+
+            int realX = (int) object.getRectangle().x;
+            int realY = (int) object.getRectangle().y;
+
+            entity.setPosition(realX / getMapTileWidth(), realY / getMapTileHeight());
+
+            System.out.println(entity);
 
             entities.add(entity);
         }
@@ -112,12 +126,24 @@ public class World {
         return getMeta(x, y) != Meta.SOLID;
     }
 
+    public boolean isValidCoordinates(int x, int y) {
+        return x >= 0 && y >= 0 && x < getMapWidth() && y < getMapHeight();
+    }
+
     public List<Entity> getEntities() {
         return entities;
     }
 
-    public boolean isValidCoordinates(int x, int y) {
-        return x >= 0 && y >= 0 && x < getMapWidth() && y < getMapHeight();
+    public boolean addEntity(Entity entity) {
+        return entities.add(entity);
+    }
+
+    public boolean removeEntity(Entity entity) {
+        return entities.remove(entity);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public TiledMap getMap() {
@@ -140,24 +166,24 @@ public class World {
         return getMapTileLayer(World.Layer.BACKGROUND).getHeight();
     }
 
-    public float getMapTileWidth() {
-        return getMapTileLayer(World.Layer.BACKGROUND).getTileWidth();
+    public int getMapTileWidth() {
+        return (int) getMapTileLayer(World.Layer.BACKGROUND).getTileWidth();
     }
 
-    public float getMapTileHeight() {
-        return getMapTileLayer(World.Layer.BACKGROUND).getTileHeight();
+    public int getMapTileHeight() {
+        return (int) getMapTileLayer(World.Layer.BACKGROUND).getTileHeight();
     }
 
-    public float getMapRealWidth() {
+    public int getMapRealWidth() {
         return getMapWidth() * getMapTileWidth();
     }
 
-    public float getMapRealHeight() {
+    public int getMapRealHeight() {
         return getMapHeight() * getMapTileHeight();
     }
 
     public enum Layer {
-        SPAWNERS, // object layer with entities/entities spawn locations
+        SPAWNERS, // object layer with entities/player spawn locations
         META, // meta layer for collisions markup
         TOP,
         ADDITIONAL,

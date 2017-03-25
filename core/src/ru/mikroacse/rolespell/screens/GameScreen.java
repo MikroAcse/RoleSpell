@@ -1,9 +1,5 @@
 package ru.mikroacse.rolespell.screens;
 
-/**
- * Created by MikroAcse on 22.03.2017.
- */
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,6 +9,10 @@ import ru.mikroacse.rolespell.model.GameModel;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.WorldRenderer;
 
+
+/**
+ * Created by MikroAcse on 22.03.2017.
+ */
 public class GameScreen implements Screen {
     private WorldRenderer renderer;
     private WorldController controller;

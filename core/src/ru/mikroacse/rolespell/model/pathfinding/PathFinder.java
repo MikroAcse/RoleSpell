@@ -1,9 +1,9 @@
-package ru.mikroacse.rolespell.model.ai;
+package ru.mikroacse.rolespell.model.pathfinding;
 
-import ru.mikroacse.rolespell.model.ai.graph.AdjacencyListItem;
-import ru.mikroacse.rolespell.model.ai.graph.Graph;
-import ru.mikroacse.rolespell.model.ai.graph.GraphNode;
-import ru.mikroacse.rolespell.model.ai.heuristic.PathFinderHeuristic;
+import ru.mikroacse.rolespell.model.pathfinding.graph.AdjacencyListItem;
+import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
+import ru.mikroacse.rolespell.model.pathfinding.graph.GraphNode;
+import ru.mikroacse.rolespell.model.pathfinding.heuristic.PathFinderHeuristic;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -144,7 +144,6 @@ public class PathFinder {
 
         // no path found
         if (current != finish) {
-            System.out.println("No path found!");
             return;
         }
 

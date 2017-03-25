@@ -1,6 +1,6 @@
-package ru.mikroacse.rolespell.model.ai.heuristic;
+package ru.mikroacse.rolespell.model.pathfinding.heuristic;
 
-import ru.mikroacse.rolespell.model.ai.graph.GraphNode;
+import ru.mikroacse.rolespell.model.pathfinding.graph.GraphNode;
 
 /**
  * Created by MikroAcse on 25.03.2017.

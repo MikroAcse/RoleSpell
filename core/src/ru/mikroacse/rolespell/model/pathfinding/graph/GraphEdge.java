@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.model.ai.graph;
+package ru.mikroacse.rolespell.model.pathfinding.graph;
 
 /**
  * Created by Никита on 20.11.2016.

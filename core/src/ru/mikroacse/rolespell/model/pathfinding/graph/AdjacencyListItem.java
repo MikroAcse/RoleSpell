@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.model.ai.graph;
+package ru.mikroacse.rolespell.model.pathfinding.graph;
 
 public class AdjacencyListItem {
     private GraphNode node;
@@ -10,7 +10,7 @@ public class AdjacencyListItem {
     }
 
     public AdjacencyListItem(GraphNode node) {
-        this(node, 0.0);
+        this(node, 0);
     }
 
     public GraphNode getNode() {

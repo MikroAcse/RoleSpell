@@ -1,10 +1,11 @@
 package ru.mikroacse.rolespell.model;
 
 import ru.mikroacse.rolespell.model.entities.Player;
+import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -12,54 +13,55 @@ import java.util.LinkedList;
 public class GameModel {
     private Point waypoint;
 
-    private LinkedList<Point> path;
-
-    private Player player;
+    private Entity observable;
     private World world;
 
     public GameModel() {
-        player = new Player(0, 0);
         waypoint = new Point(0, 0);
-
-        path = new LinkedList<>();
     }
 
-    public void movePlayer(int dx, int dy) {
-        int newX = player.x + dx;
-        int newY = player.y + dy;
+    private void initializeWorld() {
+        observable = world.getPlayer();
+    }
+
+    public void update(float delta) {
+        List<Entity> entities = world.getEntities();
+
+        for (Entity entity : entities) {
+            entity.update(delta);
+        }
+    }
+
+    public boolean moveEntityBy(Entity entity, int dx, int dy) {
+        int newX = entity.x + dx;
+        int newY = entity.y + dy;
 
         if (world.getMeta(newX, newY) == World.Meta.SOLID) {
-            return;
+            return false;
         }
 
-        player.x += dx;
-        player.y += dy;
+        entity.x += dx;
+        entity.y += dy;
 
-        player.x = Math.max(player.x, 0);
-        player.y = Math.max(player.y, 0);
+        entity.x = Math.max(entity.x, 0);
+        entity.y = Math.max(entity.y, 0);
 
-        player.x = Math.min(player.x, world.getMapWidth() - 1);
-        player.y = Math.min(player.y, world.getMapHeight() - 1);
+        entity.x = Math.min(entity.x, world.getMapWidth() - 1);
+        entity.y = Math.min(entity.y, world.getMapHeight() - 1);
+
+        return true;
     }
 
-    public boolean isMoving() {
-        return !path.isEmpty();
+    public boolean movePlayerBy(int dx, int dy) {
+        return moveEntityBy(getPlayer(), dx, dy);
     }
 
     public Player getPlayer() {
-        return player;
+        return world.getPlayer();
     }
 
-    public void addPath(LinkedList<Point> path) {
-        this.path.addAll(path);
-    }
-
-    public void clearPath() {
-        this.path.clear();
-    }
-
-    public LinkedList<Point> getPath() {
-        return path;
+    public Entity getObservable() {
+        return observable;
     }
 
     public Point getWaypoint() {
@@ -76,5 +78,7 @@ public class GameModel {
 
     public void setWorld(World world) {
         this.world = world;
+
+        initializeWorld();
     }
 }
