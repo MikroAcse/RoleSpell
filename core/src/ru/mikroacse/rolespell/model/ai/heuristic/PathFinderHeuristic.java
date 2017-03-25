@@ -22,7 +22,7 @@ public abstract class PathFinderHeuristic {
     /**
      * @param node 'From' node
      * @param goal 'To' node
-     * @param d   Minimal cost of orthogonal moving
+     * @param d    Minimal cost of orthogonal moving
      */
     public abstract double get(GraphNode node, GraphNode goal, double d);
 

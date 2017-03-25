@@ -55,12 +55,12 @@ public class WorldController {
             int x = cellPosition.x;
             int y = cellPosition.y;
 
-            if(world.getMeta(x, y) != World.Meta.SOLID) {
+            if (world.getMeta(x, y) != World.Meta.SOLID) {
                 moveTo(x, y);
             } else {
                 Point nearestEmptyCell = world.getNearestEmptyCell(World.Layer.META, x, y, 2);
 
-                if(nearestEmptyCell != null) {
+                if (nearestEmptyCell != null) {
                     moveTo(nearestEmptyCell.x, nearestEmptyCell.y);
                 }
             }
@@ -70,7 +70,7 @@ public class WorldController {
             movingUpdate += MOVING_SPEED * delta;
 
             Point point = null;
-            while(model.isMoving() && movingUpdate >= 1f) {
+            while (model.isMoving() && movingUpdate >= 1f) {
                 if (!model.getPath().isEmpty()) {
                     point = model.getPath().remove();
                 }
@@ -78,7 +78,7 @@ public class WorldController {
                 movingUpdate -= 1f;
             }
 
-            if(point != null) {
+            if (point != null) {
                 model.getPlayer().setPosition(point.x, point.y);
             }
         }
@@ -117,7 +117,7 @@ public class WorldController {
                         (int) (rect.height * (x - rect.x) + (y - rect.y))
                 ));
 
-        if(path.size() > 1) {
+        if (path.size() > 1) {
             path.remove();
 
             model.clearPath();

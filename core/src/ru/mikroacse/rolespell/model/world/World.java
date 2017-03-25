@@ -87,16 +87,16 @@ public class World {
         while (radius <= maxRadius) {
             for (int i = -radius; i <= radius; i++) {
                 for (int j = -radius; j <= radius; j++) {
-                    if(i == 0 || i == radius || j == 0 || j == radius) {
+                    if (i == 0 || i == radius || j == 0 || j == radius) {
                         int cellX = x + i;
                         int cellY = y + j;
 
-                        if(!isValidCoordinates(cellX, cellY))
+                        if (!isValidCoordinates(cellX, cellY))
                             continue;
 
                         TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
 
-                        if(cell == null)
+                        if (cell == null)
                             return new Point(cellX, cellY);
                     }
                 }
