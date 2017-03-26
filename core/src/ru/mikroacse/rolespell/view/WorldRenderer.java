@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import ru.mikroacse.rolespell.model.GameModel;
-import ru.mikroacse.rolespell.model.entities.NPC;
+import ru.mikroacse.rolespell.model.entities.Npc;
 import ru.mikroacse.rolespell.model.entities.Player;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.world.World;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -39,15 +37,12 @@ public class WorldRenderer {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.update();
 
-        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        cell.setTile(model.getWorld().getMap().getTileSets().getTile(0));
-        model.getWorld().getMapTileLayer(World.Layer.OBJECTS).setCell(0, 0, cell);
-        model.getWorld().getMapTileLayer(World.Layer.OBJECTS).setCell(10, 10, cell);
-
         player = new Sprite(new Texture("data/player.png"));
         waypoint = new Sprite(new Texture("data/waypoint.png"));
 
         batch = new SpriteBatch();
+
+        // TODO: zooming
     }
 
     public void render(float delta) {
@@ -55,7 +50,7 @@ public class WorldRenderer {
             return;
         }
 
-        Point observablePosition = mapToReal(model.getObservable().x, model.getObservable().y);
+        Point observablePosition = cellToMap(model.getObservable().x, model.getObservable().y);
 
         Vector2 cameraPos = new Vector2(observablePosition.x, observablePosition.y);
 
@@ -65,8 +60,8 @@ public class WorldRenderer {
         cameraPos.x = Math.max(cameraPos.x, camera.viewportWidth / 2f);
         cameraPos.y = Math.max(cameraPos.y, camera.viewportHeight / 2f);
 
-        camera.position.x += (cameraPos.x - camera.position.x) / 10f;
-        camera.position.y += (cameraPos.y - camera.position.y) / 10f;
+        camera.position.x += (cameraPos.x - camera.position.x) / 4f;
+        camera.position.y += (cameraPos.y - camera.position.y) / 4f;
 
         camera.update();
 
@@ -77,27 +72,27 @@ public class WorldRenderer {
         batch.setProjectionMatrix(camera.combined);
 
         for (Entity entity : model.getWorld().getEntities()) {
-            Point entityPosition = mapToReal(entity.x, entity.y);
+            Point entityPosition = cellToMap(entity.x, entity.y);
 
             if(entity instanceof Player) {
                 batch.draw(new Texture("data/player.png"), entityPosition.x, entityPosition.y);
             }
-            if(entity instanceof NPC) {
-                batch.draw(new Texture("data/NPC.png"), entityPosition.x, entityPosition.y);
+            if(entity instanceof Npc) {
+                batch.draw(new Texture("data/Npc.png"), entityPosition.x, entityPosition.y);
             }
         }
 
         LinkedList<Point> playerPath = model.getPlayer().getPath();
 
         if (!playerPath.isEmpty()) {
-            Point waypointPosition = mapToReal(model.getWaypoint().x, model.getWaypoint().y);
+            Point waypointPosition = cellToMap(model.getWaypoint().x, model.getWaypoint().y);
 
             waypoint.setPosition(waypointPosition.x, waypointPosition.y);
             waypoint.draw(batch);
 
             for (int i = 0; i < playerPath.size() - 1; i++) {
                 Point pathPoint = playerPath.get(i);
-                Point realPoint = mapToReal(pathPoint.x, pathPoint.y);
+                Point realPoint = cellToMap(pathPoint.x, pathPoint.y);
 
                 batch.draw(new Texture("data/path.png"), realPoint.x, realPoint.y);
             }
@@ -105,7 +100,7 @@ public class WorldRenderer {
 
         batch.end();
 
-        renderer.render(new int[]{4});
+        renderer.render(new int[]{4, 5});
     }
 
     public Point globalToLocal(int x, int y) {
@@ -117,13 +112,13 @@ public class WorldRenderer {
         return new Point(x, y);
     }
 
-    public Point mapToReal(int x, int y) {
+    public Point cellToMap(int x, int y) {
         return new Point(
                 x * model.getWorld().getMapTileWidth(),
                 y * model.getWorld().getMapTileHeight());
     }
 
-    public Point realToMap(int x, int y) {
+    public Point mapToCell(int x, int y) {
         return new Point(
                 x / model.getWorld().getMapTileWidth(),
                 y / model.getWorld().getMapTileHeight());

@@ -1,5 +1,8 @@
 package ru.mikroacse.rolespell.model.entities.core;
 
+import ru.mikroacse.rolespell.model.entities.ai.core.EntityAI;
+import ru.mikroacse.rolespell.model.world.World;
+
 import java.awt.*;
 import java.util.LinkedList;
 
@@ -10,42 +13,55 @@ public /*TODO:abstract*/ class Entity {
     public int x;
     public int y;
 
-    private EntityType type;
-    private LinkedList<Point> path;
+    private Point supposedPosition;
 
-    private float movingSpeed; // blocks per second
-    private float movingUpdate;
+    protected World world;
 
-    public Entity(int x, int y, EntityType type) {
+    protected EntityAI ai;
+
+    protected EntityType type;
+    protected LinkedList<Point> path;
+
+    protected float movingSpeed; // blocks per second
+    protected float time;
+
+    public Entity(int x, int y, EntityType type, World world) {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.world = world;
 
-        path = new LinkedList<>();
-
-        movingUpdate = 0f;
-        movingSpeed = 10f;
-    }
-
-    public Entity(int x, int y) {
-        this(0, 0, null);
+        initialize();
     }
 
     public Entity() {
-        this(0, 0);
+        this(0, 0, null, null);
+    }
+
+    protected void initialize() {
+        supposedPosition = new Point(x, y);
+
+        path = new LinkedList<>();
+
+        time = 0f;
+        movingSpeed = 0f;
     }
 
     public void update(float delta) {
-        if (!isPathEmpty()) {
-            movingUpdate += movingSpeed * delta;
+        if (isPathEmpty()) {
+            if(ai != null) {
+                ai.update(delta);
+            }
+        } else {
+            time += movingSpeed * delta;
 
             Point point = null;
-            while (movingUpdate >= 1f) {
+            while (time >= 1f) {
                 if (isPathEmpty())
                     break;
 
                 point = removePathPoint();
-                movingUpdate -= 1f;
+                time -= 1f;
             }
 
             if (point != null) {
@@ -62,6 +78,26 @@ public /*TODO:abstract*/ class Entity {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setSupposedPosition(int x, int y) {
+        supposedPosition.setLocation(x, y);
+
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getSupposedX() {
+        return supposedPosition.x;
+    }
+
+    public int getSupposedY() {
+        return supposedPosition.y;
+    }
+
+    public void setPath(LinkedList<Point> path) {
+        this.path = path;
+        time = 0f;
     }
 
     public void addToPath(LinkedList<Point> path) {
@@ -100,11 +136,20 @@ public /*TODO:abstract*/ class Entity {
         return type;
     }
 
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
     @Override
     public String toString() {
         return "Entity{" +
                 "x=" + x +
                 ", y=" + y +
+                ", world=" + world +
                 ", type=" + type +
                 '}';
     }

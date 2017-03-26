@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.model.entities.ai;
+package ru.mikroacse.rolespell.model.entities.ai.core;
 
 /**
  * Created by MikroAcse on 26.03.2017.

@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.model.entities.core;
 
+import ru.mikroacse.rolespell.model.entities.Npc;
 import ru.mikroacse.rolespell.model.entities.Player;
 
 
@@ -7,7 +8,7 @@ import ru.mikroacse.rolespell.model.entities.Player;
  * Created by MikroAcse on 24.03.2017.
  */
 public enum EntityType {
-    NPC(ru.mikroacse.rolespell.model.entities.NPC.class),
+    NPC(Npc.class),
     BAT(Entity.class),
     SLIME(Entity.class),
     PLAYER(Player.class);

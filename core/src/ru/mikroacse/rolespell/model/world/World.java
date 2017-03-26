@@ -6,12 +6,18 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.entities.Player;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.entities.core.EntityType;
+import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
+import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
+import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
+import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -41,25 +47,58 @@ public class World {
             RectangleMapObject object = (RectangleMapObject) mapObject;
             Entity entity = EntityType.createEntity(EntityType.valueOf(object.getName()));
 
-            if(entity.getType() == EntityType.PLAYER) {
-                player = (Player) entity;
-            }
-
-
             if(entity == null) {
                 System.out.println("Null entity: " + object.getName());
                 continue;
             }
 
+            if(entity.getType() == EntityType.PLAYER) {
+                player = (Player) entity;
+            }
+
+            // TODO: is this ok? It's for AI
+            entity.setWorld(this);
+
             int realX = (int) object.getRectangle().x;
             int realY = (int) object.getRectangle().y;
 
-            entity.setPosition(realX / getMapTileWidth(), realY / getMapTileHeight());
+            entity.setSupposedPosition(realX / getMapTileWidth(), realY / getMapTileHeight());
 
             System.out.println(entity);
 
             entities.add(entity);
         }
+    }
+
+    public LinkedList<Point> getPath(Point from, Point to, int radius) {
+        int minX = Math.min(from.x, to.x);
+        int minY = Math.min(from.y, to.y);
+
+        int maxX = Math.max(from.x, to.x);
+        int maxY = Math.max(from.y, to.y);
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+
+        Rectangle rect = new Rectangle(
+                Math.max(minX - radius, 0),
+                Math.max(minY - radius, 0),
+                width + radius * 2,
+                height + radius * 2);
+
+
+        PathFinder pathFinder = new PathFinder(new ManhattanDistance(getWeight(World.Meta.PATH)));
+
+        Graph graph = GraphBuilder.fromWorld(this, rect);
+
+        LinkedList<Point> path = pathFinder.convertPathToCells(
+                pathFinder.getPath(
+                        graph,
+                        (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
+                        (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
+                ));
+
+        return path;
     }
 
     public Point getCellPosition(float x, float y) {
@@ -95,31 +134,52 @@ public class World {
         return getMapTileLayer(layer).getCell(x, y);
     }
 
-    public Point getNearestEmptyCell(Layer layer, int x, int y, int maxRadius) {
-        int radius = 0;
+    public ArrayList<Point> getPassableCells(int x, int y, int minRadius, int maxRadius, boolean inverse) {
+        return getCells(
+                Layer.META,
+                (cell, cellX, cellY) -> getMeta(cellX, cellY) != Meta.SOLID,
+                x,
+                y,
+                minRadius,
+                maxRadius,
+                inverse);
+    }
 
-        while (radius <= maxRadius) {
+    /**
+     * Rhombus search around given position (checks the position itself too).
+     */
+    public ArrayList<Point> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius, boolean inversed) {
+        ArrayList<Point> result = new ArrayList<>();
+        int radius = inversed? maxRadius : minRadius;
+
+        while (inversed? radius >= minRadius : radius <= maxRadius) {
             for (int i = -radius; i <= radius; i++) {
                 for (int j = -radius; j <= radius; j++) {
-                    if (i == 0 || i == radius || j == 0 || j == radius) {
-                        int cellX = x + i;
-                        int cellY = y + j;
-
-                        if (!isValidCoordinates(cellX, cellY))
-                            continue;
-
-                        TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
-
-                        if (cell == null)
-                            return new Point(cellX, cellY);
+                    if(Math.abs(i) + Math.abs(j) != radius) {
+                        continue;
                     }
-                }
+
+                    int cellX = x + i;
+                    int cellY = y + j;
+
+                    if (!isValidCoordinates(cellX, cellY))
+                        continue;
+
+                    TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
+
+                    if (checker.check(cell, cellX, cellY))
+                        result.add(new Point(cellX, cellY));
+                    }
             }
 
-            radius++;
+            if(inversed) {
+                radius--;
+            } else {
+                radius++;
+            }
         }
 
-        return null;
+        return result;
     }
 
     public boolean isTraversable(int x, int y) {
@@ -182,6 +242,13 @@ public class World {
         return getMapHeight() * getMapTileHeight();
     }
 
+    @Override
+    public String toString() {
+        return "World{" +
+                "map=" + map +
+                '}';
+    }
+
     public enum Layer {
         SPAWNERS, // object layer with entities/player spawn locations
         META, // meta layer for collisions markup
@@ -198,5 +265,9 @@ public class World {
         WATER,
         PATH,
         EMPTY
+    }
+
+    public interface CellChecker {
+        boolean check(TiledMapTileLayer.Cell cell, int x, int y);
     }
 }

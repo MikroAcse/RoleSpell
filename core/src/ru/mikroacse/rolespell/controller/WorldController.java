@@ -1,17 +1,12 @@
 package ru.mikroacse.rolespell.controller;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.GameModel;
-import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
-import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
-import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
-import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.WorldRenderer;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -35,8 +30,8 @@ public class WorldController {
         World world = model.getWorld();
 
         if (inputAdapter.isJustTouched()) {
-            int mouseX = inputAdapter.getTouchMouseX();
-            int mouseY = inputAdapter.getTouchMouseY();
+            int mouseX = inputAdapter.getMouseX();
+            int mouseY = inputAdapter.getMouseY();
 
             Point coordinates = renderer.globalToLocal(mouseX, mouseY);
             Point cellPosition = world.getCellPosition(coordinates.x, coordinates.y);
@@ -44,13 +39,16 @@ public class WorldController {
             int x = cellPosition.x;
             int y = cellPosition.y;
 
-            if (world.getMeta(x, y) != World.Meta.SOLID) {
-                moveTo(x, y);
-            } else {
-                Point nearestEmptyCell = world.getNearestEmptyCell(World.Layer.META, x, y, 2);
+            if(world.isValidCoordinates(x, y)) {
+                if (world.getMeta(x, y) != World.Meta.SOLID) {
+                    moveTo(x, y);
+                } else {
+                    // TODO: bad
+                    ArrayList<Point> passableCells = world.getPassableCells(x, y, 0, 10, false);
 
-                if (nearestEmptyCell != null) {
-                    moveTo(nearestEmptyCell.x, nearestEmptyCell.y);
+                    if (!passableCells.isEmpty()) {
+                        moveTo(passableCells.get(0).x, passableCells.get(0).y);
+                    }
                 }
             }
         }
@@ -64,38 +62,12 @@ public class WorldController {
         int playerX = model.getPlayer().x;
         int playerY = model.getPlayer().y;
 
-        int minX = Math.min(playerX, x);
-        int minY = Math.min(playerY, y);
-
-        int maxX = Math.max(playerX, x);
-        int maxY = Math.max(playerY, y);
-
-        int width = maxX - minX + 1;
-        int height = maxY - minY + 1;
-
-        Rectangle rect = new Rectangle(
-                Math.max(minX - 5, 0),
-                Math.max(minY - 5, 0),
-                width + 10,
-                height + 10);
-
-
-        PathFinder pathFinder = new PathFinder(new ManhattanDistance(model.getWorld().getWeight(World.Meta.PATH)));
-
-        Graph graph = GraphBuilder.fromWorld(model.getWorld(), rect);
-
-        LinkedList<Point> path = pathFinder.convertPathToCells(
-                pathFinder.getPath(
-                        graph,
-                        (int) (rect.height * (playerX - rect.x) + (playerY - rect.y)),
-                        (int) (rect.height * (x - rect.x) + (y - rect.y))
-                ));
+        LinkedList<Point> path = model.getWorld().getPath(new Point(playerX, playerY), new Point(x, y), 5);
 
         if (path.size() > 1) {
             path.remove();
 
-            model.getPlayer().clearPath();
-            model.getPlayer().addToPath(path);
+            model.getPlayer().setPath(path);
 
             model.setWaypoint(x, y);
         }
