@@ -2,12 +2,13 @@ package ru.mikroacse.rolespell.controller;
 
 import com.badlogic.gdx.Gdx;
 import ru.mikroacse.rolespell.model.GameModel;
+import ru.mikroacse.rolespell.model.entities.Player;
+import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.WorldRenderer;
+import ru.mikroacse.util.Position;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -27,49 +28,59 @@ public class WorldController {
     }
 
     public void update(float delta) {
-        World world = model.getWorld();
-
         if (inputAdapter.isJustTouched()) {
-            int mouseX = inputAdapter.getMouseX();
-            int mouseY = inputAdapter.getMouseY();
-
-            Point coordinates = renderer.globalToLocal(mouseX, mouseY);
-            Point cellPosition = world.getCellPosition(coordinates.x, coordinates.y);
-
-            int x = cellPosition.x;
-            int y = cellPosition.y;
-
-            if(world.isValidCoordinates(x, y)) {
-                if (world.getMeta(x, y) != World.Meta.SOLID) {
-                    moveTo(x, y);
-                } else {
-                    // TODO: bad
-                    ArrayList<Point> passableCells = world.getPassableCells(x, y, 0, 10, false);
-
-                    if (!passableCells.isEmpty()) {
-                        moveTo(passableCells.get(0).x, passableCells.get(0).y);
-                    }
-                }
-            }
+            cellTouched();
         }
 
         model.update(delta);
-
         inputAdapter.update();
     }
 
-    public void moveTo(int x, int y) {
-        int playerX = model.getPlayer().x;
-        int playerY = model.getPlayer().y;
+    private void cellTouched() {
+        Player player = model.getPlayer();
+        World world = model.getWorld();
 
-        LinkedList<Point> path = model.getWorld().getPath(new Point(playerX, playerY), new Point(x, y), 5);
+        player.getMovementComponent().clearPath();
 
-        if (path.size() > 1) {
-            path.remove();
+        int mouseX = inputAdapter.getMouseX();
+        int mouseY = inputAdapter.getMouseY();
 
-            model.getPlayer().setPath(path);
+        Position coordinates = renderer.globalToLocal(mouseX, mouseY);
+        Position touchedCell = world.getCellPosition(coordinates.x, coordinates.y);
 
-            model.setWaypoint(x, y);
+        int x = touchedCell.x;
+        int y = touchedCell.y;
+
+        if (world.isValidPosition(touchedCell)) {
+            // TODO: bad and magic
+            // looking for the nearest passable cells
+            List<Position> passableCells = world.getPassableCells(x, y, 0, 10, false);
+            Position destination = null;
+
+            // checking passable cells for available paths
+            for (Position passableCell : passableCells) {
+                if (moveTo(passableCell)) {
+                    destination = passableCell;
+                    break;
+                }
+            }
+
+            // no path found to any nearest cell
+            if(destination == null) {
+                System.out.println("Path not found!");
+            }
         }
+    }
+
+    public boolean moveTo(Position destination) {
+        Player player = model.getPlayer();
+        PathMovementComponent movement = player.getMovementComponent();
+
+        if (movement.moveTo(player, model.getWorld(), destination, 10/*TODO: magic*/)) {
+            model.getWaypoint().set(destination);
+            return true;
+        }
+
+        return false;
     }
 }

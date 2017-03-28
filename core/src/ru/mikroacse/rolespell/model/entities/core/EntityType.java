@@ -7,28 +7,25 @@ import ru.mikroacse.rolespell.model.entities.Player;
 /**
  * Created by MikroAcse on 24.03.2017.
  */
+// TODO: maybe, factory?
 public enum EntityType {
-    NPC(Npc.class),
-    BAT(Entity.class),
-    SLIME(Entity.class),
-    PLAYER(Player.class);
+    NPC,
+    BAT,
+    SLIME,
+    PLAYER;
 
-    private Class<? extends Entity> entityClass;
+    public static Entity create(EntityType type) {
+        Entity entity = null;
 
-    EntityType(Class<? extends Entity> entityClass) {
-        this.entityClass = entityClass;
-    }
-
-    // TODO: looks bad
-    public static Entity createEntity(EntityType type) {
-        try {
-            Entity entity = type.entityClass.newInstance();
-            entity.setType(type);
-            return entity;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+        switch (type) {
+            case NPC:
+                entity = new Npc();
+                break;
+            case PLAYER:
+                entity = new Player();
+                break;
         }
 
-        return null;
+        return entity;
     }
 }

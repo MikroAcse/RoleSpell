@@ -15,7 +15,7 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = "rolespell"
+        appName = "RoleSpell"
         gdxVersion = '1.9.6'
         roboVMVersion = '2.3.0'
         box2DLightsVersion = '1.4'
@@ -51,9 +51,8 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
-        compile "com.kotcrab.vis:vis-ui:1.2.4"
         compile "com.github.czyzby:gdx-kiwi:1.8.1.9.4"
+        compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
     }
 }
 

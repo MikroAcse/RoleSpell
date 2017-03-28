@@ -8,14 +8,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.entities.Player;
+import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.entities.core.EntityType;
+import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
 import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
+import ru.mikroacse.rolespell.model.world.cells.CellChecker;
+import ru.mikroacse.rolespell.model.world.cells.PassableCellChecker;
+import ru.mikroacse.util.Position;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,35 +46,35 @@ public class World {
     private void initialize() {
         entities = new ArrayList<>();
 
-        // TODO: :/
-        for (MapObject mapObject : getMapLayer(Layer.SPAWNERS).getObjects()) {
+        // TODO: make this less horrible and move to separate util class
+        for (MapObject mapObject : getLayer(Layer.SPAWNERS).getObjects()) {
             RectangleMapObject object = (RectangleMapObject) mapObject;
-            Entity entity = EntityType.createEntity(EntityType.valueOf(object.getName()));
+            Entity entity = EntityType.create(EntityType.valueOf(object.getName()));
 
-            if(entity == null) {
-                System.out.println("Null entity: " + object.getName());
+            if (entity == null) {
+                System.out.println("Didn't create entity: " + object.getName());
                 continue;
             }
 
-            if(entity.getType() == EntityType.PLAYER) {
+            if (entity.getType() == EntityType.PLAYER) {
                 player = (Player) entity;
             }
-
-            // TODO: is this ok? It's for AI
-            entity.setWorld(this);
 
             int realX = (int) object.getRectangle().x;
             int realY = (int) object.getRectangle().y;
 
-            entity.setSupposedPosition(realX / getMapTileWidth(), realY / getMapTileHeight());
+            if (entity instanceof MovableEntity) {
+                MovementComponent movementComponent = ((MovableEntity) entity).getMovementComponent();
 
-            System.out.println(entity);
+                movementComponent
+                        .setBoth(realX / getTileWidth(), realY / getTileHeight());
+            }
 
             entities.add(entity);
         }
     }
 
-    public LinkedList<Point> getPath(Point from, Point to, int radius) {
+    public LinkedList<Position> getPath(Position from, Position to, int radius) {
         int minX = Math.min(from.x, to.x);
         int minY = Math.min(from.y, to.y);
 
@@ -89,34 +93,33 @@ public class World {
 
         PathFinder pathFinder = new PathFinder(new ManhattanDistance(getWeight(World.Meta.PATH)));
 
+        // TODO: use actual map instead of generating Graph every time
         Graph graph = GraphBuilder.fromWorld(this, rect);
 
-        LinkedList<Point> path = pathFinder.convertPathToCells(
+        return pathFinder.convertPathToCells(
                 pathFinder.getPath(
                         graph,
                         (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
                         (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
                 ));
-
-        return path;
     }
 
-    public Point getCellPosition(float x, float y) {
-        return new Point(
-                (int) (x / getMapTileWidth()),
-                (int) (y / getMapTileHeight()));
+    public Position getCellPosition(float x, float y) {
+        return new Position(
+                (int) (x / getTileWidth()),
+                (int) (y / getTileHeight()));
     }
 
-    public float getWeight(int x, int y) {
+    public double getWeight(int x, int y) {
         return getWeight(getMeta(x, y));
     }
 
-    public float getWeight(Meta meta) {
+    public double getWeight(Meta meta) {
         switch (meta) {
             case PATH:
-                return 0.5f;
+                return 0.5;
             default:
-                return 1f;
+                return 1;
         }
     }
 
@@ -130,14 +133,28 @@ public class World {
         return Meta.valueOf((String) cell.getTile().getProperties().get("type"));
     }
 
-    public TiledMapTileLayer.Cell getCell(Layer layer, int x, int y) {
-        return getMapTileLayer(layer).getCell(x, y);
+    public Meta getMeta(Position position) {
+        return getMeta(position.x, position.y);
     }
 
-    public ArrayList<Point> getPassableCells(int x, int y, int minRadius, int maxRadius, boolean inverse) {
+    public TiledMapTileLayer.Cell getCell(Layer layer, int x, int y) {
+        return getTileLayer(layer).getCell(x, y);
+    }
+
+    // TODO: new PassableCellChecker instance every time (fix?)
+
+    public boolean isPassable(int x, int y) {
+        return new PassableCellChecker().check(this, x, y);
+    }
+
+    public boolean isPassable(Position position) {
+        return isPassable(position.x, position.y);
+    }
+
+    public ArrayList<Position> getPassableCells(int x, int y, int minRadius, int maxRadius, boolean inverse) {
         return getCells(
                 Layer.META,
-                (cell, cellX, cellY) -> getMeta(cellX, cellY) != Meta.SOLID,
+                new PassableCellChecker(),
                 x,
                 y,
                 minRadius,
@@ -148,31 +165,32 @@ public class World {
     /**
      * Rhombus search around given position (checks the position itself too).
      */
-    public ArrayList<Point> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius, boolean inversed) {
-        ArrayList<Point> result = new ArrayList<>();
-        int radius = inversed? maxRadius : minRadius;
+    // TODO: MAKE THIS BEAUTIFUL
+    public ArrayList<Position> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius, boolean inversed) {
+        ArrayList<Position> result = new ArrayList<>();
+        int radius = inversed ? maxRadius : minRadius;
 
-        while (inversed? radius >= minRadius : radius <= maxRadius) {
+        while (inversed ? radius >= minRadius : radius <= maxRadius) {
             for (int i = -radius; i <= radius; i++) {
                 for (int j = -radius; j <= radius; j++) {
-                    if(Math.abs(i) + Math.abs(j) != radius) {
+                    if (Math.abs(i) + Math.abs(j) != radius) {
                         continue;
                     }
 
                     int cellX = x + i;
                     int cellY = y + j;
 
-                    if (!isValidCoordinates(cellX, cellY))
+                    if (!isValidPosition(cellX, cellY))
                         continue;
 
                     TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
 
-                    if (checker.check(cell, cellX, cellY))
-                        result.add(new Point(cellX, cellY));
-                    }
+                    if (checker.check(this, cellX, cellY))
+                        result.add(new Position(cellX, cellY));
+                }
             }
 
-            if(inversed) {
+            if (inversed) {
                 radius--;
             } else {
                 radius++;
@@ -182,12 +200,18 @@ public class World {
         return result;
     }
 
-    public boolean isTraversable(int x, int y) {
-        return getMeta(x, y) != Meta.SOLID;
+    public boolean isValidPosition(int x, int y) {
+        return x >= 0 && y >= 0 && x < getWidth() && y < getHeight();
     }
 
-    public boolean isValidCoordinates(int x, int y) {
-        return x >= 0 && y >= 0 && x < getMapWidth() && y < getMapHeight();
+    public boolean isValidPosition(Position position) {
+        return isValidPosition(position.x, position.y);
+    }
+
+    public void validatePosition(Position position) {
+        if (!isValidPosition(position)) {
+            position.limit(0, 0, getWidth() - 1, getHeight() - 1);
+        }
     }
 
     public List<Entity> getEntities() {
@@ -210,36 +234,36 @@ public class World {
         return map;
     }
 
-    public MapLayer getMapLayer(Layer layer) {
+    public MapLayer getLayer(Layer layer) {
         return map.getLayers().get(layer.name());
     }
 
-    public TiledMapTileLayer getMapTileLayer(World.Layer layer) {
-        return (TiledMapTileLayer) getMapLayer(layer);
+    public TiledMapTileLayer getTileLayer(World.Layer layer) {
+        return (TiledMapTileLayer) getLayer(layer);
     }
 
-    public int getMapWidth() {
-        return getMapTileLayer(World.Layer.BACKGROUND).getWidth();
+    public int getWidth() {
+        return getTileLayer(World.Layer.BACKGROUND).getWidth();
     }
 
-    public int getMapHeight() {
-        return getMapTileLayer(World.Layer.BACKGROUND).getHeight();
+    public int getHeight() {
+        return getTileLayer(World.Layer.BACKGROUND).getHeight();
     }
 
-    public int getMapTileWidth() {
-        return (int) getMapTileLayer(World.Layer.BACKGROUND).getTileWidth();
+    public int getTileWidth() {
+        return (int) getTileLayer(World.Layer.BACKGROUND).getTileWidth();
     }
 
-    public int getMapTileHeight() {
-        return (int) getMapTileLayer(World.Layer.BACKGROUND).getTileHeight();
+    public int getTileHeight() {
+        return (int) getTileLayer(World.Layer.BACKGROUND).getTileHeight();
     }
 
-    public int getMapRealWidth() {
-        return getMapWidth() * getMapTileWidth();
+    public int getRealWidth() {
+        return getWidth() * getTileWidth();
     }
 
-    public int getMapRealHeight() {
-        return getMapHeight() * getMapTileHeight();
+    public int getRealHeight() {
+        return getHeight() * getTileHeight();
     }
 
     @Override
@@ -265,9 +289,5 @@ public class World {
         WATER,
         PATH,
         EMPTY
-    }
-
-    public interface CellChecker {
-        boolean check(TiledMapTileLayer.Cell cell, int x, int y);
     }
 }

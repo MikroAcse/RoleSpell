@@ -1,8 +1,8 @@
 package ru.mikroacse.rolespell.model.pathfinding;
 
 import com.badlogic.gdx.math.Rectangle;
-import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
+import ru.mikroacse.rolespell.model.world.World;
 
 /**
  * Created by MikroAcse on 24.03.2017.
@@ -33,20 +33,20 @@ public class GraphBuilder {
 
                 int cellIndex = getIndex(i, j, height);
 
-                if (!world.isTraversable(x, y))
+                if (!world.isPassable(x, y))
                     continue;
 
                 // LEFT
-                if (i - 1 >= 0 && world.isTraversable(x - 1, y))
+                if (i - 1 >= 0 && world.isPassable(x - 1, y))
                     graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getWeight(x - 1, y));
                 // RIGHT
-                if (i + 1 < width && world.isTraversable(x + 1, y))
+                if (i + 1 < width && world.isPassable(x + 1, y))
                     graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getWeight(x + 1, y));
                 // BOTTOM
-                if (j - 1 >= 0 && world.isTraversable(x, y - 1))
+                if (j - 1 >= 0 && world.isPassable(x, y - 1))
                     graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getWeight(x, y - 1));
                 // TOP
-                if (j + 1 < height && world.isTraversable(x, y + 1))
+                if (j + 1 < height && world.isPassable(x, y + 1))
                     graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getWeight(x, y + 1));
             }
         }

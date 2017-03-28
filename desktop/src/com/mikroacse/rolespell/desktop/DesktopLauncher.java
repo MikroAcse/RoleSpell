@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.desktop;
+package com.mikroacse.rolespell.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;

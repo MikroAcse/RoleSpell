@@ -2,22 +2,23 @@ package ru.mikroacse.rolespell.model;
 
 import ru.mikroacse.rolespell.model.entities.Player;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
+import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
 import ru.mikroacse.rolespell.model.world.World;
+import ru.mikroacse.util.Position;
 
-import java.awt.*;
 import java.util.List;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
 public class GameModel {
-    private Point waypoint;
+    private Position waypoint;
 
-    private Entity observable;
+    private MovableEntity observable;
     private World world;
 
     public GameModel() {
-        waypoint = new Point(0, 0);
+        waypoint = new Position(0, 0);
     }
 
     private void initializeWorld() {
@@ -28,48 +29,24 @@ public class GameModel {
         List<Entity> entities = world.getEntities();
 
         for (Entity entity : entities) {
-            entity.update(delta);
+            entity.update(delta, world);
         }
-    }
-
-    public boolean moveEntityBy(Entity entity, int dx, int dy) {
-        int newX = entity.x + dx;
-        int newY = entity.y + dy;
-
-        if (world.getMeta(newX, newY) == World.Meta.SOLID) {
-            return false;
-        }
-
-        entity.x += dx;
-        entity.y += dy;
-
-        entity.x = Math.max(entity.x, 0);
-        entity.y = Math.max(entity.y, 0);
-
-        entity.x = Math.min(entity.x, world.getMapWidth() - 1);
-        entity.y = Math.min(entity.y, world.getMapHeight() - 1);
-
-        return true;
-    }
-
-    public boolean movePlayerBy(int dx, int dy) {
-        return moveEntityBy(getPlayer(), dx, dy);
     }
 
     public Player getPlayer() {
         return world.getPlayer();
     }
 
-    public Entity getObservable() {
+    public MovableEntity getObservable() {
         return observable;
     }
 
-    public Point getWaypoint() {
-        return waypoint;
+    public void setObservable(MovableEntity observable) {
+        this.observable = observable;
     }
 
-    public void setWaypoint(int x, int y) {
-        waypoint.setLocation(x, y);
+    public Position getWaypoint() {
+        return waypoint;
     }
 
     public World getWorld() {
