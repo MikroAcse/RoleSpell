@@ -12,7 +12,7 @@ import ru.mikroacse.rolespell.model.world.World;
 /**
  * Created by MikroAcse on 22.03.2017.
  */
-public class Player extends Entity implements GuidedEntity, DrawableEntity {
+public class Player extends Entity implements GuidedEntity {
     private PathMovementComponent movement;
     private DrawableComponent drawable;
 
@@ -23,26 +23,7 @@ public class Player extends Entity implements GuidedEntity, DrawableEntity {
         movement.setType(PathMovementComponent.UpdateType.BOTH);
 
         // TODO: It's supposed to be in the View!
-        drawable = new TextureDrawableComponent(new Texture("data/player.png")) {
-            @Override
-            public boolean draw(Entity entity, World world, SpriteBatch batch) {
-                if (!(entity instanceof MovableEntity)) {
-                    return false;
-                }
-
-                MovementComponent movement = ((MovableEntity) entity).getMovement();
-
-                int x = movement.getPosition().x;
-                int y = movement.getPosition().y;
-
-                x *= world.getTileWidth();
-                y *= world.getTileHeight();
-
-                batch.draw(getTexture(), x, y);
-
-                return true;
-            }
-        };
+        drawable = new TextureDrawableComponent(new Texture("data/player.png"));
     }
 
     public Player() {

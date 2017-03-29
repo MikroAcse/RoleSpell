@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by MikroAcse on 25.03.2017.
  */
-public class Npc extends Entity implements GuidedEntity, DrawableEntity, IntelligentEntity {
+public class Npc extends Entity implements GuidedEntity, IntelligentEntity {
     private ArrayList<AiComponent> ai;
 
     private RandomMovementAi randomMovementAi;
@@ -43,26 +43,7 @@ public class Npc extends Entity implements GuidedEntity, DrawableEntity, Intelli
         ai.add(collisionAvoidingAi);
 
         // TODO: It's supposed to be in the View!
-        drawable = new TextureDrawableComponent(new Texture("data/npc.png")) {
-            @Override
-            public boolean draw(Entity entity, World world, SpriteBatch batch) {
-                if (!(entity instanceof MovableEntity)) {
-                    return false;
-                }
-
-                MovementComponent movement = ((MovableEntity) entity).getMovement();
-
-                int x = movement.getPosition().x;
-                int y = movement.getPosition().y;
-
-                x *= world.getTileWidth();
-                y *= world.getTileHeight();
-
-                batch.draw(getTexture(), x, y);
-
-                return true;
-            }
-        };
+        drawable = new TextureDrawableComponent(new Texture("data/npc.png"));
     }
 
     public Npc() {

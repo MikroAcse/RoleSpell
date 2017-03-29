@@ -5,7 +5,7 @@ import ru.mikroacse.rolespell.model.world.World;
 /**
  * Created by MikroAcse on 23.03.2017.
  */
-public abstract class Entity {
+public abstract class Entity implements DrawableEntity, MovableEntity {
     private EntityType type;
 
     public Entity(EntityType type) {

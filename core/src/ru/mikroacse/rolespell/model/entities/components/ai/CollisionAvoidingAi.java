@@ -36,17 +36,13 @@ public class CollisionAvoidingAi extends AiComponent {
 
     @Override
     public boolean apply(Entity entity, World world) {
-        if(!(entity instanceof MovableEntity)) {
-            return false;
-        }
-
         if(entity instanceof GuidedEntity) {
             if(!((GuidedEntity) entity).getMovement().isPathEmpty()) {
                 return false;
             }
         }
 
-        MovableEntity movableEntity = (MovableEntity) entity;
+        MovableEntity movableEntity = entity;
 
         List<Entity> entities = world.getEntitiesAt(movement.getPosition());
         entities.remove(entity);
@@ -56,8 +52,8 @@ public class CollisionAvoidingAi extends AiComponent {
         }
 
         List<Position> passableCells = world.getPassableCells(
-                movement.getPosition().x,
-                movement.getPosition().y,
+                movement.getOrigin().x,
+                movement.getOrigin().y,
                 true,
                 minRadius,
                 maxRadius,

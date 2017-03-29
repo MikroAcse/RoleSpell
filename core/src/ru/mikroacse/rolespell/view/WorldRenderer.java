@@ -10,6 +10,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import ru.mikroacse.rolespell.model.GameModel;
 import ru.mikroacse.rolespell.model.entities.components.drawable.DrawableComponent;
+import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawableComponent;
+import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.DrawableEntity;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
@@ -71,16 +73,22 @@ public class WorldRenderer {
         camera.update();
 
         renderer.setView(camera);
-        renderer.render(new int[]{0, 1, 2, 3});
+        renderer.render(new int[]{0, 1, 2, 3}); // TODO: magic
 
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
 
         for (Entity entity : world.getEntities()) {
-            if (entity instanceof DrawableEntity) {
-                DrawableComponent drawableComponent = ((DrawableEntity) entity).getDrawable();
+            DrawableComponent drawable = entity.getDrawable();
+            MovementComponent movement = entity.getMovement();
 
-                drawableComponent.draw(entity, world, batch);
+            Position position = movement.getPosition();
+            position = cellToMap(position);
+
+            if(drawable instanceof TextureDrawableComponent) {
+                Texture texture = ((TextureDrawableComponent) drawable).getTexture();
+
+                batch.draw(texture, position.x, position.y);
             }
         }
 
