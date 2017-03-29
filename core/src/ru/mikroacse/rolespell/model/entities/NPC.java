@@ -3,41 +3,54 @@ package ru.mikroacse.rolespell.model.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.mikroacse.rolespell.model.entities.components.ai.AiComponent;
-import ru.mikroacse.rolespell.model.entities.components.ai.RandomMovementAiComponent;
+import ru.mikroacse.rolespell.model.entities.components.ai.CollisionAvoidingAi;
+import ru.mikroacse.rolespell.model.entities.components.ai.RandomMovementAi;
 import ru.mikroacse.rolespell.model.entities.components.drawable.DrawableComponent;
 import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawableComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.*;
 import ru.mikroacse.rolespell.model.world.World;
+import ru.mikroacse.util.Interval;
+
+import java.util.ArrayList;
 
 /**
  * Created by MikroAcse on 25.03.2017.
  */
 public class Npc extends Entity implements GuidedEntity, DrawableEntity, IntelligentEntity {
-    private RandomMovementAiComponent aiComponent;
-    private PathMovementComponent movementComponent;
-    private TextureDrawableComponent drawableComponent;
+    private ArrayList<AiComponent> ai;
+
+    private RandomMovementAi randomMovementAi;
+    private CollisionAvoidingAi collisionAvoidingAi;
+
+    private PathMovementComponent movement;
+    private TextureDrawableComponent drawable;
 
     public Npc(int x, int y) {
         super(EntityType.NPC);
 
-        movementComponent = new PathMovementComponent(x, y, 5.0 /*TODO: magic*/);
-        movementComponent.setType(PathMovementComponent.Type.CURRENT);
+        movement = new PathMovementComponent(x, y, 4.0 /*TODO: magic*/);
+        movement.setType(PathMovementComponent.UpdateType.CURRENT);
+
+        ai = new ArrayList<>();
 
         // TODO: magic numbers
-        aiComponent = new RandomMovementAiComponent(movementComponent, 5, 10);
-        aiComponent.setInterval(2.0);
+        randomMovementAi = new RandomMovementAi(movement, new Interval(2.0, 10.0), 0, 5);
+        ai.add(randomMovementAi);
+
+        collisionAvoidingAi = new CollisionAvoidingAi(movement, new Interval(0.5), 1, 5);
+        ai.add(collisionAvoidingAi);
 
         // TODO: It's supposed to be in the View!
-        drawableComponent = new TextureDrawableComponent(new Texture("data/npc.png")) {
+        drawable = new TextureDrawableComponent(new Texture("data/npc.png")) {
             @Override
             public boolean draw(Entity entity, World world, SpriteBatch batch) {
                 if (!(entity instanceof MovableEntity)) {
                     return false;
                 }
 
-                MovementComponent movement = ((MovableEntity) entity).getMovementComponent();
+                MovementComponent movement = ((MovableEntity) entity).getMovement();
 
                 int x = movement.getPosition().x;
                 int y = movement.getPosition().y;
@@ -58,22 +71,34 @@ public class Npc extends Entity implements GuidedEntity, DrawableEntity, Intelli
 
     @Override
     public void update(float delta, World world) {
-        aiComponent.update(this, world, delta);
-        movementComponent.update(this, world, delta);
+        for (AiComponent aiComponent : ai) {
+            aiComponent.update(this, world, delta);
+        }
+
+        movement.update(this, world, delta);
     }
 
     @Override
-    public AiComponent getAiComponent() {
-        return aiComponent;
+    public void dispose() {
+        randomMovementAi.dispose();
+        collisionAvoidingAi.dispose();
+
+        movement.dispose();
+        drawable.dispose();
     }
 
     @Override
-    public PathMovementComponent getMovementComponent() {
-        return movementComponent;
+    public ArrayList<AiComponent> getAi() {
+        return ai;
     }
 
     @Override
-    public DrawableComponent getDrawableComponent() {
-        return drawableComponent;
+    public PathMovementComponent getMovement() {
+        return movement;
+    }
+
+    @Override
+    public DrawableComponent getDrawable() {
+        return drawable;
     }
 }

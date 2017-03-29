@@ -27,6 +27,7 @@ import java.util.List;
 /**
  * Created by MikroAcse on 23.03.2017.
  */
+// TODO: refactor
 public class World {
     private TiledMap map;
     private List<Entity> entities;
@@ -52,7 +53,7 @@ public class World {
             Entity entity = EntityType.create(EntityType.valueOf(object.getName()));
 
             if (entity == null) {
-                System.out.println("Didn't create entity: " + object.getName());
+                System.out.println("Couldn't create entity: " + object.getName());
                 continue;
             }
 
@@ -64,7 +65,7 @@ public class World {
             int realY = (int) object.getRectangle().y;
 
             if (entity instanceof MovableEntity) {
-                MovementComponent movementComponent = ((MovableEntity) entity).getMovementComponent();
+                MovementComponent movementComponent = ((MovableEntity) entity).getMovement();
 
                 movementComponent
                         .setBoth(realX / getTileWidth(), realY / getTileHeight());
@@ -143,18 +144,18 @@ public class World {
 
     // TODO: new PassableCellChecker instance every time (fix?)
 
-    public boolean isPassable(int x, int y) {
-        return new PassableCellChecker().check(this, x, y);
+    public boolean isPassable(int x, int y, boolean checkEntities) {
+        return new PassableCellChecker(checkEntities).check(this, x, y);
     }
 
-    public boolean isPassable(Position position) {
-        return isPassable(position.x, position.y);
+    public boolean isPassable(Position position, boolean checkEntities) {
+        return isPassable(position.x, position.y, checkEntities);
     }
 
-    public ArrayList<Position> getPassableCells(int x, int y, int minRadius, int maxRadius, boolean inverse) {
+    public ArrayList<Position> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius, boolean inverse) {
         return getCells(
                 Layer.META,
-                new PassableCellChecker(),
+                new PassableCellChecker(checkEntities),
                 x,
                 y,
                 minRadius,
@@ -198,6 +199,26 @@ public class World {
         }
 
         return result;
+    }
+
+    public ArrayList<Entity> getEntitiesAt(int x, int y) {
+        ArrayList<Entity> result = new ArrayList<>();
+
+        for (Entity entity : entities) {
+            if(entity instanceof MovableEntity) {
+                MovementComponent movement = ((MovableEntity) entity).getMovement();
+
+                if(movement.getPosition().equals(x, y)) {
+                    result.add(entity);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public ArrayList<Entity> getEntitiesAt(Position position) {
+        return getEntitiesAt(position.x, position.y);
     }
 
     public boolean isValidPosition(int x, int y) {

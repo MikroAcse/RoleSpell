@@ -55,7 +55,7 @@ public class WorldRenderer {
         World world = model.getWorld();
         MovableEntity observable = model.getObservable();
 
-        Position observablePosition = cellToMap(observable.getMovementComponent().getPosition());
+        Position observablePosition = cellToMap(observable.getMovement().getPosition());
 
         Vector2 cameraPos = new Vector2(observablePosition.x, observablePosition.y);
 
@@ -78,14 +78,14 @@ public class WorldRenderer {
 
         for (Entity entity : world.getEntities()) {
             if (entity instanceof DrawableEntity) {
-                DrawableComponent drawableComponent = ((DrawableEntity) entity).getDrawableComponent();
+                DrawableComponent drawableComponent = ((DrawableEntity) entity).getDrawable();
 
                 drawableComponent.draw(entity, world, batch);
             }
         }
 
         // TODO: beautify
-        LinkedList<Position> playerPath = model.getPlayer().getMovementComponent().getPath();
+        LinkedList<Position> playerPath = model.getPlayer().getMovement().getPath();
 
         if (!playerPath.isEmpty()) {
             Position waypointPosition = cellToMap(model.getWaypoint().x, model.getWaypoint().y);

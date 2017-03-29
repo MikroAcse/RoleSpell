@@ -38,6 +38,21 @@ public class Position {
         y = Math.min(y, maxY);
     }
 
+    public boolean equals(int x, int y) {
+        return this.x == x && this.y == y;
+    }
+
+    public boolean equals(Position position) {
+        return equals(position.x, position.y);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
+
     @Override
     public Position clone() {
         return new Position(x, y);

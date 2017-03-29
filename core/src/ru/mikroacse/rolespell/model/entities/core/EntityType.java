@@ -7,7 +7,6 @@ import ru.mikroacse.rolespell.model.entities.Player;
 /**
  * Created by MikroAcse on 24.03.2017.
  */
-// TODO: maybe, factory?
 public enum EntityType {
     NPC,
     BAT,

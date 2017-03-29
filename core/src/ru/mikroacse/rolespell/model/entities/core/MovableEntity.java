@@ -6,5 +6,5 @@ import ru.mikroacse.rolespell.model.entities.components.movement.MovementCompone
  * Created by MikroAcse on 28.03.2017.
  */
 public interface MovableEntity {
-    MovementComponent getMovementComponent();
+    MovementComponent getMovement();
 }

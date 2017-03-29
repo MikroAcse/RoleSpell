@@ -10,19 +10,15 @@ public abstract class Entity {
 
     public Entity(EntityType type) {
         this.type = type;
-
-        initialize();
     }
 
     public Entity() {
         this(null);
     }
 
-    private void initialize() {
-
-    }
-
     public abstract void update(float delta, World world);
+
+    public abstract void dispose();
 
     public EntityType getType() {
         return type;

@@ -40,7 +40,7 @@ public class WorldController {
         Player player = model.getPlayer();
         World world = model.getWorld();
 
-        player.getMovementComponent().clearPath();
+        player.getMovement().clearPath();
 
         int mouseX = inputAdapter.getMouseX();
         int mouseY = inputAdapter.getMouseY();
@@ -54,7 +54,14 @@ public class WorldController {
         if (world.isValidPosition(touchedCell)) {
             // TODO: bad and magic
             // looking for the nearest passable cells
-            List<Position> passableCells = world.getPassableCells(x, y, 0, 10, false);
+            List<Position> passableCells = world.getPassableCells(
+                    x,
+                    y,
+                    false,
+                    0,
+                    10,
+                    false);
+
             Position destination = null;
 
             // checking passable cells for available paths
@@ -74,7 +81,7 @@ public class WorldController {
 
     public boolean moveTo(Position destination) {
         Player player = model.getPlayer();
-        PathMovementComponent movement = player.getMovementComponent();
+        PathMovementComponent movement = player.getMovement();
 
         if (movement.moveTo(player, model.getWorld(), destination, 10/*TODO: magic*/)) {
             model.getWaypoint().set(destination);

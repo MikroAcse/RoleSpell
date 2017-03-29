@@ -24,6 +24,10 @@ public abstract class MovementComponent implements UpdatableComponent {
         time = 0.0;
     }
 
+    public MovementComponent(double speed) {
+        this(0, 0, speed);
+    }
+
     public MovementComponent() {
         this(0, 0, 1.0);
     }
@@ -54,6 +58,11 @@ public abstract class MovementComponent implements UpdatableComponent {
 
     public void teleportToOrigin() {
         position.set(origin);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     public void setPosition(int x, int y) {

@@ -18,6 +18,11 @@ public abstract class TextureDrawableComponent implements DrawableComponent {
     @Override
     public abstract boolean draw(Entity entity, World world, SpriteBatch batch);
 
+    @Override
+    public void dispose() {
+        texture.dispose();
+    }
+
     public Texture getTexture() {
         return texture;
     }

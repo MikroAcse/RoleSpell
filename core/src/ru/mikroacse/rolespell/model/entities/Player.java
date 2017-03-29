@@ -13,24 +13,24 @@ import ru.mikroacse.rolespell.model.world.World;
  * Created by MikroAcse on 22.03.2017.
  */
 public class Player extends Entity implements GuidedEntity, DrawableEntity {
-    private PathMovementComponent movementComponent;
-    private DrawableComponent drawableComponent;
+    private PathMovementComponent movement;
+    private DrawableComponent drawable;
 
     public Player(int x, int y) {
         super(EntityType.PLAYER);
 
-        movementComponent = new PathMovementComponent(x, y, 10.0/*TODO: magic*/);
-        movementComponent.setType(PathMovementComponent.Type.BOTH);
+        movement = new PathMovementComponent(x, y, 10.0/*TODO: magic*/);
+        movement.setType(PathMovementComponent.UpdateType.BOTH);
 
         // TODO: It's supposed to be in the View!
-        drawableComponent = new TextureDrawableComponent(new Texture("data/player.png")) {
+        drawable = new TextureDrawableComponent(new Texture("data/player.png")) {
             @Override
             public boolean draw(Entity entity, World world, SpriteBatch batch) {
                 if (!(entity instanceof MovableEntity)) {
                     return false;
                 }
 
-                MovementComponent movement = ((MovableEntity) entity).getMovementComponent();
+                MovementComponent movement = ((MovableEntity) entity).getMovement();
 
                 int x = movement.getPosition().x;
                 int y = movement.getPosition().y;
@@ -51,16 +51,22 @@ public class Player extends Entity implements GuidedEntity, DrawableEntity {
 
     @Override
     public void update(float delta, World world) {
-        movementComponent.update(this, world, delta);
+        movement.update(this, world, delta);
     }
 
     @Override
-    public PathMovementComponent getMovementComponent() {
-        return movementComponent;
+    public void dispose() {
+        movement.dispose();
+        drawable.dispose();
     }
 
     @Override
-    public DrawableComponent getDrawableComponent() {
-        return drawableComponent;
+    public PathMovementComponent getMovement() {
+        return movement;
+    }
+
+    @Override
+    public DrawableComponent getDrawable() {
+        return drawable;
     }
 }

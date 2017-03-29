@@ -12,16 +12,13 @@ import java.util.LinkedList;
  */
 public class PathMovementComponent extends MovementComponent {
     private LinkedList<Position> path;
-    private Type type;
+    private UpdateType type;
+
     public PathMovementComponent(int x, int y, double speed) {
         super(x, y, speed);
 
         path = new LinkedList<>();
-        type = Type.ORIGIN;
-    }
-
-    public PathMovementComponent() {
-        super();
+        type = UpdateType.BOTH;
     }
 
     @Override
@@ -34,14 +31,13 @@ public class PathMovementComponent extends MovementComponent {
 
         switch (type) {
             case ORIGIN:
-                getOrigin().set(position);
+                setOrigin(position);
                 break;
             case CURRENT:
-                getPosition().set(position);
+                setPosition(position);
                 break;
             case BOTH:
-                getOrigin().set(position);
-                teleportToOrigin();
+                setBoth(position);
                 break;
         }
 
@@ -90,15 +86,15 @@ public class PathMovementComponent extends MovementComponent {
         return path.isEmpty();
     }
 
-    public Type getType() {
+    public UpdateType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(UpdateType type) {
         this.type = type;
     }
 
-    public enum Type {
+    public enum UpdateType {
         ORIGIN,
         CURRENT,
         BOTH
