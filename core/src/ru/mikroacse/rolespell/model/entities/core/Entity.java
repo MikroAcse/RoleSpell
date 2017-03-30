@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.model.entities.core;
 
+import ru.mikroacse.rolespell.model.entities.components.drawable.DrawableComponent;
 import ru.mikroacse.rolespell.model.world.World;
 
 /**
