@@ -1,62 +1,56 @@
 package ru.mikroacse.rolespell.model.entities;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import ru.mikroacse.rolespell.model.entities.components.ai.AiComponent;
 import ru.mikroacse.rolespell.model.entities.components.ai.CollisionAvoidingAi;
 import ru.mikroacse.rolespell.model.entities.components.ai.RandomMovementAi;
-import ru.mikroacse.rolespell.model.entities.components.drawable.DrawableComponent;
+import ru.mikroacse.rolespell.model.entities.components.ai.SimpleBehaviorAi;
 import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawableComponent;
-import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.model.entities.core.*;
+import ru.mikroacse.rolespell.model.entities.components.status.StatusComponent;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.HealthParameter;
+import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
-import ru.mikroacse.util.Interval;
-
-import java.util.ArrayList;
+import ru.mikroacse.util.LimitedDouble;
 
 /**
  * Created by MikroAcse on 25.03.2017.
  */
-public class Npc extends Entity implements GuidedEntity, IntelligentEntity {
-    private ArrayList<AiComponent> ai;
-
+public class Npc extends Entity {
     private RandomMovementAi randomMovementAi;
     private CollisionAvoidingAi collisionAvoidingAi;
 
     private PathMovementComponent movement;
     private TextureDrawableComponent drawable;
+    private StatusComponent status;
 
-    public Npc(int x, int y) {
-        super(EntityType.NPC);
+    public Npc(World world, int x, int y) {
+        super(EntityType.NPC, world);
 
-        movement = new PathMovementComponent(x, y, 4.0 /*TODO: magic*/);
+        // TODO: magic
+        movement = new PathMovementComponent(this, x, y, 4.0);
         movement.setType(PathMovementComponent.UpdateType.CURRENT);
+        addComponent(movement);
 
-        ai = new ArrayList<>();
+        randomMovementAi = new RandomMovementAi(this, new LimitedDouble(2.0, 10.0), 0, 5, true);
+        addComponent(randomMovementAi);
 
-        // TODO: magic numbers
-        randomMovementAi = new RandomMovementAi(movement, new Interval(2.0, 10.0), 0, 5);
-        ai.add(randomMovementAi);
+        collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 3, false);
+        addComponent(collisionAvoidingAi);
 
-        collisionAvoidingAi = new CollisionAvoidingAi(movement, new Interval(0.5), 1, 5);
-        ai.add(collisionAvoidingAi);
+        SimpleBehaviorAi behaviorAi = new SimpleBehaviorAi(this, new LimitedDouble(0.5), SimpleBehaviorAi.Type.FOLLOW, null, 5);
+        //addComponent(behaviorAi);
 
-        // TODO: It's supposed to be in the View!
-        drawable = new TextureDrawableComponent(new Texture("data/npc.png"));
+        status = new StatusComponent(this);
+        status.add(new HealthParameter(status));
+        addComponent(status);
+
+        // TODO: Is it supposed to be in the View?!
+        drawable = new TextureDrawableComponent(this, new Texture("data/npc.png"));
+        addComponent(drawable);
     }
 
-    public Npc() {
-        this(0, 0);
-    }
-
-    @Override
-    public void update(float delta, World world) {
-        for (AiComponent aiComponent : ai) {
-            aiComponent.update(this, world, delta);
-        }
-
-        movement.update(this, world, delta);
+    public Npc(World world) {
+        this(world, 0, 0);
     }
 
     @Override
@@ -66,20 +60,6 @@ public class Npc extends Entity implements GuidedEntity, IntelligentEntity {
 
         movement.dispose();
         drawable.dispose();
-    }
-
-    @Override
-    public ArrayList<AiComponent> getAi() {
-        return ai;
-    }
-
-    @Override
-    public PathMovementComponent getMovement() {
-        return movement;
-    }
-
-    @Override
-    public DrawableComponent getDrawable() {
-        return drawable;
+        status.dispose();
     }
 }

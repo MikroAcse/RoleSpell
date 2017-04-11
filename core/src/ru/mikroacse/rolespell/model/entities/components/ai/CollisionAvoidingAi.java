@@ -1,59 +1,64 @@
 package ru.mikroacse.rolespell.model.entities.components.ai;
 
+import ru.mikroacse.rolespell.model.entities.components.core.Component;
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.entities.core.GuidedEntity;
-import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.util.ArrayUtil;
-import ru.mikroacse.util.Interval;
 import ru.mikroacse.util.Position;
+import ru.mikroacse.util.Priority;
 
 import java.util.List;
 
 /**
  * Created by MikroAcse on 29.03.2017.
  */
-public class CollisionAvoidingAi extends AiComponent {
-    private PathMovementComponent movement;
-
+// TODO: this IS 'avoid' behavior
+public class CollisionAvoidingAi extends Component implements World.Listener, MovementComponent.Listener {
     private int minRadius;
     private int maxRadius;
 
     private int pathFindRadius;
 
-    public CollisionAvoidingAi(PathMovementComponent movement, Interval interval, int minRadius, int maxRadius) {
-        super(interval);
+    // TODO: one variable for all AIs?
+    private boolean stickToOrigin;
 
-        this.movement = movement;
+    public CollisionAvoidingAi(Entity entity, int minRadius, int maxRadius, boolean stickToOrigin) {
+        super(entity);
+
         this.minRadius = minRadius;
         this.maxRadius = maxRadius;
+        this.stickToOrigin = stickToOrigin;
 
         // TODO: magic
         pathFindRadius = 5;
+
+        entity.getWorld().addListener(this);
     }
 
     @Override
-    public boolean apply(Entity entity, World world) {
-        if(entity instanceof GuidedEntity) {
-            if(!((GuidedEntity) entity).getMovement().isPathEmpty()) {
-                return false;
-            }
-        }
+    public boolean action() {
+        Entity entity = getEntity();
+        World world = entity.getWorld();
+        PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
 
-        MovableEntity movableEntity = entity;
+        if(movement == null) {
+            return false;
+        }
 
         List<Entity> entities = world.getEntitiesAt(movement.getPosition());
         entities.remove(entity);
 
-        if(entities.isEmpty()) {
+        if (entities.isEmpty()) {
             return false;
         }
 
+        Position position = stickToOrigin? movement.getOrigin() : movement.getPosition();
+
         List<Position> passableCells = world.getPassableCells(
-                movement.getOrigin().x,
-                movement.getOrigin().y,
+                position.x,
+                position.y,
                 true,
                 minRadius,
                 maxRadius,
@@ -65,8 +70,8 @@ public class CollisionAvoidingAi extends AiComponent {
         while (!passableCells.isEmpty()) {
             Position passableCell = ArrayUtil.getRandom(passableCells);
             passableCells.remove(passableCell);
-
-            if (movement.moveTo(movableEntity, world, passableCell, pathFindRadius)) {
+1
+            if (movement.routeTo(passableCell, Priority.HIGH, pathFindRadius, 15)) {
                 destination = passableCell;
                 break;
             }
@@ -76,8 +81,36 @@ public class CollisionAvoidingAi extends AiComponent {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void originChanged(MovementComponent movement, Position previous, Position current) {
+
+    }
+
+    @Override
+    public void positionChanged(MovementComponent movement, Position previous, Position current) {
+        action();
+    }
+
+    @Override
+    public void entityMoved(Entity entity, Position previous, Position current) {
+        action();
+    }
+
+    @Override
+    protected void attachEntity(Entity entity) {
+        super.attachEntity(entity);
+
+        entity
+                .getComponent(MovementComponent.class)
+                .addListener(this);
+    }
+
+    @Override
+    protected void detachEntity(Entity entity) {
+        super.detachEntity(entity);
+
+        entity
+                .getComponent(MovementComponent.class)
+                .removeListener(this);
     }
 
     public int getPathFindRadius() {

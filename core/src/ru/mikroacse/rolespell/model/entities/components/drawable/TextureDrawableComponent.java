@@ -1,22 +1,18 @@
 package ru.mikroacse.rolespell.model.entities.components.drawable;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.world.World;
 
 /**
  * Created by MikroAcse on 28.03.2017.
  */
-public class TextureDrawableComponent implements DrawableComponent {
+public class TextureDrawableComponent extends DrawableComponent {
     private Texture texture;
 
-    public TextureDrawableComponent(Texture texture) {
+    public TextureDrawableComponent(Entity entity, Texture texture) {
+        super(entity);
         this.texture = texture;
     }
-
-    //@Override
-    //public abstract boolean draw(Entity entity, World world, SpriteBatch batch);
 
     @Override
     public void dispose() {

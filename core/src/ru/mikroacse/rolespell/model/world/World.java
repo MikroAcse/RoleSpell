@@ -8,10 +8,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.model.entities.Player;
+import ru.mikroacse.rolespell.model.entities.components.ai.SimpleBehaviorAi;
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.entities.core.EntityType;
-import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
+import ru.mikroacse.rolespell.model.entities.EntityType;
 import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
@@ -19,6 +19,9 @@ import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
 import ru.mikroacse.rolespell.model.world.cells.CellChecker;
 import ru.mikroacse.rolespell.model.world.cells.PassableCellChecker;
 import ru.mikroacse.util.Position;
+import ru.mikroacse.util.listeners.Listener;
+import ru.mikroacse.util.listeners.ListenerSupport;
+import ru.mikroacse.util.listeners.ListenerSupportFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,14 +31,17 @@ import java.util.List;
  * Created by MikroAcse on 23.03.2017.
  */
 // TODO: refactor
-public class World {
+public class World implements MovementComponent.Listener {
     private TiledMap map;
     private List<Entity> entities;
+
+    private Listener listeners;
 
     private Player player;
 
     public World(TiledMap map) {
         this.map = map;
+        listeners = ListenerSupportFactory.create(Listener.class);
 
         initialize();
     }
@@ -47,10 +53,11 @@ public class World {
     private void initialize() {
         entities = new ArrayList<>();
 
-        // TODO: make this less horrible and move to separate util class
+        // TODO: make this less horrible and moveTo to separate class
         for (MapObject mapObject : getLayer(Layer.SPAWNERS).getObjects()) {
             RectangleMapObject object = (RectangleMapObject) mapObject;
-            Entity entity = EntityType.create(EntityType.valueOf(object.getName()));
+
+            Entity entity = EntityType.create(this, EntityType.valueOf(object.getName()));
 
             if (entity == null) {
                 System.out.println("Couldn't create entity: " + object.getName());
@@ -64,15 +71,43 @@ public class World {
             int realX = (int) object.getRectangle().x;
             int realY = (int) object.getRectangle().y;
 
-            if (entity instanceof MovableEntity) {
-                MovementComponent movementComponent = ((MovableEntity) entity).getMovement();
+            MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
 
-                movementComponent
-                        .setBoth(realX / getTileWidth(), realY / getTileHeight());
-            }
+            movementComponent.setBoth(new Position(realX / getTileWidth(), realY / getTileHeight()));
 
+            movementComponent.addListener(this);
             entities.add(entity);
         }
+
+        for (Entity entity : entities) {
+            if(entity.hasComponent(SimpleBehaviorAi.class)) {
+                entity
+                        .getComponent(SimpleBehaviorAi.class)
+                        .setTarget(player);
+            }
+        }
+    }
+
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+    }
+
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
+    }
+
+    @Override
+    public void originChanged(MovementComponent movement, Position previous, Position current) {
+
+    }
+
+    @Override
+    public void positionChanged(MovementComponent movement, Position previous, Position current) {
+        listeners.entityMoved(movement.getEntity(), previous, current);
     }
 
     public LinkedList<Position> getPath(Position from, Position to, int radius) {
@@ -97,12 +132,11 @@ public class World {
         // TODO: use actual map instead of generating Graph every time
         Graph graph = GraphBuilder.fromWorld(this, rect);
 
-        return pathFinder.convertPathToCells(
-                pathFinder.getPath(
+        return pathFinder.getPath(
                         graph,
                         (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
                         (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
-                ));
+                );
     }
 
     public Position getCellPosition(float x, float y) {
@@ -205,12 +239,10 @@ public class World {
         ArrayList<Entity> result = new ArrayList<>();
 
         for (Entity entity : entities) {
-            if(entity instanceof MovableEntity) {
-                MovementComponent movement = ((MovableEntity) entity).getMovement();
+            MovementComponent movement = entity.getComponent(MovementComponent.class);
 
-                if(movement.getPosition().equals(x, y)) {
-                    result.add(entity);
-                }
+            if (movement.getPosition().equals(x, y)) {
+                result.add(entity);
             }
         }
 
@@ -310,5 +342,9 @@ public class World {
         WATER,
         PATH,
         EMPTY
+    }
+
+    public interface Listener extends ru.mikroacse.util.listeners.Listener {
+        void entityMoved(Entity entity, Position previous, Position current);
     }
 }

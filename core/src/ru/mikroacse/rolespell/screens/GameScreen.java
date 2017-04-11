@@ -4,18 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import ru.mikroacse.rolespell.controller.WorldController;
+import ru.mikroacse.rolespell.controller.GameController;
 import ru.mikroacse.rolespell.model.GameModel;
 import ru.mikroacse.rolespell.model.world.World;
-import ru.mikroacse.rolespell.view.WorldRenderer;
+import ru.mikroacse.rolespell.view.game.GameRenderer;
 
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
 public class GameScreen implements Screen {
-    private WorldRenderer renderer;
-    private WorldController controller;
+    private GameRenderer renderer;
+    private GameController controller;
 
     private GameModel model;
 
@@ -24,8 +24,8 @@ public class GameScreen implements Screen {
         model = new GameModel();
         model.setWorld(new World(new TmxMapLoader().load("data/maps/test_map.tmx")));
 
-        renderer = new WorldRenderer(model);
-        controller = new WorldController(renderer, model);
+        renderer = new GameRenderer(model);
+        controller = new GameController(renderer, model);
     }
 
     @Override

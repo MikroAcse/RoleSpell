@@ -1,34 +1,34 @@
 package ru.mikroacse.rolespell.model.entities.components.ai;
 
+import ru.mikroacse.rolespell.model.entities.components.core.IntervalComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.entities.core.MovableEntity;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.util.ArrayUtil;
-import ru.mikroacse.util.Interval;
+import ru.mikroacse.util.LimitedDouble;
 import ru.mikroacse.util.Position;
+import ru.mikroacse.util.Priority;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Created by MikroAcse on 26.03.2017.
  */
-public class RandomMovementAi extends AiComponent {
-    private PathMovementComponent movement;
-
+public class RandomMovementAi extends IntervalComponent {
     private int minRadius;
     private int maxRadius;
 
     private int pathFindRadius;
 
-    public RandomMovementAi(PathMovementComponent movement, Interval interval, int minRadius, int maxRadius) {
-        super(interval);
+    private boolean stickToOrigin;
 
-        this.movement = movement;
+    public RandomMovementAi(Entity entity, LimitedDouble interval, int minRadius, int maxRadius, boolean stickToOrigin) {
+        super(entity, interval);
+
         this.minRadius = minRadius;
         this.maxRadius = maxRadius;
+        this.stickToOrigin = stickToOrigin;
 
         pathFindRadius = 5; // TODO: magic
 
@@ -36,7 +36,11 @@ public class RandomMovementAi extends AiComponent {
     }
 
     @Override
-    public boolean apply(Entity entity, World world) {
+    public boolean action() {
+        Entity entity = getEntity();
+        World world = entity.getWorld();
+        PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
+
         getInterval().randomize();
 
         LinkedList<Position> path = movement.getPath();
@@ -46,29 +50,25 @@ public class RandomMovementAi extends AiComponent {
             return false;
         }
 
-        int x = movement.getOrigin().x;
-        int y = movement.getOrigin().y;
+        Position position = stickToOrigin? movement.getOrigin() : movement.getPosition();
 
-        // looking for empty cells to move
+        int x = position.x;
+        int y = position.y;
+
+        // looking for empty cells to moveTo
         ArrayList<Position> passableCells = world.getPassableCells(x, y, false, minRadius, maxRadius, false);
 
         if (!passableCells.isEmpty()) {
             Position destination = ArrayUtil.getRandom(passableCells);
 
-            // TODO: unchecked casting
-            return movement.moveTo((MovableEntity) entity, world, destination, pathFindRadius);
+            // TODO: magic number
+            if(movement.routeTo(destination, Priority.LOW, pathFindRadius, 15)) {
+                return true;
+            }
         }
 
         // TODO: if can't find path, do something else
         return false;
-    }
-
-    public PathMovementComponent getMovement() {
-        return movement;
-    }
-
-    public void setMovement(PathMovementComponent movement) {
-        this.movement = movement;
     }
 
     public int getMinRadius() {

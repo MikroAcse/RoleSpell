@@ -1,53 +1,52 @@
 package ru.mikroacse.rolespell.model.entities;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.mikroacse.rolespell.model.entities.components.drawable.DrawableComponent;
 import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawableComponent;
-import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.model.entities.core.*;
+import ru.mikroacse.rolespell.model.entities.components.status.StatusComponent;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.ExperienceParameter;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.HealthParameter;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.ManaParameter;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.StaminaParameter;
+import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
-public class Player extends Entity implements GuidedEntity {
+public class Player extends Entity {
     private PathMovementComponent movement;
     private DrawableComponent drawable;
+    private StatusComponent status;
 
-    public Player(int x, int y) {
-        super(EntityType.PLAYER);
+    public Player(World world, int x, int y) {
+        super(EntityType.PLAYER, world);
 
-        movement = new PathMovementComponent(x, y, 10.0/*TODO: magic*/);
+        movement = new PathMovementComponent(this, x, y, 8.0/*TODO: magic*/);
         movement.setType(PathMovementComponent.UpdateType.BOTH);
+        addComponent(movement);
 
-        // TODO: It's supposed to be in the View!
-        drawable = new TextureDrawableComponent(new Texture("data/player.png"));
+        status = new StatusComponent(this);
+        status.add(new HealthParameter(status));
+        status.add(new ManaParameter(status));
+        status.add(new StaminaParameter(status));
+        status.add(new ExperienceParameter(status));
+        addComponent(status);
+
+        // TODO: Is it supposed to be in the View?!
+        drawable = new TextureDrawableComponent(this, new Texture("data/player.png"));
+        addComponent(drawable);
     }
 
-    public Player() {
-        this(0, 0);
-    }
-
-    @Override
-    public void update(float delta, World world) {
-        movement.update(this, world, delta);
+    public Player(World world) {
+        this(world, 0, 0);
     }
 
     @Override
     public void dispose() {
         movement.dispose();
         drawable.dispose();
-    }
-
-    @Override
-    public PathMovementComponent getMovement() {
-        return movement;
-    }
-
-    @Override
-    public DrawableComponent getDrawable() {
-        return drawable;
+        status.dispose();
     }
 }

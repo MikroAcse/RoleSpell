@@ -16,6 +16,21 @@ public class Position {
         this(0, 0);
     }
 
+    public static Position at(int x, int y) {
+        return new Position(x, y);
+    }
+
+    public static double distance(int x1, int y1, int x2, int y2) {
+        x1 -= x2;
+        y1 -= y2;
+
+        return Math.sqrt(x1 * x1 + y1 * y1);
+    }
+
+    public static double distance(Position position1, Position position2) {
+        return distance(position1.x, position1.y, position2.x, position2.y);
+    }
+
     public void set(int x, int y) {
         this.x = x;
         this.y = y;
@@ -30,12 +45,31 @@ public class Position {
         y += dy;
     }
 
+    public double distance(Position position) {
+        return distance(this, position);
+    }
+
     public void limit(int minX, int maxX, int minY, int maxY) {
         x = Math.max(x, minX);
         y = Math.max(y, minY);
 
         x = Math.min(x, maxX);
         y = Math.min(y, maxY);
+    }
+
+    public void shorten(Position origin, int distance) {
+        if(this.distance(origin) <= distance) {
+            return;
+        }
+
+        double x2 = this.x - origin.x;
+        double y2 = this.y - origin.y;
+        double angle = Math.atan2(y2, x2);
+
+        double x1 = Math.cos(angle) * distance;
+        double y1 = Math.sin(angle) * distance;
+
+        this.translate((int) (x1 - x2), (int) (y1 - y2));
     }
 
     public boolean equals(int x, int y) {
@@ -46,15 +80,7 @@ public class Position {
         return equals(position.x, position.y);
     }
 
-    @Override
-    public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
-        return result;
-    }
-
-    @Override
-    public Position clone() {
+    public Position copy() {
         return new Position(x, y);
     }
 

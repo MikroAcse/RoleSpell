@@ -25,28 +25,18 @@ public class PathFinder {
         this.heuristic = heuristic;
     }
 
-    public LinkedList<GraphNode> getPath(Graph mapGraph, int startingPoint, int endPoint) {
+    public LinkedList<Position> getPath(Graph mapGraph, int startingPoint, int endPoint) {
         this.graph = mapGraph;
         this.nodes = this.graph.getNodes();
         this.adjacencyList = this.graph.getAdjacencyList();
 
-        LinkedList<GraphNode> path = new LinkedList<>();
+        LinkedList<Position> path = new LinkedList<>();
         getShortestPathBetweenTwoNodes(startingPoint, endPoint, path);
 
         return path;
     }
 
-    public LinkedList<Position> convertPathToCells(LinkedList<GraphNode> path) {
-        LinkedList<Position> convertedPath = new LinkedList<>();
-
-        for (GraphNode node : path) {
-            convertedPath.add(new Position(node.getCellX(), node.getCellY()));
-        }
-
-        return convertedPath;
-    }
-
-    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<GraphNode> path) {
+    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<Position> path) {
         Cell[] cells = new Cell[graph.getNodes().length];
 
         // TODO: priority queue
@@ -66,7 +56,7 @@ public class PathFinder {
         GraphNode finish = nodes[indexNodeFinish];
 
         for (GraphNode node : nodes) {
-            // reset node state (open/closed)
+            // resetTime node state (open/closed)
             node.setVisited(false);
 
             // calculate G and H costs
@@ -148,11 +138,11 @@ public class PathFinder {
         }
 
         // build path
-        path.add(current);
+        path.add(new Position(current.getCellX(), current.getCellY()));
 
         while (current != start) {
             current = cells[current.getNodeIndex()].parent;
-            path.add(current);
+            path.add(new Position(current.getCellX(), current.getCellY()));
         }
 
         Collections.reverse(path);
