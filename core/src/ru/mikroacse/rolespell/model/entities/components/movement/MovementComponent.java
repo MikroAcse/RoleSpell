@@ -2,7 +2,7 @@ package ru.mikroacse.rolespell.model.entities.components.movement;
 
 import ru.mikroacse.rolespell.model.entities.components.core.IntervalComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.util.LimitedDouble;
+import ru.mikroacse.util.Interval;
 import ru.mikroacse.util.Position;
 import ru.mikroacse.util.listeners.ListenerSupport;
 import ru.mikroacse.util.listeners.ListenerSupportFactory;
@@ -11,6 +11,8 @@ import ru.mikroacse.util.listeners.ListenerSupportFactory;
  * Created by MikroAcse on 28.03.2017.
  */
 public abstract class MovementComponent extends IntervalComponent {
+    private float speed;
+
     private Position position;
     private Position origin;
 
@@ -18,16 +20,21 @@ public abstract class MovementComponent extends IntervalComponent {
 
     private Listener listeners;
 
-    public MovementComponent(Entity entity, int x, int y, double speed) {
-        super(entity, new LimitedDouble(1.0));
+    public MovementComponent(Entity entity, int x, int y, float speed) {
+        super(entity, new Interval(1.0));
+        this.speed = speed;
+
         listeners = ListenerSupportFactory.create(Listener.class);
 
         origin = new Position(x, y);
         position = origin.copy();
 
-        super.setSpeed(speed);
-
         type = UpdateType.BOTH;
+    }
+
+    @Override
+    public boolean update(float delta) {
+        return super.update(delta * speed);
     }
 
     public void moveTo(Position position, UpdateType type) {
@@ -35,7 +42,7 @@ public abstract class MovementComponent extends IntervalComponent {
             case ORIGIN:
                 setOrigin(position);
                 break;
-            case CURRENT:
+            case POSITION:
                 setPosition(position);
                 break;
             case BOTH:
@@ -95,11 +102,6 @@ public abstract class MovementComponent extends IntervalComponent {
         setPosition(position);
     }
 
-    @Override
-    public void setSpeed(double speed) {
-        super.setSpeed(speed);
-    }
-
     public UpdateType getType() {
         return type;
     }
@@ -108,14 +110,23 @@ public abstract class MovementComponent extends IntervalComponent {
         this.type = type;
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
     public enum UpdateType {
         ORIGIN,
-        CURRENT,
+        POSITION,
         BOTH
     }
 
     public interface Listener extends ru.mikroacse.util.listeners.Listener {
         public void originChanged(MovementComponent movement, Position previous, Position current);
+
         public void positionChanged(MovementComponent movement, Position previous, Position current);
     }
 }

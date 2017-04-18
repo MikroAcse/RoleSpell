@@ -2,8 +2,6 @@ package ru.mikroacse.rolespell.model.entities.components.status.parameters.core;
 
 import ru.mikroacse.rolespell.model.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.model.entities.components.status.parameters.ParameterType;
-import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.util.LimitedDouble;
 
 /**
@@ -27,7 +25,15 @@ public abstract class NumericParameter extends Parameter {
         return true;
     }
 
-    public double getValue() {
+    public LimitedDouble getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value.setValue(value);
+    }
+
+    public double getCurrentValue() {
         return value.getValue();
     }
 

@@ -21,4 +21,8 @@ public enum Priority {
     public int getValue() {
         return value;
     }
+
+    public int compare(Priority priority) {
+        return getValue() - priority.getValue();
+    }
 }

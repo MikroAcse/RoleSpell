@@ -23,7 +23,7 @@ public class StatusHUD {
 
     public void draw(StatusComponent status, SpriteBatch batch, float x, float y) {
         for (Parameter parameter : status.getParameters()) {
-            if(parameter instanceof NumericParameter) {
+            if (parameter instanceof NumericParameter) {
                 drawParameter((NumericParameter) parameter, batch, x, y);
 
                 y += STATUSBAR_HEIGHT + OFFSET;

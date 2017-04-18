@@ -23,7 +23,8 @@ public class Player extends Entity {
     public Player(World world, int x, int y) {
         super(EntityType.PLAYER, world);
 
-        movement = new PathMovementComponent(this, x, y, 8.0/*TODO: magic*/);
+        // TODO: magic number
+        movement = new PathMovementComponent(this, x, y, 8f);
         movement.setType(PathMovementComponent.UpdateType.BOTH);
         addComponent(movement);
 

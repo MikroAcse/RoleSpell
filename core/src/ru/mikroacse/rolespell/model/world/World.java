@@ -7,11 +7,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
+import ru.mikroacse.rolespell.model.entities.EntityType;
 import ru.mikroacse.rolespell.model.entities.Player;
-import ru.mikroacse.rolespell.model.entities.components.ai.SimpleBehaviorAi;
+import ru.mikroacse.rolespell.model.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.entities.EntityType;
 import ru.mikroacse.rolespell.model.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.model.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.model.pathfinding.graph.Graph;
@@ -19,7 +19,6 @@ import ru.mikroacse.rolespell.model.pathfinding.heuristic.ManhattanDistance;
 import ru.mikroacse.rolespell.model.world.cells.CellChecker;
 import ru.mikroacse.rolespell.model.world.cells.PassableCellChecker;
 import ru.mikroacse.util.Position;
-import ru.mikroacse.util.listeners.Listener;
 import ru.mikroacse.util.listeners.ListenerSupport;
 import ru.mikroacse.util.listeners.ListenerSupportFactory;
 
@@ -80,10 +79,10 @@ public class World implements MovementComponent.Listener {
         }
 
         for (Entity entity : entities) {
-            if(entity.hasComponent(SimpleBehaviorAi.class)) {
+            if (entity.hasComponent(BehaviorAi.class)) {
                 entity
-                        .getComponent(SimpleBehaviorAi.class)
-                        .setTarget(player);
+                        .getComponent(BehaviorAi.class)
+                        .addTarget(player);
             }
         }
     }
@@ -133,10 +132,10 @@ public class World implements MovementComponent.Listener {
         Graph graph = GraphBuilder.fromWorld(this, rect);
 
         return pathFinder.getPath(
-                        graph,
-                        (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
-                        (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
-                );
+                graph,
+                (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
+                (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
+        );
     }
 
     public Position getCellPosition(float x, float y) {
@@ -186,14 +185,12 @@ public class World implements MovementComponent.Listener {
         return isPassable(position.x, position.y, checkEntities);
     }
 
-    public ArrayList<Position> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius, boolean inverse) {
+    public List<Position> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius, boolean inverse) {
         return getCells(
                 Layer.META,
                 new PassableCellChecker(checkEntities),
-                x,
-                y,
-                minRadius,
-                maxRadius,
+                x, y,
+                minRadius, maxRadius,
                 inverse);
     }
 
@@ -201,8 +198,8 @@ public class World implements MovementComponent.Listener {
      * Rhombus search around given position (checks the position itself too).
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public ArrayList<Position> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius, boolean inversed) {
-        ArrayList<Position> result = new ArrayList<>();
+    public List<Position> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius, boolean inversed) {
+        List<Position> result = new ArrayList<>();
         int radius = inversed ? maxRadius : minRadius;
 
         while (inversed ? radius >= minRadius : radius <= maxRadius) {
@@ -235,13 +232,13 @@ public class World implements MovementComponent.Listener {
         return result;
     }
 
-    public ArrayList<Entity> getEntitiesAt(int x, int y) {
-        ArrayList<Entity> result = new ArrayList<>();
+    public List<Entity> getEntitiesAt(int x, int y, int radius) {
+        List<Entity> result = new ArrayList<>();
 
         for (Entity entity : entities) {
             MovementComponent movement = entity.getComponent(MovementComponent.class);
 
-            if (movement.getPosition().equals(x, y)) {
+            if (movement.getPosition().distance(x, y) <= radius) {
                 result.add(entity);
             }
         }
@@ -249,7 +246,15 @@ public class World implements MovementComponent.Listener {
         return result;
     }
 
-    public ArrayList<Entity> getEntitiesAt(Position position) {
+    public List<Entity> getEntitiesAt(int x, int y) {
+        return getEntitiesAt(x, y, 0);
+    }
+
+    public List<Entity> getEntitiesAt(Position position, int radius) {
+        return getEntitiesAt(position.x, position.y, radius);
+    }
+
+    public List<Entity> getEntitiesAt(Position position) {
         return getEntitiesAt(position.x, position.y);
     }
 

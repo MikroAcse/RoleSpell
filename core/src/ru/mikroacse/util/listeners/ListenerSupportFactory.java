@@ -19,7 +19,6 @@ public class ListenerSupportFactory {
     }
 
     private static class ListenerInvocationHandler<T extends Listener> implements InvocationHandler {
-
         private final Class<T> listenerClass;
 
         private final List<T> listeners = Collections.synchronizedList(new ArrayList<T>());
@@ -59,5 +58,4 @@ public class ListenerSupportFactory {
             return method.invoke(this, args);
         }
     }
-
 }

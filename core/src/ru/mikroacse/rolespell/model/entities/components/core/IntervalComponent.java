@@ -1,23 +1,25 @@
 package ru.mikroacse.rolespell.model.entities.components.core;
 
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.util.LimitedDouble;
+import ru.mikroacse.util.Interval;
 
 /**
  * Created by MikroAcse on 09-Apr-17.
  */
 public abstract class IntervalComponent extends Component {
-    private LimitedDouble interval;
+    private Interval interval;
+    private Interval.Listener listener;
 
-    private double speed;
-    private double time;
-
-    public IntervalComponent(Entity entity, LimitedDouble interval) {
+    public IntervalComponent(Entity entity, Interval interval) {
         super(entity);
-        this.interval = interval;
 
-        speed = 1.0;
-        time = 0.0;
+        listener = this::action;
+
+        setInterval(interval);
+    }
+
+    public IntervalComponent(Entity entity) {
+        this(entity, null);
     }
 
     @Override
@@ -25,38 +27,26 @@ public abstract class IntervalComponent extends Component {
         if (interval == null) {
             return false;
         }
-
-        time += speed * delta;
-
-        double intervalValue = interval.getValue();
-
-        boolean updated = false;
-        while (time >= intervalValue) {
-            updated |= action();
-
-            time -= intervalValue;
-        }
-
-        return updated;
+        return interval.update(delta);
     }
 
-    public void resetTime() {
-        time = 0.0;
+    protected void action(Interval interval) {
+        action();
     }
 
-    public LimitedDouble getInterval() {
+    public Interval getInterval() {
         return interval;
     }
 
-    public void setInterval(LimitedDouble interval) {
+    public void setInterval(Interval interval) {
+        if (this.interval != null) {
+            this.interval.removeListener(listener);
+        }
+
         this.interval = interval;
-    }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
+        if (interval != null) {
+            interval.addListener(listener);
+        }
     }
 }

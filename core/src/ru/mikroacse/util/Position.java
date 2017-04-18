@@ -40,6 +40,10 @@ public class Position {
         set(position.x, position.y);
     }
 
+    public void translate(Position position) {
+        translate(position.x, position.y);
+    }
+
     public void translate(int dx, int dy) {
         x += dx;
         y += dy;
@@ -47,6 +51,10 @@ public class Position {
 
     public double distance(Position position) {
         return distance(this, position);
+    }
+
+    public double distance(int x, int y) {
+        return distance(this.x, this.y, x, y);
     }
 
     public void limit(int minX, int maxX, int minY, int maxY) {
@@ -58,7 +66,7 @@ public class Position {
     }
 
     public void shorten(Position origin, int distance) {
-        if(this.distance(origin) <= distance) {
+        if (this.distance(origin) <= distance) {
             return;
         }
 

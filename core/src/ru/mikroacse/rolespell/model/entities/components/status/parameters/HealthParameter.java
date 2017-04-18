@@ -12,6 +12,6 @@ public class HealthParameter extends NumericParameter {
 
         value.setValue(0);
         value.setMax(100);
-        change = 1.0;
+        change = 5.0;
     }
 }

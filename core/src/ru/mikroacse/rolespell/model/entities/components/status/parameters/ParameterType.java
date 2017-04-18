@@ -10,7 +10,8 @@ public enum ParameterType {
     HEALTH,
     MANA,
     STAMINA,
-    EXPERIENCE;
+    EXPERIENCE,
+    DAMAGE;
 
     public static Parameter create(StatusComponent status, ParameterType type) {
         Parameter parameter = null;
@@ -27,6 +28,9 @@ public enum ParameterType {
                 break;
             case EXPERIENCE:
                 parameter = new ExperienceParameter(status);
+                break;
+            case DAMAGE:
+                parameter = new DamageParameter(status);
                 break;
         }
 

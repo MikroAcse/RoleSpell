@@ -18,7 +18,7 @@ public class PathMovementComponent extends MovementComponent {
 
     private Listener listeners;
 
-    public PathMovementComponent(Entity entity, int x, int y, double speed) {
+    public PathMovementComponent(Entity entity, int x, int y, float speed) {
         super(entity, x, y, speed);
 
         listeners = ListenerSupportFactory.create(Listener.class);
@@ -30,7 +30,7 @@ public class PathMovementComponent extends MovementComponent {
 
     @Override
     public boolean action() {
-        if(path.isEmpty()) {
+        if (path.isEmpty()) {
             priority = Priority.NEVER;
             return false;
         }
@@ -42,13 +42,14 @@ public class PathMovementComponent extends MovementComponent {
 
     /**
      * Finds nearest path to the destination point and sets.
-     * @param priority Priority of route.
-     *                 If current path's priority is bigger, movement cancels.
+     *
+     * @param priority       Priority of route.
+     *                       If current path's priority is bigger, movement cancels.
      * @param pathFindRadius Radius of map's 'cut' offset.
-     * @param maxDistance Maximum distance between current entity position and destination
+     * @param maxDistance    Maximum distance between current entity position and destination
      *                       If actual distance is bigger, path is being shortened.
      */
-    // TODO: separate world path finder
+    // TODO: move path finder to separate class
     public boolean routeTo(Position destination, Priority priority, int pathFindRadius, int maxDistance) {
         if (priority.getValue() < this.priority.getValue()) {
             return false;
@@ -125,10 +126,12 @@ public class PathMovementComponent extends MovementComponent {
     }
 
     public interface Listener extends ru.mikroacse.util.listeners.Listener {
+        public void pathChanged(PathMovementComponent movement, Event event, LinkedList<Position> path);
+
+        ;
+
         public enum Event {
             PATH_SET, PATH_CLEARED, PATH_NEXT, PATH_ADDED
-        };
-
-        public void pathChanged(PathMovementComponent movement, Event event, LinkedList<Position> path);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class LimitedDouble {
     }
 
     public LimitedDouble(double value) {
-        this(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, value);
+        this(Double.MIN_VALUE, Double.MAX_VALUE, value);
     }
 
     public LimitedDouble() {
@@ -29,10 +29,14 @@ public class LimitedDouble {
     }
 
     public void randomize() {
-        value = min + Math.random() * (max - min);
+        if (min != max) {
+            value = min + Math.random() * (max - min);
+        }
     }
 
     public double getPercentage() {
+        if (min == max) return 1;
+
         return (value - min) / (max - min);
     }
 

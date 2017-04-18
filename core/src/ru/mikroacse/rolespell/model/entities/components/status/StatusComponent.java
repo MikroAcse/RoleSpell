@@ -2,9 +2,7 @@ package ru.mikroacse.rolespell.model.entities.components.status;
 
 import ru.mikroacse.rolespell.model.entities.components.core.Component;
 import ru.mikroacse.rolespell.model.entities.components.status.parameters.core.Parameter;
-import ru.mikroacse.rolespell.model.entities.components.status.parameters.ParameterType;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
-import ru.mikroacse.rolespell.model.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,7 @@ public class StatusComponent extends Component {
 
     public StatusComponent(Entity entity) {
         super(entity);
+
         parameters = new ArrayList<>();
     }
 
@@ -35,21 +34,47 @@ public class StatusComponent extends Component {
         parameters.add(parameter);
     }
 
-    public Parameter remove(int index) {
-        return parameters.remove(index);
-    }
-
     public boolean remove(Parameter parameter) {
         return parameters.remove(parameter);
     }
 
-    public Parameter remove(ParameterType type) {
+    /**
+     * @return True if status has at least one parameter of given class.
+     */
+    public boolean hasParameter(Class<? extends Component> parameterClass) {
         for (Parameter parameter : parameters) {
-            if (parameter.getType() == type) {
-                return parameter;
+            if (parameterClass.isInstance(parameter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return First matching status parameter of given class.
+     */
+    public <T extends Parameter> T getParameter(Class<T> parameterClass) {
+        for (Parameter parameter : parameters) {
+            if (parameterClass.isInstance(parameter)) {
+                return (T) parameter;
             }
         }
         return null;
+    }
+
+    /**
+     * @return All status parameters of given class.
+     */
+    public <T extends Parameter> List<T> getParameters(Class<T> parameterClass) {
+        List<T> result = new ArrayList<T>();
+
+        for (Parameter parameter : parameters) {
+            if (parameterClass.isInstance(parameter)) {
+                result.add((T) parameter);
+            }
+        }
+
+        return result;
     }
 
     public List<Parameter> getParameters() {

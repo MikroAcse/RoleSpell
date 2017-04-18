@@ -14,7 +14,8 @@ import java.util.List;
 /**
  * Created by MikroAcse on 29.03.2017.
  */
-// TODO: this IS 'avoid' behavior
+// TODO: Convert it to behavior
+// TODO: It is the heir of the "avoid" behavior
 public class CollisionAvoidingAi extends Component implements World.Listener, MovementComponent.Listener {
     private int minRadius;
     private int maxRadius;
@@ -31,7 +32,7 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
         this.maxRadius = maxRadius;
         this.stickToOrigin = stickToOrigin;
 
-        // TODO: magic
+        // TODO: magic number
         pathFindRadius = 5;
 
         entity.getWorld().addListener(this);
@@ -43,7 +44,7 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
         World world = entity.getWorld();
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
 
-        if(movement == null) {
+        if (movement == null) {
             return false;
         }
 
@@ -54,7 +55,7 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
             return false;
         }
 
-        Position position = stickToOrigin? movement.getOrigin() : movement.getPosition();
+        Position position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
 
         List<Position> passableCells = world.getPassableCells(
                 position.x,
@@ -70,8 +71,8 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
         while (!passableCells.isEmpty()) {
             Position passableCell = ArrayUtil.getRandom(passableCells);
             passableCells.remove(passableCell);
-1
-            if (movement.routeTo(passableCell, Priority.HIGH, pathFindRadius, 15)) {
+
+            if (movement.routeTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius)) {
                 destination = passableCell;
                 break;
             }

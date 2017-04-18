@@ -21,7 +21,7 @@ public abstract class Component {
     }
 
     public void dispose() {
-        if(entity != null) {
+        if (entity != null) {
             detachEntity(entity);
         }
     }
@@ -45,13 +45,13 @@ public abstract class Component {
     }
 
     public void setEntity(Entity entity) {
-        if(this.entity != null) {
+        if (this.entity != null) {
             detachEntity(this.entity);
         }
 
         this.entity = entity;
 
-        if(entity != null) {
+        if (entity != null) {
             attachEntity(entity);
         }
     }

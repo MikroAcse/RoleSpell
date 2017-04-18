@@ -4,23 +4,24 @@ import ru.mikroacse.rolespell.model.entities.EntityType;
 import ru.mikroacse.rolespell.model.entities.components.core.Component;
 import ru.mikroacse.rolespell.model.world.World;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by MikroAcse on 23.03.2017.
  */
-public abstract class Entity {
+public abstract class Entity extends Observable {
     private World world;
     private EntityType type;
 
-    private Set<Component> components;
+    private List<Component> components;
 
     public Entity(EntityType type, World world) {
         this.type = type;
         this.world = world;
 
-        components = new HashSet<>();
+        components = new ArrayList<>();
     }
 
     public Entity() {
@@ -32,7 +33,7 @@ public abstract class Entity {
      */
     public void update(float delta) {
         for (Component component : components) {
-            boolean res = component.update(delta);
+            component.update(delta);
         }
     }
 
@@ -67,7 +68,7 @@ public abstract class Entity {
      */
     public boolean hasComponent(Class<? extends Component> componentClass) {
         for (Component component : components) {
-            if(componentClass.isInstance(component)) {
+            if (componentClass.isInstance(component)) {
                 return true;
             }
         }
@@ -79,7 +80,7 @@ public abstract class Entity {
      */
     public <T extends Component> T getComponent(Class<T> componentClass) {
         for (Component component : components) {
-            if(componentClass.isInstance(component)) {
+            if (componentClass.isInstance(component)) {
                 return (T) component;
             }
         }
@@ -89,11 +90,11 @@ public abstract class Entity {
     /**
      * @return All entity components of given class.
      */
-    public <T extends Component> Set<T> getComponents(Class<T> componentClass) {
-        Set<T> result = new HashSet<T>();
+    public <T extends Component> List<T> getComponents(Class<T> componentClass) {
+        List<T> result = new ArrayList<T>();
 
         for (Component component : components) {
-            if(componentClass.isInstance(component)) {
+            if (componentClass.isInstance(component)) {
                 result.add((T) component);
             }
         }
@@ -101,7 +102,7 @@ public abstract class Entity {
         return result;
     }
 
-    public Set<Component> getComponents() {
+    public List<Component> getComponents() {
         return components;
     }
 }

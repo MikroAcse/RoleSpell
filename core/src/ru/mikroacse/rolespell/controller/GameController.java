@@ -60,7 +60,7 @@ public class GameController {
                     touchedCell.y,
                     false,
                     0,
-                    10,
+                    5,
                     false);
 
             Position destination = null;
