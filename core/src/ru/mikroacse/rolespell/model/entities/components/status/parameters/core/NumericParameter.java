@@ -9,7 +9,7 @@ import ru.mikroacse.util.LimitedDouble;
  */
 public abstract class NumericParameter extends Parameter {
     protected LimitedDouble value;
-    protected double change;
+    protected double speed;
 
     public NumericParameter(StatusComponent status, ParameterType type) {
         super(status, type);
@@ -20,7 +20,7 @@ public abstract class NumericParameter extends Parameter {
 
     @Override
     public boolean update(float delta) {
-        value.setValue(value.getValue() + change * delta);
+        value.setValue(value.getValue() + speed * delta);
 
         return true;
     }

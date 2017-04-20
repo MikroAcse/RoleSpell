@@ -12,6 +12,6 @@ public class ManaParameter extends NumericParameter {
 
         value.setValue(0);
         value.setMax(100);
-        change = 2.0;
+        speed = 2.0;
     }
 }

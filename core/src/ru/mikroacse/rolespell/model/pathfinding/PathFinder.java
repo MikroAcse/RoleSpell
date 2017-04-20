@@ -76,7 +76,7 @@ public class PathFinder {
                     position = open.get(i);
                 }
             }
-            open.remove(position);*/
+            open.removeParameter(position);*/
             open.sort((o1, o2) -> {
                 double f1 = cells[o1.getNodeIndex()].getFCost();
                 double f2 = cells[o2.getNodeIndex()].getFCost();
@@ -95,7 +95,7 @@ public class PathFinder {
                 return 0;
             });
 
-            //position = open.remove(0);
+            //position = open.removeParameter(0);
             current = open.remove(0);
 
             Cell currentCell = cells[current.getNodeIndex()];

@@ -9,7 +9,10 @@ import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.util.Interval;
 import ru.mikroacse.util.Position;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by MikroAcse on 29.03.2017.
@@ -23,14 +26,17 @@ public class BehaviorAi extends Component {
 
     private int maxTargets;
 
-    private Set<Behavior> behaviors;
+    private List<Behavior> behaviors;
     private Target target;
-
-    private Interval globalInterval;
 
     private MovementComponent.Listener movementListener;
     private Interval.Listener intervalListener;
 
+    /**
+     * @param entity               Entity to which behavior is being applied
+     * @param activationDistance   Global target activation distance (use 0 to customize it for every behavior)
+     * @param deactivationDistance Global target deactivation distance (smaller values — better performance)
+     */
     public BehaviorAi(Entity entity, int activationDistance, int deactivationDistance) {
         super(entity);
         this.activationDistance = activationDistance;
@@ -38,10 +44,7 @@ public class BehaviorAi extends Component {
 
         maxTargets = Integer.MAX_VALUE;
 
-        // descending order, sorting by priority
-        behaviors = new TreeSet<>((o1, o2) -> {
-            return -o1.getPriority().compare(o2.getPriority());
-        });
+        behaviors = new ArrayList<>();
 
         targets = new ArrayList<>();
         target = Target.CUSTOM;
@@ -62,6 +65,10 @@ public class BehaviorAi extends Component {
         intervalListener = this::process;
     }
 
+    public BehaviorAi(Entity entity, int deactivationDistance) {
+        this(entity, 0, deactivationDistance);
+    }
+
     @Override
     public boolean action() {
         return process();
@@ -69,16 +76,20 @@ public class BehaviorAi extends Component {
 
     @Override
     public boolean update(float delta) {
-        boolean result = false;
+        boolean updated = false;
 
         for (Behavior behavior : behaviors) {
-            result |= behavior.update(delta);
+            updated |= behavior.update(delta);
         }
 
-        return result;
+        return updated;
     }
 
     private boolean process(Behavior.Trigger trigger, Interval interval) {
+        if (behaviors.isEmpty()) {
+            return false;
+        }
+
         Entity entity = getEntity();
         World world = entity.getWorld();
 
@@ -87,59 +98,60 @@ public class BehaviorAi extends Component {
 
         List<Entity> targets = new ArrayList<>();
 
-        // TODO: CODE DUPLICATION
-
-        // get targets from custom list
-        if (target == Target.ALL || target == Target.CUSTOM) {
-            for (Entity target : this.targets) {
-                MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-                Position targetPosition = targetMovement.getPosition();
-
-                double distance = position.distance(targetPosition);
-
-                if (distance >= activationDistance && distance <= deactivationDistance) {
-                    targets.add(target);
-                }
-            }
-        }
-
-        // get targets from world
+        // TODO: optimize
         if (target == Target.ALL || target == Target.NEAREST) {
-            List<Entity> worldEntities = world.getEntitiesAt(position, deactivationDistance);
+            targets.addAll(world.getEntitiesAt(position, deactivationDistance));
+            targets.remove(entity);
+        }
+        if (target == Target.ALL || target == Target.CUSTOM) {
+            targets.addAll(this.targets);
+        }
 
-            for (Entity target : worldEntities) {
+        targets.removeIf(target -> {
+            MovementComponent targetMovement = target.getComponent(MovementComponent.class);
+            Position targetPosition = targetMovement.getPosition();
+
+            double distance = position.distance(targetPosition);
+
+            return distance < activationDistance || distance > deactivationDistance;
+        });
+
+        targets.sort(new Comparator<Entity>() {
+            @Override
+            public int compare(Entity o1, Entity o2) {
+                return Double.compare(getDistance(o1), getDistance(o2));
+            }
+
+            public double getDistance(Entity target) {
+                MovementComponent movement = entity.getComponent(MovementComponent.class);
+                Position position = movement.getPosition();
+
                 MovementComponent targetMovement = target.getComponent(MovementComponent.class);
                 Position targetPosition = targetMovement.getPosition();
 
-                double distance = position.distance(targetPosition);
-
-                if (distance >= activationDistance && distance <= deactivationDistance) {
-                    targets.add(target);
-                }
+                return position.distance(targetPosition);
             }
-        }
+        });
 
-        // truncate targets list to needed count
+        // truncate target list
         if (targets.size() > maxTargets) {
-            Collections.shuffle(targets);
             targets = targets.subList(0, maxTargets);
         }
 
         boolean actionPerformed = false;
         boolean soloistPerformed = false;
         for (Behavior behavior : behaviors) {
-
-            if(trigger != null) {
+            if (trigger != null) {
                 Behavior.Trigger behaviorTrigger = behavior.getTrigger();
 
-                if(behaviorTrigger != trigger) {
-                    if(behaviorTrigger != Behavior.Trigger.BOTH) {
+                if (behaviorTrigger != trigger) {
+                    if (behaviorTrigger != Behavior.Trigger.BOTH) {
                         continue;
                     }
                 }
 
-                if(behaviorTrigger == Behavior.Trigger.INTERVAL) {
-                    if(interval != null && behavior.getInterval() != interval) {
+                if (behaviorTrigger == Behavior.Trigger.INTERVAL) {
+                    if (interval != null && behavior.getInterval() != interval) {
                         continue;
                     }
                 }
@@ -206,6 +218,11 @@ public class BehaviorAi extends Component {
                 .removeListener(intervalListener);
     }
 
+    public void setTarget(Entity target) {
+        clearTargets();
+        addTarget(target);
+    }
+
     public void addTarget(Entity target) {
         targets.add(target);
         attachTarget(target);
@@ -226,6 +243,9 @@ public class BehaviorAi extends Component {
     public void addBehavior(Behavior behavior) {
         behaviors.add(behavior);
         attachBehavior(behavior);
+
+        // TODO: move to list implementation?
+        Collections.sort(behaviors, Collections.reverseOrder());
     }
 
     public boolean removeBehavior(Behavior behavior) {
@@ -241,6 +261,38 @@ public class BehaviorAi extends Component {
 
     public List<Entity> getTargets() {
         return targets;
+    }
+
+    public int getActivationDistance() {
+        return activationDistance;
+    }
+
+    public void setActivationDistance(int activationDistance) {
+        this.activationDistance = activationDistance;
+    }
+
+    public int getDeactivationDistance() {
+        return deactivationDistance;
+    }
+
+    public void setDeactivationDistance(int deactivationDistance) {
+        this.deactivationDistance = deactivationDistance;
+    }
+
+    public Target getTargetType() {
+        return target;
+    }
+
+    public void setTargetType(Target target) {
+        this.target = target;
+    }
+
+    public int getMaxTargets() {
+        return maxTargets;
+    }
+
+    public void setMaxTargets(int maxTargets) {
+        this.maxTargets = maxTargets;
     }
 
     public enum Target {

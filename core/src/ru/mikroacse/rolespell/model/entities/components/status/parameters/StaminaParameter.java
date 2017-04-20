@@ -12,6 +12,6 @@ public class StaminaParameter extends NumericParameter {
 
         value.setValue(0);
         value.setMax(100);
-        change = 10.0;
+        speed = 10.0;
     }
 }

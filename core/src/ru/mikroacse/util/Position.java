@@ -44,9 +44,26 @@ public class Position {
         translate(position.x, position.y);
     }
 
+    public void translate(int d) {
+        translate(d, d);
+    }
+
     public void translate(int dx, int dy) {
         x += dx;
         y += dy;
+    }
+
+    public void multiply(Position position) {
+        multiply(position.x, position.y);
+    }
+
+    public void multiply(double d) {
+        multiply(d, d);
+    }
+
+    public void multiply(double dx, double dy) {
+        x *= dx;
+        y *= dy;
     }
 
     public double distance(Position position) {

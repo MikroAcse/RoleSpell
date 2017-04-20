@@ -52,7 +52,7 @@ public class World implements MovementComponent.Listener {
     private void initialize() {
         entities = new ArrayList<>();
 
-        // TODO: make this less horrible and moveTo to separate class
+        // TODO: make this less horrible and routeTo to separate class
         for (MapObject mapObject : getLayer(Layer.SPAWNERS).getObjects()) {
             RectangleMapObject object = (RectangleMapObject) mapObject;
 

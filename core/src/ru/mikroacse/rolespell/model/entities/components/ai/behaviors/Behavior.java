@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.model.entities.components.ai.behaviors;
 
-import ru.mikroacse.rolespell.model.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.util.Interval;
@@ -8,12 +7,16 @@ import ru.mikroacse.util.Position;
 import ru.mikroacse.util.Priority;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by MikroAcse on 14-Apr-17.
  */
-public abstract class Behavior {
+public abstract class Behavior implements Comparable<Behavior> {
     private Trigger trigger;
+
+    private int activationDistance;
+    private int deactivationDistance;
 
     private Interval interval;
     private Priority priority;
@@ -30,10 +33,13 @@ public abstract class Behavior {
         this.type = type;
         this.solo = solo;
         this.trigger = trigger;
+
+        this.activationDistance = 0;
+        this.deactivationDistance = Integer.MAX_VALUE;
     }
 
     public boolean update(float delta) {
-        if(interval == null) {
+        if (interval == null) {
             return false;
         }
 
@@ -42,21 +48,16 @@ public abstract class Behavior {
 
     public abstract boolean process(Entity entity, List<Entity> targets);
 
-    // TODO: does it belong here?
-    public Position getCentroid(List<Entity> entities) {
-        Position centroid = new Position(0, 0);
+    public boolean isTargetActivated(Entity entity, Entity target) {
+        MovementComponent movement = entity.getComponent(MovementComponent.class);
+        Position position = movement.getPosition();
 
-        for (Entity target : entities) {
-            MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-            Position targetPosition = targetMovement.getPosition();
+        MovementComponent targetMovement = target.getComponent(MovementComponent.class);
+        Position targetPosition = targetMovement.getPosition();
 
-            centroid.translate(targetPosition);
-        }
+        double distance = position.distance(targetPosition);
 
-        int positions = entities.size();
-        centroid.set(centroid.x / positions, centroid.y / positions);
-
-        return centroid;
+        return distance >= activationDistance && distance <= deactivationDistance;
     }
 
     public Trigger getTrigger() {
@@ -97,6 +98,38 @@ public abstract class Behavior {
 
     public void setInterval(Interval interval) {
         this.interval = interval;
+    }
+
+    public int getActivationDistance() {
+        return activationDistance;
+    }
+
+    public void setActivationDistance(int activationDistance) {
+        this.activationDistance = activationDistance;
+    }
+
+    public int getDeactivationDistance() {
+        return deactivationDistance;
+    }
+
+    public void setDeactivationDistance(int deactivationDistance) {
+        this.deactivationDistance = deactivationDistance;
+    }
+
+    @Override
+    public int compareTo(Behavior o) {
+        return getPriority().compare(o.getPriority());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = new Random().nextInt();
+        return result;
     }
 
     public enum Trigger {

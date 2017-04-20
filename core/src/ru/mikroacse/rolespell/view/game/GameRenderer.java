@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.view.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -14,6 +15,7 @@ import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawable
 import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.status.StatusComponent;
+import ru.mikroacse.rolespell.model.entities.components.status.parameters.HealthParameter;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
 import ru.mikroacse.rolespell.view.game.ui.StatusHUD;
@@ -100,7 +102,16 @@ public class GameRenderer {
             if (drawable instanceof TextureDrawableComponent) {
                 Texture texture = ((TextureDrawableComponent) drawable).getTexture();
 
+                // TODO: normal damage animation and handling
+                StatusComponent status = entity.getComponent(StatusComponent.class);
+                HealthParameter health = status.getParameter(HealthParameter.class);
+
+                if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
+                    batch.setColor(Color.RED);
+                }
+
                 batch.draw(texture, position.x, position.y);
+                batch.setColor(Color.WHITE);
             }
         }
 

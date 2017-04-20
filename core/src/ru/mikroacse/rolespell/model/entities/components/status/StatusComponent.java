@@ -30,11 +30,11 @@ public class StatusComponent extends Component {
         return updated;
     }
 
-    public void add(Parameter parameter) {
+    public void addParameter(Parameter parameter) {
         parameters.add(parameter);
     }
 
-    public boolean remove(Parameter parameter) {
+    public boolean removeParameter(Parameter parameter) {
         return parameters.remove(parameter);
     }
 

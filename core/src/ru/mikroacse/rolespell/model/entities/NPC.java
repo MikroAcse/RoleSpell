@@ -1,11 +1,10 @@
 package ru.mikroacse.rolespell.model.entities;
 
 import com.badlogic.gdx.graphics.Texture;
-import ru.mikroacse.rolespell.model.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.model.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.model.entities.components.ai.CollisionAvoidingAi;
+import ru.mikroacse.rolespell.model.entities.components.ai.behaviors.AttackBehavior;
 import ru.mikroacse.rolespell.model.entities.components.ai.behaviors.SeekBehavior;
-import ru.mikroacse.rolespell.model.entities.components.ai.behaviors.WanderBehavior;
 import ru.mikroacse.rolespell.model.entities.components.drawable.TextureDrawableComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.status.StatusComponent;
@@ -21,9 +20,8 @@ import ru.mikroacse.util.Priority;
  * Created by MikroAcse on 25.03.2017.
  */
 public class Npc extends Entity {
-    private RandomMovementAi randomMovementAi;
+    private BehaviorAi behaviorAi;
     private CollisionAvoidingAi collisionAvoidingAi;
-    private AttackAi attackAi;
 
     private PathMovementComponent movement;
     private TextureDrawableComponent drawable;
@@ -32,13 +30,24 @@ public class Npc extends Entity {
     public Npc(World world, int x, int y) {
         super(EntityType.NPC, world);
 
-
         status = new StatusComponent(this);
 
-        status.add(new HealthParameter(status));
+        status.addParameter(new HealthParameter(status));
 
-        DamageParameter damage = new DamageParameter(status, new LimitedDouble(5), 1, 2);
-        status.add(damage);
+        // TODO: this is bad
+        status.addParameter(new DamageParameter(
+                status,
+                new LimitedDouble(3.0, 10.0),
+                2,
+                true) {
+            @Override
+            public boolean bump(Entity entity) {
+                if (entity instanceof Player) {
+                    return super.bump(entity);
+                }
+                return false;
+            }
+        });
 
         addComponent(status);
 
@@ -51,19 +60,33 @@ public class Npc extends Entity {
         collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
 
-        BehaviorAi behaviorAi = new BehaviorAi(this, 3, 20);
+        behaviorAi = new BehaviorAi(this, 20);
         addComponent(behaviorAi);
 
-        behaviorAi.addBehavior(
+        /*behaviorAi.addBehavior(
                 new WanderBehavior(
                         Priority.LOW,
                         WanderBehavior.Guide.POSITION,
-                        2, 5,
+                        2,
+                        5,
                         new Interval(new LimitedDouble(4.0, 14.0), true)
+                )
+        );*/
+
+        behaviorAi.addBehavior(
+                new SeekBehavior(
+                        Priority.NORMAL,
+                        new Interval(2.0),
+                        5
                 )
         );
 
-        behaviorAi.addBehavior(new SeekBehavior(Priority.NORMAL, new Interval(1.0)));
+        behaviorAi.addBehavior(
+                new AttackBehavior(
+                        Priority.NORMAL,
+                        new Interval(new LimitedDouble(3.0, 7.0), true)
+                )
+        );
 
         // TODO: Is it supposed to be in the View?!
         drawable = new TextureDrawableComponent(this, new Texture("data/npc.png"));
@@ -76,7 +99,7 @@ public class Npc extends Entity {
 
     @Override
     public void dispose() {
-        randomMovementAi.dispose();
+        behaviorAi.dispose();
         collisionAvoidingAi.dispose();
 
         movement.dispose();

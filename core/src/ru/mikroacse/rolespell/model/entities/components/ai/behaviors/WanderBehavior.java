@@ -1,10 +1,11 @@
 package ru.mikroacse.rolespell.model.entities.components.ai.behaviors;
 
+import ru.mikroacse.rolespell.model.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
-import ru.mikroacse.util.ArrayUtil;
 import ru.mikroacse.util.Interval;
+import ru.mikroacse.util.ListUtil;
 import ru.mikroacse.util.Position;
 import ru.mikroacse.util.Priority;
 
@@ -40,7 +41,17 @@ public class WanderBehavior extends Behavior {
 
         switch (guide) {
             case TARGET:
-                destination = getCentroid(targets);
+                destination = new Position(0, 0);
+
+                for (Entity target : targets) {
+                    if (!isTargetActivated(entity, target)) {
+                        continue;
+                    }
+
+                    MovementComponent targetMovement = target.getComponent(MovementComponent.class);
+
+                    destination.translate(targetMovement.getPosition());
+                }
                 break;
             case ORIGIN:
                 destination = movement.getOrigin();
@@ -50,14 +61,14 @@ public class WanderBehavior extends Behavior {
                 break;
         }
 
-        if(destination == null) {
+        if (destination == null) {
             return false;
         }
 
         int x = destination.x;
         int y = destination.y;
 
-        // looking for empty cells to moveTo
+        // looking for empty cells to routeTo
         List<Position> passableCells = world.getPassableCells(
                 x, y,
                 false,
@@ -68,7 +79,7 @@ public class WanderBehavior extends Behavior {
             return false;
         }
 
-        destination = ArrayUtil.getRandom(passableCells);
+        destination = ListUtil.getRandom(passableCells);
 
         // TODO: magic numbers
         return movement.routeTo(destination, Priority.LOW, 5, 15);

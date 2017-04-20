@@ -11,25 +11,30 @@ import ru.mikroacse.util.LimitedDouble;
 public class DamageParameter extends Parameter {
     private LimitedDouble damage;
     private int attackDistance;
-    private double attackSpeed;
 
-    public DamageParameter(StatusComponent status, LimitedDouble damage, int attackDistance, double attackSpeed) {
+    private boolean randomized;
+
+    public DamageParameter(StatusComponent status, LimitedDouble damage, int attackDistance, boolean randomized) {
         super(status, ParameterType.DAMAGE);
         this.damage = damage;
         this.attackDistance = attackDistance;
-        this.attackSpeed = attackSpeed;
+        this.randomized = randomized;
     }
 
     public DamageParameter(StatusComponent status) {
-        this(status, new LimitedDouble(0), 0, 0);
+        this(status, new LimitedDouble(0), 0, false);
     }
 
     public boolean bump(Entity entity) {
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthParameter health = status.getParameter(HealthParameter.class);
 
-        health.setValue(health.getCurrentValue() - damage.getValue());
-        damage.randomize();
+        health.damage(damage.getValue());
+
+        if (randomized) {
+            damage.randomize();
+        }
+
         return true;
     }
 
@@ -50,11 +55,11 @@ public class DamageParameter extends Parameter {
         this.attackDistance = attackDistance;
     }
 
-    public double getAttackSpeed() {
-        return attackSpeed;
+    public boolean isRandomized() {
+        return randomized;
     }
 
-    public void setAttackSpeed(double attackSpeed) {
-        this.attackSpeed = attackSpeed;
+    public void setRandomized(boolean randomized) {
+        this.randomized = randomized;
     }
 }

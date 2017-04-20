@@ -5,7 +5,7 @@ import ru.mikroacse.rolespell.model.entities.components.movement.MovementCompone
 import ru.mikroacse.rolespell.model.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.model.entities.core.Entity;
 import ru.mikroacse.rolespell.model.world.World;
-import ru.mikroacse.util.ArrayUtil;
+import ru.mikroacse.util.ListUtil;
 import ru.mikroacse.util.Position;
 import ru.mikroacse.util.Priority;
 
@@ -69,7 +69,7 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
 
         // checking passable cells for available paths
         while (!passableCells.isEmpty()) {
-            Position passableCell = ArrayUtil.getRandom(passableCells);
+            Position passableCell = ListUtil.getRandom(passableCells);
             passableCells.remove(passableCell);
 
             if (movement.routeTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius)) {

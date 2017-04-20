@@ -36,6 +36,7 @@ public class LimitedDouble {
 
     public double getPercentage() {
         if (min == max) return 1;
+        if (value == min) return 0;
 
         return (value - min) / (max - min);
     }
@@ -59,6 +60,24 @@ public class LimitedDouble {
 
         value = Math.max(value, min);
         value = Math.min(value, max);
+    }
+
+    public void add(double value) {
+        this.value += value;
+        trim();
+    }
+
+    public void multiply(double value) {
+        this.value *= value;
+        trim();
+    }
+
+    public boolean isMax() {
+        return value == max;
+    }
+
+    public boolean isMin() {
+        return value == min;
     }
 
     public double getMin() {
