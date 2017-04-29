@@ -1,0 +1,30 @@
+{
+	"files": {
+		"textures": [
+			"entities/*",
+			"items/inventory-cell.png",
+			"items/weapons/*",
+			"path/path.png",
+			"path/waypoint.png",
+			"hud/statusbar.png"
+		],
+		"sounds": [
+
+		],
+		"music": [
+
+		],
+		"atlases": [
+			
+		],
+		"fonts": [
+
+		],
+		"shaders": [
+			
+		],
+		"maps" : [
+			"rottenville.tmx"
+		]
+	}
+}

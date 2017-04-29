@@ -1,0 +1,20 @@
+{
+	"animationFps": 30,
+	"bundles": {
+		"global": {
+			"fonts": {
+
+			}
+		},
+		"menu": {
+			"fonts": {
+
+			}
+		},
+		"game": {
+			"fonts": {
+
+			}
+		}
+	}
+}
