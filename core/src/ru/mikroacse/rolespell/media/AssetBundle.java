@@ -26,7 +26,7 @@ public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
         textureParameter = new TextureLoader.TextureParameter();
         textureParameter.genMipMaps = false;
         textureParameter.minFilter = Texture.TextureFilter.Linear;
-        textureParameter.magFilter = Texture.TextureFilter.Linear;
+        textureParameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
         
         fontParameter = new BitmapFontLoader.BitmapFontParameter();
         fontParameter.flip = false;

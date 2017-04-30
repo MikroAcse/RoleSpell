@@ -9,7 +9,7 @@ import ru.mikroacse.engine.tween.TweenManager;
 import ru.mikroacse.rolespell.config.Config;
 import ru.mikroacse.rolespell.config.Lang;
 import ru.mikroacse.rolespell.media.AssetManager;
-import ru.mikroacse.rolespell.screens.ScreenManager;
+import ru.mikroacse.rolespell.app.screens.ScreenManager;
 
 public class RoleSpell extends Game {
     private static TweenManager tweenManager;
@@ -59,10 +59,16 @@ public class RoleSpell extends Game {
         assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
         assetManager.loadBundle(AssetManager.Bundle.MENU);
         assetManager.loadBundle(AssetManager.Bundle.GAME);
-        //Assets.finishLoading();
+        assetManager.finishLoading();
         
         screenManager.setWaitScene(ScreenManager.BundledScreen.GAME);
         screenManager.setScreen(ScreenManager.BundledScreen.LOADER);
+    }
+    
+    @Override
+    public void render() {
+        super.render();
+        tweenManager.update(Gdx.graphics.getDeltaTime());
     }
     
     @Override
@@ -71,11 +77,5 @@ public class RoleSpell extends Game {
         
         screenManager.dispose();
         assetManager.unloadBundle(AssetManager.Bundle.GLOBAL);
-    }
-    
-    @Override
-    public void render() {
-        super.render();
-        tweenManager.update(Gdx.graphics.getDeltaTime());
     }
 }

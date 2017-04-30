@@ -1,6 +1,6 @@
 package ru.mikroacse.engine.media;
 
-import ru.mikroacse.engine.utils.Vector2;
+import ru.mikroacse.engine.util.Vector2;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
-
 /**
  * Created by MikroAcse on 14.07.2016.
  */
@@ -45,7 +44,7 @@ public class AnimationActor extends Image {
         if (paused) {
             return;
         }
-    
+        
         stateTime += delta;
         update();
     }
@@ -71,7 +70,7 @@ public class AnimationActor extends Image {
             stateTime %= animation.getAnimationDuration();
             listeners.onComplete();
         }
-    
+        
         drawable.setRegion(animation.getKeyFrame(stateTime));
     }
     

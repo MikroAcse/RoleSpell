@@ -1,7 +1,7 @@
 package ru.mikroacse.engine.config;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ru.mikroacse.engine.utils.JSONLoader;
+import ru.mikroacse.engine.util.JSONLoader;
 
 /**
  * Created by MikroAcse on 08.07.2016.

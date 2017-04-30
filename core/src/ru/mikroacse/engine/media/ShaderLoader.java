@@ -17,7 +17,6 @@ public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderP
     private String vertProgram;
     private String fragProgram;
     
-    
     public ShaderLoader(FileHandleResolver resolver) {
         super(resolver);
     }

@@ -1,7 +1,7 @@
 package ru.mikroacse.engine.actors;
 
 import com.badlogic.gdx.scenes.scene2d.utils.Cullable;
-import ru.mikroacse.engine.utils.GroupUtil;
+import ru.mikroacse.engine.util.GroupUtil;
 
 /**
  * Created by MikroAcse on 24.07.2016.

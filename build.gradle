@@ -51,7 +51,7 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
+        compile "net.dermetfan.libgdx-util:libgdx-util:0.13.4"
         compile "com.github.czyzby:gdx-kiwi:1.8.1.9.4"
     }
 }

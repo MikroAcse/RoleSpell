@@ -12,9 +12,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.media.AssetBundleManager;
-import ru.mikroacse.engine.utils.FileUtil;
-import ru.mikroacse.engine.utils.JSONLoader;
-import ru.mikroacse.engine.utils.StringUtil;
+import ru.mikroacse.engine.util.FileUtil;
+import ru.mikroacse.engine.util.JSONLoader;
+import ru.mikroacse.engine.util.StringUtil;
 import ru.mikroacse.rolespell.RoleSpell;
 
 /**
@@ -23,6 +23,7 @@ import ru.mikroacse.rolespell.RoleSpell;
 public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetBundle> {
     public static final String ASSETS_DIRECTORY = "data/";
     public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
+    
     public AssetManager(int initialWidth, int initialHeight) {
         super(initialWidth, initialHeight);
     }
@@ -81,14 +82,13 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
             
             // recursively load all files in a path (i.e. "files/*")
             if (asset.endsWith("/*")) {
-                Gdx.app.log("LOADING", "loading assets: " + assetPath + " (" + assetClass + ")");
                 asset = asset.substring(0, asset.length() - 1);
                 
                 FileHandle assetHandle = Gdx.files.internal(assetPath.substring(0, assetPath.length() - 1));
                 
                 Array<FileHandle> subHandles = new Array<>();
                 FileUtil.getHandles(assetHandle, subHandles);
-    
+                
                 for (FileHandle subHandle : subHandles) {
                     assetPath = subHandle.file().getPath();
                     assetPath = assetPath.replaceAll("\\\\", "/");
@@ -100,7 +100,7 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
                 
                 continue;
             }
-    
+            
             bundle.loadAsset(StringUtil.getFilename(asset), assetPath, assetClass);
         }
     }
