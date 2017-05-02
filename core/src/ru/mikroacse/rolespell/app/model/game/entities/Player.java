@@ -25,7 +25,7 @@ import java.util.EnumSet;
  * Created by MikroAcse on 22.03.2017.
  */
 public class Player extends Entity {
-    private BehaviorAi<Behavior> movementAi;
+    private BehaviorAi movementAi;
     private AttackAi attackAi;
     private PickupAi pickupAi;
     
@@ -70,7 +70,7 @@ public class Player extends Entity {
             }
         });
         
-        movementAi = new BehaviorAi<>(this, 20);
+        movementAi = new BehaviorAi(this, 20);
         addComponent(movementAi);
         
         movementAi.setTargetSelectors(EnumSet.of(BehaviorAi.TargetSelector.CUSTOM));

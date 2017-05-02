@@ -8,13 +8,20 @@ import java.util.EnumSet;
 /**
  * Created by MikroAcse on 02-May-17.
  */
-public class PickupAi extends BehaviorAi<PickupBehavior> {
+public class PickupAi extends BehaviorAi {
+    private PickupBehavior pickupBehavior;
+    
     public PickupAi(Entity entity) {
         super(entity, 0);
         
         // pick up only one item at the time
         setMaxTargets(1);
-        
-        addBehavior(new PickupBehavior());
+    
+        pickupBehavior = new PickupBehavior();
+        addBehavior(pickupBehavior);
+    }
+    
+    public PickupBehavior getPickupBehavior() {
+        return pickupBehavior;
     }
 }

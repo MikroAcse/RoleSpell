@@ -27,7 +27,7 @@ public class GameStateProcessor extends StateProcessor {
         InputAdapter.Button mouseLeft = input.getButton(Input.Buttons.LEFT);
         InputAdapter.Button mouseRight = input.getButton(Input.Buttons.RIGHT);
     
-        IntVector2 cell = renderer.mapToCell(renderer.stageToMap(mouseX, mouseY));
+        IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
     
         if (mouseLeft.justPressed) {
             model.tryRouteTo(cell.x, cell.y);

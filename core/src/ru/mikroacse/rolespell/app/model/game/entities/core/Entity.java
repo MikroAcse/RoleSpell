@@ -84,6 +84,7 @@ public abstract class Entity extends Observable {
                 return (T) component;
             }
         }
+        
         return null;
     }
     

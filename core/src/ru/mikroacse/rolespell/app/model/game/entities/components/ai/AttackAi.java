@@ -7,10 +7,17 @@ import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 /**
  * Created by MikroAcse on 02-May-17.
  */
-public class AttackAi extends BehaviorAi<AttackBehavior> {
+public class AttackAi extends BehaviorAi {
+    private AttackBehavior attackBehavior;
+    
     public AttackAi(Entity entity, Interval interval) {
         super(entity, Integer.MAX_VALUE);
-        
-        addBehavior(new AttackBehavior(interval));
+    
+        attackBehavior = new AttackBehavior(interval);
+        addBehavior(attackBehavior);
+    }
+    
+    public AttackBehavior getAttackBehavior() {
+        return attackBehavior;
     }
 }

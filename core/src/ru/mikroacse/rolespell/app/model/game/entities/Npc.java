@@ -22,7 +22,7 @@ import java.util.EnumSet;
  */
 public class Npc extends Entity {
     private CollisionAvoidingAi collisionAvoidingAi;
-    private BehaviorAi<Behavior> movementAi;
+    private BehaviorAi movementAi;
     private AttackAi attackAi;
     
     private PathMovementComponent movement;
@@ -61,7 +61,7 @@ public class Npc extends Entity {
         collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
         
-        movementAi = new BehaviorAi<>(this, 20);
+        movementAi = new BehaviorAi(this, 20);
         addComponent(movementAi);
         
         movementAi.setTargetSelectors(EnumSet.of(BehaviorAi.TargetSelector.CUSTOM));

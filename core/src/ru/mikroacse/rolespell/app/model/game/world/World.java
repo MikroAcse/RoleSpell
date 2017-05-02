@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 // TODO: refactor
 public class World implements MovementComponent.Listener {
+    // TODO: separate map
     private TiledMap map;
     private List<Entity> entities;
     
@@ -41,6 +43,8 @@ public class World implements MovementComponent.Listener {
     public World(TiledMap map) {
         this.map = map;
         listeners = ListenerSupportFactory.create(Listener.class);
+    
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("META");
         
         initialize();
     }
@@ -74,6 +78,7 @@ public class World implements MovementComponent.Listener {
             entities.add(entity);
         }
         
+        // TODO: remove
         for (Entity entity : entities) {
             if (entity.hasComponent(BehaviorAi.class)) {
                 entity
@@ -291,6 +296,10 @@ public class World implements MovementComponent.Listener {
         return map;
     }
     
+    public int getLayerIndex(Layer layer) {
+        return map.getLayers().getIndex(layer.name());
+    }
+    
     public MapLayer getLayer(Layer layer) {
         return map.getLayers().get(layer.name());
     }
@@ -338,7 +347,7 @@ public class World implements MovementComponent.Listener {
         OBJECTS,
         BOTTOM,
         LAYOUT,
-        BACKGROUND
+        BACKGROUND;
     }
     
     public enum Meta {

@@ -99,7 +99,7 @@ public class InventoryStateProcessor extends StateProcessor {
                 hotbarView.retouchItemList();
             } else {
                 // TODO: looks bad
-                IntVector2 cell = renderer.mapToCell(renderer.stageToMap(mouseX, mouseY));
+                IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
                 
                 MovementComponent movement = controllable.getComponent(MovementComponent.class);
                 IntVector2 position = movement.getPosition();

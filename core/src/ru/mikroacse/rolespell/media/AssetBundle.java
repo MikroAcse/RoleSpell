@@ -1,13 +1,15 @@
 package ru.mikroacse.rolespell.media;
 
-import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
-import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.AtlasTmxMapLoader;
+import com.badlogic.gdx.maps.tiled.AtlasTmxMapLoader.AtlasTiledMapLoaderParameters;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
@@ -15,20 +17,20 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
  * Created by MikroAcse on 29-Apr-17.
  */
 public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
-    private final TextureLoader.TextureParameter textureParameter;
-    private final BitmapFontLoader.BitmapFontParameter fontParameter;
+    private TextureParameter textureParameter;
+    private BitmapFontParameter fontParameter;
     
     public AssetBundle() {
         super();
         
         getManager().setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         
-        textureParameter = new TextureLoader.TextureParameter();
+        textureParameter = new TextureParameter();
         textureParameter.genMipMaps = false;
         textureParameter.minFilter = Texture.TextureFilter.Linear;
         textureParameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
         
-        fontParameter = new BitmapFontLoader.BitmapFontParameter();
+        fontParameter = new BitmapFontParameter();
         fontParameter.flip = false;
         fontParameter.genMipMaps = true;
         fontParameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;
@@ -39,10 +41,12 @@ public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
     public <T> void loadAsset(String key, String path, Class<T> assetClass) {
         if (assetClass == BitmapFont.class) {
             loadAsset(key, path, BitmapFont.class, fontParameter);
+            return;
         }
         
         if (assetClass == Texture.class) {
             loadAsset(key, path, Texture.class, textureParameter);
+            return;
         }
         
         super.loadAsset(key, path, assetClass);
@@ -72,11 +76,11 @@ public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
         return getAsset(name, BitmapFont.class);
     }
     
-    public TextureLoader.TextureParameter getTextureParameter() {
+    public TextureParameter getTextureParameter() {
         return textureParameter;
     }
     
-    public BitmapFontLoader.BitmapFontParameter getFontParameter() {
+    public BitmapFontParameter getFontParameter() {
         return fontParameter;
     }
 }

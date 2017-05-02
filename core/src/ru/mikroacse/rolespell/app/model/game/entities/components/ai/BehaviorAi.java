@@ -4,7 +4,6 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior.Trigger;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.PickupBehavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
@@ -16,7 +15,7 @@ import java.util.*;
 /**
  * Created by MikroAcse on 29.03.2017.
  */
-public class BehaviorAi<T extends Behavior> extends Component {
+public class BehaviorAi extends Component {
     private List<Entity> targets;
     
     private int activationDistance;
@@ -24,7 +23,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
     
     private int maxTargets;
     
-    private List<T> behaviors;
+    private List<Behavior> behaviors;
     private EnumSet<TargetSelector> targetSelectors;
     
     private MovementComponent.Listener movementListener;
@@ -83,7 +82,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
     public boolean update(float delta) {
         boolean updated = false;
         
-        for (T behavior : behaviors) {
+        for (Behavior behavior : behaviors) {
             updated |= behavior.update(delta);
         }
         
@@ -147,7 +146,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
         
         boolean actionPerformed = false;
         boolean soloistPerformed = false;
-        for (T behavior : behaviors) {
+        for (Behavior behavior : behaviors) {
             if (triggers != null) {
                 if(!behavior.getTriggers().containsAll(triggers)) {
                     continue;
@@ -192,7 +191,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
     /**
      * Subscribes to specific behavior events.
      */
-    private void attachBehavior(T behavior) {
+    private void attachBehavior(Behavior behavior) {
         if(behavior.getTriggers().contains(Trigger.INTERVAL)) {
             behavior.getInterval()
                     .addListener(intervalListener);
@@ -202,7 +201,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
     /**
      * Unsubscribes from specific behavior events.
      */
-    private void detachBehavior(T behavior) {
+    private void detachBehavior(Behavior behavior) {
         if(behavior.getTriggers().contains(Trigger.INTERVAL)) {
             behavior.getInterval()
                     .removeListener(intervalListener);
@@ -231,7 +230,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
         targets.clear();
     }
     
-    public void addBehavior(T behavior) {
+    public void addBehavior(Behavior behavior) {
         behaviors.add(behavior);
         attachBehavior(behavior);
         
@@ -239,7 +238,7 @@ public class BehaviorAi<T extends Behavior> extends Component {
         Collections.sort(behaviors, Collections.reverseOrder());
     }
     
-    public boolean removeBehavior(T behavior) {
+    public boolean removeBehavior(Behavior behavior) {
         detachBehavior(behavior);
         return behaviors.remove(behavior);
     }
@@ -286,14 +285,14 @@ public class BehaviorAi<T extends Behavior> extends Component {
         this.maxTargets = maxTargets;
     }
     
-    public List<T> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return behaviors;
     }
     
     /**
      * @return First behavior in the behaviors list.
      */
-    public T getBehavior() {
+    public Behavior getBehavior() {
         return behaviors.get(0);
     }
     

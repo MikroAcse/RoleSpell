@@ -54,8 +54,7 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         RoleSpell.getAssetManager().updateScale(width, height);
     
-        renderer.getViewport().update(width, height, true);
-        renderer.update();
+        renderer.resize(width, height);
     }
     
     @Override
