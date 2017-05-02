@@ -84,6 +84,8 @@ public class ScreenManager {
             disposeScreen(currentScreen);
         }
         currentScreen = bundledScreen;
+    
+        System.out.println(" === Current screen set to " + bundledScreen + " === ");
     }
     
     public void setWaited() {

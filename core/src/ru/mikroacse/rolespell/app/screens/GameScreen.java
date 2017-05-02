@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import ru.mikroacse.rolespell.RoleSpell;
@@ -19,9 +19,9 @@ public class GameScreen implements Screen {
     
     private GameModel model;
     
-    private Game game;
+    private com.badlogic.gdx.Game game;
     
-    public GameScreen(Game game) {
+    public GameScreen(com.badlogic.gdx.Game game) {
         this.game = game;
         
         model = new GameModel();
@@ -46,12 +46,16 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         controller.update(delta);
-        renderer.render(delta);
+        
+        renderer.draw();
     }
     
     @Override
     public void resize(int width, int height) {
-        renderer.resize(width, height);
+        RoleSpell.getAssetManager().updateScale(width, height);
+    
+        renderer.getViewport().update(width, height, true);
+        renderer.update();
     }
     
     @Override

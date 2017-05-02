@@ -2,11 +2,12 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.movement;
 
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.engine.util.Priority;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class PathMovementComponent extends MovementComponent {
     private Priority priority;
-    private LinkedList<Vector2> path;
+    private List<IntVector2> path;
     
     private Listener listeners;
     
@@ -24,7 +25,7 @@ public class PathMovementComponent extends MovementComponent {
         
         listeners = ListenerSupportFactory.create(Listener.class);
         
-        path = new LinkedList<>();
+        path = new ArrayList<>();
         
         priority = Priority.NEVER;
     }
@@ -36,7 +37,7 @@ public class PathMovementComponent extends MovementComponent {
             return false;
         }
         
-        moveTo(path.poll(), getType());
+        moveTo(path.remove(0), getType());
         listeners.pathChanged(this, Listener.Event.PATH_NEXT, path);
         return true;
     }
@@ -51,7 +52,7 @@ public class PathMovementComponent extends MovementComponent {
      *                       If actual distance is bigger, path is being shortened.
      */
     // TODO: move path finder to separate class
-    public boolean tryRouteTo(Vector2 destination, Priority priority, int pathFindRadius, int maxDistance) {
+    public boolean tryRouteTo(IntVector2 destination, Priority priority, int pathFindRadius, int maxDistance) {
         if (priority.getValue() < this.priority.getValue()) {
             return false;
         }
@@ -63,7 +64,7 @@ public class PathMovementComponent extends MovementComponent {
         }
         
         World world = getEntity().getWorld();
-        LinkedList<Vector2> newPath = world.getPath(getPosition(), destination, pathFindRadius);
+        LinkedList<IntVector2> newPath = world.getPath(getPosition(), destination, pathFindRadius);
         
         // > 1 because first element is actually entity current position
         if (newPath.size() > 1) {
@@ -78,8 +79,8 @@ public class PathMovementComponent extends MovementComponent {
         return false;
     }
     
-    public boolean tryRouteTo(List<Vector2> destinations, Priority priority, int pathFindRadius, int maxDistance) {
-        for (Vector2 destination : destinations) {
+    public boolean tryRouteTo(List<IntVector2> destinations, Priority priority, int pathFindRadius, int maxDistance) {
+        for (IntVector2 destination : destinations) {
             if (tryRouteTo(destination, priority, pathFindRadius, maxDistance)) {
                 return true;
             }
@@ -99,21 +100,21 @@ public class PathMovementComponent extends MovementComponent {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
     
-    public LinkedList<Vector2> getPath() {
+    public List<IntVector2> getPath() {
         return path;
     }
     
-    public void setPath(LinkedList<Vector2> path) {
+    public void setPath(List<IntVector2> path) {
         this.path = path;
         listeners.pathChanged(this, Listener.Event.PATH_SET, path);
     }
     
-    public void addToPath(LinkedList<Vector2> path) {
+    public void addToPath(List<IntVector2> path) {
         this.path.addAll(path);
         listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
     }
     
-    public void addToPath(Vector2 pathPos) {
+    public void addToPath(IntVector2 pathPos) {
         path.add(pathPos);
         listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
         
@@ -140,9 +141,7 @@ public class PathMovementComponent extends MovementComponent {
     }
     
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        public void pathChanged(PathMovementComponent movement, Event event, LinkedList<Vector2> path);
-        
-        ;
+        public void pathChanged(PathMovementComponent movement, Event event, List<IntVector2> path);
         
         public enum Event {
             PATH_SET, PATH_CLEARED, PATH_NEXT, PATH_ADDED

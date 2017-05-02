@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core;
 
+import ru.mikroacse.engine.listeners.Listener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.ParameterType;
 import ru.mikroacse.engine.util.LimitedDouble;
@@ -22,7 +23,7 @@ public abstract class NumericParameter extends Parameter {
     public boolean update(float delta) {
         value.setValue(value.getValue() + speed * delta);
         
-        return true;
+        return super.update(delta);
     }
     
     public LimitedDouble getValue() {
@@ -39,5 +40,9 @@ public abstract class NumericParameter extends Parameter {
     
     public double getPercentage() {
         return value.getPercentage();
+    }
+    
+    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    
     }
 }

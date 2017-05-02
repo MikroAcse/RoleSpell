@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.pathfinding;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.AdjacencyListItem;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.GraphNode;
@@ -25,18 +25,18 @@ public class PathFinder {
         this.heuristic = heuristic;
     }
     
-    public LinkedList<Vector2> getPath(Graph mapGraph, int startingPoint, int endPoint) {
+    public LinkedList<IntVector2> getPath(Graph mapGraph, int startingPoint, int endPoint) {
         this.graph = mapGraph;
         this.nodes = this.graph.getNodes();
         this.adjacencyList = this.graph.getAdjacencyList();
         
-        LinkedList<Vector2> path = new LinkedList<>();
+        LinkedList<IntVector2> path = new LinkedList<>();
         getShortestPathBetweenTwoNodes(startingPoint, endPoint, path);
         
         return path;
     }
     
-    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<Vector2> path) {
+    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<IntVector2> path) {
         Cell[] cells = new Cell[graph.getNodes().length];
         
         // TODO: priority queue
@@ -142,11 +142,11 @@ public class PathFinder {
         }
         
         // build path
-        path.add(new Vector2(current.getCellX(), current.getCellY()));
+        path.add(new IntVector2(current.getCellX(), current.getCellY()));
         
         while (current != start) {
             current = cells[current.getNodeIndex()].parent;
-            path.add(new Vector2(current.getCellX(), current.getCellY()));
+            path.add(new IntVector2(current.getCellX(), current.getCellY()));
         }
         
         Collections.reverse(path);

@@ -13,18 +13,4 @@ public class Config extends Configuration {
         
         load(AssetManager.ASSETS_DIRECTORY + "config.json");
     }
-    
-    public String getFont(AssetManager.Bundle bundle, String key) {
-        key = String.format("bundles.%s.fonts.%s", bundle.getName(), key);
-        
-        return getString(key);
-    }
-    
-    public int getAnimationFps() {
-        return getInt("animationFps");
-    }
-    
-    public float getAnimationFrameDuration() {
-        return 1f / getAnimationFps();
-    }
 }

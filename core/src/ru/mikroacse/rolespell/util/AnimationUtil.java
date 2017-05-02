@@ -26,7 +26,7 @@ public class AnimationUtil {
                       .setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
             }
         }
-        return new Animation<>(RoleSpell.getConfig().getAnimationFrameDuration(), atlas.getRegions());
+        return new Animation<>(1 / 30f, atlas.getRegions());
     }
     
     public static Animation<TextureRegion> create(TextureAtlas atlas) {

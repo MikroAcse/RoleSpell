@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
@@ -17,7 +17,7 @@ public class FleeBehavior extends Behavior {
     private int fleeDistance;
     
     public FleeBehavior(Priority priority, Interval interval, int deactivationDistance) {
-        super(priority, Type.SOMETIMES, true, Trigger.BOTH);
+        super(priority, false, Trigger.ALL);
         
         setInterval(interval);
         setDeactivationDistance(deactivationDistance);
@@ -28,12 +28,13 @@ public class FleeBehavior extends Behavior {
     
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
+        targets.remove(entity);
         if (targets.isEmpty()) {
             return false;
         }
         
         // get centroid of target positions
-        Vector2 destination = new Vector2(0, 0);
+        IntVector2 destination = new IntVector2(0, 0);
         
         int targetCount = 0;
         
@@ -57,8 +58,8 @@ public class FleeBehavior extends Behavior {
         
         World world = entity.getWorld();
         MovementComponent movement = entity.getComponent(MovementComponent.class);
-        Vector2 position = movement.getPosition();
-        List<Vector2> passableCells;
+        IntVector2 position = movement.getPosition();
+        List<IntVector2> passableCells;
         
         double distance = position.distance(destination);
         
@@ -96,7 +97,7 @@ public class FleeBehavior extends Behavior {
         return tryRouteTo(entity, passableCells);
     }
     
-    private boolean tryRouteTo(Entity entity, List<Vector2> positions) {
+    private boolean tryRouteTo(Entity entity, List<IntVector2> positions) {
         // TODO: magic numbers
         
         return entity
@@ -109,7 +110,7 @@ public class FleeBehavior extends Behavior {
                 );
     }
     
-    private Vector2 moveAway(Vector2 position, Vector2 origin, int distance) {
+    private IntVector2 moveAway(IntVector2 position, IntVector2 origin, int distance) {
         double x2 = position.x - origin.x;
         double y2 = position.y - origin.y;
         double angle = Math.atan2(y2, x2);
@@ -117,6 +118,6 @@ public class FleeBehavior extends Behavior {
         double x1 = Math.cos(angle) * distance;
         double y1 = Math.sin(angle) * distance;
         
-        return new Vector2(position.x + (int) (x1 - x2), position.y + (int) (y1 - y2));
+        return new IntVector2(position.x + (int) (x1 - x2), position.y + (int) (y1 - y2));
     }
 }

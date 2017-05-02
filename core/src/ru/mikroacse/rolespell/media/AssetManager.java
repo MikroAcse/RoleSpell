@@ -105,10 +105,6 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
         }
     }
     
-    public BitmapFont getGlobalFont(Bundle bundle, String key) {
-        return getBundle(Bundle.GLOBAL).getFont(RoleSpell.getConfig().getFont(bundle, key));
-    }
-    
     private String getAssetBundlePath(Bundle bundle) {
         return String.format(BUNDLE_DIRECTORY, bundle.getName());
     }

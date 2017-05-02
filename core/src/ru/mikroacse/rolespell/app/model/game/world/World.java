@@ -8,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.Player;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
@@ -68,7 +68,7 @@ public class World implements MovementComponent.Listener {
             
             MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
             
-            movementComponent.setBoth(new Vector2(realX / getTileWidth(), realY / getTileHeight()));
+            movementComponent.setBoth(new IntVector2(realX / getTileWidth(), realY / getTileHeight()));
             
             movementComponent.addListener(this);
             entities.add(entity);
@@ -96,16 +96,16 @@ public class World implements MovementComponent.Listener {
     }
     
     @Override
-    public void originChanged(MovementComponent movement, Vector2 previous, Vector2 current) {
+    public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
     
     }
     
     @Override
-    public void positionChanged(MovementComponent movement, Vector2 previous, Vector2 current) {
+    public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
         listeners.entityMoved(movement.getEntity(), previous, current);
     }
     
-    public LinkedList<Vector2> getPath(Vector2 from, Vector2 to, int radius) {
+    public LinkedList<IntVector2> getPath(IntVector2 from, IntVector2 to, int radius) {
         int minX = Math.min(from.x, to.x);
         int minY = Math.min(from.y, to.y);
         
@@ -133,8 +133,8 @@ public class World implements MovementComponent.Listener {
         );
     }
     
-    public Vector2 getCellPosition(float x, float y) {
-        return new Vector2(
+    public IntVector2 getCellPosition(float x, float y) {
+        return new IntVector2(
                 (int) (x / getTileWidth()),
                 (int) (y / getTileHeight()));
     }
@@ -162,7 +162,7 @@ public class World implements MovementComponent.Listener {
         return Meta.valueOf((String) cell.getTile().getProperties().get("type"));
     }
     
-    public Meta getMeta(Vector2 position) {
+    public Meta getMeta(IntVector2 position) {
         return getMeta(position.x, position.y);
     }
     
@@ -176,12 +176,12 @@ public class World implements MovementComponent.Listener {
         return new PassableCellChecker(checkEntities).check(this, x, y);
     }
     
-    public boolean isPassable(Vector2 position, boolean checkEntities) {
+    public boolean isPassable(IntVector2 position, boolean checkEntities) {
         return isPassable(position.x, position.y, checkEntities);
     }
     
-    public List<Vector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
-                                          boolean inverse) {
+    public List<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
+                                             boolean inverse) {
         return getCells(
                 Layer.META,
                 new PassableCellChecker(checkEntities),
@@ -194,9 +194,9 @@ public class World implements MovementComponent.Listener {
      * Rhombus search around given position (checks the position itself too).
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public List<Vector2> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
-                                  boolean inversed) {
-        List<Vector2> result = new ArrayList<>();
+    public List<IntVector2> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
+                                     boolean inversed) {
+        List<IntVector2> result = new ArrayList<>();
         int radius = minRadius;
         
         while (radius <= maxRadius) {
@@ -216,7 +216,7 @@ public class World implements MovementComponent.Listener {
                     TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
                     
                     if (checker.check(this, cellX, cellY)) {
-                        result.add(new Vector2(cellX, cellY));
+                        result.add(new IntVector2(cellX, cellY));
                     }
                 }
             }
@@ -249,11 +249,11 @@ public class World implements MovementComponent.Listener {
         return getEntitiesAt(x, y, 0);
     }
     
-    public List<Entity> getEntitiesAt(Vector2 position, int radius) {
+    public List<Entity> getEntitiesAt(IntVector2 position, int radius) {
         return getEntitiesAt(position.x, position.y, radius);
     }
     
-    public List<Entity> getEntitiesAt(Vector2 position) {
+    public List<Entity> getEntitiesAt(IntVector2 position) {
         return getEntitiesAt(position.x, position.y);
     }
     
@@ -261,11 +261,11 @@ public class World implements MovementComponent.Listener {
         return x >= 0 && y >= 0 && x < getWidth() && y < getHeight();
     }
     
-    public boolean isValidPosition(Vector2 position) {
+    public boolean isValidPosition(IntVector2 position) {
         return isValidPosition(position.x, position.y);
     }
     
-    public void validatePosition(Vector2 position) {
+    public void validatePosition(IntVector2 position) {
         if (!isValidPosition(position)) {
             position.limit(0, 0, getWidth() - 1, getHeight() - 1);
         }
@@ -349,6 +349,6 @@ public class World implements MovementComponent.Listener {
     }
     
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void entityMoved(Entity entity, Vector2 previous, Vector2 current);
+        void entityMoved(Entity entity, IntVector2 previous, IntVector2 current);
     }
 }

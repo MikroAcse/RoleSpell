@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
@@ -9,7 +9,7 @@ import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.engine.util.ListUtil;
 import ru.mikroacse.engine.util.Priority;
 
-import java.util.LinkedList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ public class WanderBehavior extends Behavior {
     private int maxRadius;
     
     public WanderBehavior(Priority priority, Guide guide, int minRadius, int maxRadius, Interval interval) {
-        super(priority, Type.SOMETIMES, true, Trigger.INTERVAL);
+        super(priority, false, EnumSet.of(Trigger.INTERVAL));
         this.guide = guide;
         this.minRadius = minRadius;
         this.maxRadius = maxRadius;
@@ -33,15 +33,21 @@ public class WanderBehavior extends Behavior {
     
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
+        targets.remove(entity);
+    
         World world = entity.getWorld();
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
-        LinkedList<Vector2> path = movement.getPath();
+        List<IntVector2> path = movement.getPath();
         
-        Vector2 destination = null;
+        IntVector2 destination = null;
         
         switch (guide) {
             case TARGET:
-                destination = new Vector2(0, 0);
+                if(targets.isEmpty()) {
+                    return false;
+                }
+                
+                destination = new IntVector2(0, 0);
                 
                 for (Entity target : targets) {
                     if (!isTargetActivated(entity, target)) {
@@ -69,7 +75,7 @@ public class WanderBehavior extends Behavior {
         int y = destination.y;
         
         // looking for empty cells to tryRouteTo
-        List<Vector2> passableCells = world.getPassableCells(
+        List<IntVector2> passableCells = world.getPassableCells(
                 x, y,
                 false,
                 minRadius, maxRadius,

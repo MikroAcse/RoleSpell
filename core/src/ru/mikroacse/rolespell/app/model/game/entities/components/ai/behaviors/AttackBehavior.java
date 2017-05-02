@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.DamageParameter;
@@ -8,26 +8,28 @@ import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.engine.util.Priority;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
  * Created by MikroAcse on 18-Apr-17.
  */
 public class AttackBehavior extends Behavior {
-    public AttackBehavior(Priority priority, Interval interval) {
-        super(priority, Type.ALWAYS, false, Trigger.INTERVAL);
+    public AttackBehavior(Interval interval) {
+        super(Priority.IMMEDIATELY, true, EnumSet.of(Trigger.INTERVAL));
         
         setInterval(interval);
     }
     
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
+        targets.remove(entity);
         if (targets.isEmpty()) {
             return false;
         }
         
         MovementComponent movement = entity.getComponent(MovementComponent.class);
-        Vector2 position = movement.getPosition();
+        IntVector2 position = movement.getPosition();
         
         StatusComponent status = entity.getComponent(StatusComponent.class);
         DamageParameter damage = status.getParameter(DamageParameter.class);
@@ -37,7 +39,7 @@ public class AttackBehavior extends Behavior {
         for (Entity target : targets) {
             if (isTargetActivated(entity, target)) {
                 MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-                Vector2 targetPosition = targetMovement.getPosition();
+                IntVector2 targetPosition = targetMovement.getPosition();
                 
                 if (position.distance(targetPosition) <= damage.getAttackDistance()) {
                     bumped |= damage.bump(target);

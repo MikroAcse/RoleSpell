@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
@@ -55,9 +55,9 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
             return false;
         }
         
-        Vector2 position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
+        IntVector2 position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
         
-        List<Vector2> passableCells = world.getPassableCells(
+        List<IntVector2> passableCells = world.getPassableCells(
                 position.x,
                 position.y,
                 true,
@@ -65,11 +65,11 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
                 maxRadius,
                 false);
         
-        Vector2 destination = null;
+        IntVector2 destination = null;
         
         // checking passable cells for available paths
         while (!passableCells.isEmpty()) {
-            Vector2 passableCell = ListUtil.getRandom(passableCells);
+            IntVector2 passableCell = ListUtil.getRandom(passableCells);
             passableCells.remove(passableCell);
             
             if (movement.tryRouteTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius)) {
@@ -82,17 +82,17 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
     }
     
     @Override
-    public void originChanged(MovementComponent movement, Vector2 previous, Vector2 current) {
+    public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
     
     }
     
     @Override
-    public void positionChanged(MovementComponent movement, Vector2 previous, Vector2 current) {
+    public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
         action();
     }
     
     @Override
-    public void entityMoved(Entity entity, Vector2 previous, Vector2 current) {
+    public void entityMoved(Entity entity, IntVector2 previous, IntVector2 current) {
         action();
     }
     

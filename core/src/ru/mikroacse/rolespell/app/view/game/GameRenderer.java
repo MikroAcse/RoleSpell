@@ -5,14 +5,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import ru.mikroacse.engine.util.Vector2;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager;
-import ru.mikroacse.rolespell.app.model.game.GameModel;
+import ru.mikroacse.rolespell.app.model.game.entities.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.Npc;
 import ru.mikroacse.rolespell.app.model.game.entities.Player;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
@@ -21,186 +22,183 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMo
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.HealthParameter;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
+import ru.mikroacse.rolespell.app.view.game.items.ItemView;
+import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
+import ru.mikroacse.rolespell.app.view.game.status.StatusView;
+import ru.mikroacse.rolespell.media.AssetBundle;
+import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-import ru.mikroacse.rolespell.app.view.game.ui.HotbarView;
-import ru.mikroacse.rolespell.app.view.game.ui.InventoryView;
-import ru.mikroacse.rolespell.app.view.game.ui.StatusHUD;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
-public class GameRenderer {
-    private GameModel model;
+public class GameRenderer extends Stage {
+    private GameModel gameModel;
     
     private State state;
     
-    private TiledMapRenderer renderer;
+    private AssetBundle bundle;
+    
+    private TiledMapRenderer mapRenderer;
     private OrthographicCamera camera;
-    private SpriteBatch batch;
+    
+    private StatusView statusView;
+    
+    private ItemListView inventoryView;
+    private ItemListView hotbarView;
     
     private Texture waypoint;
     private Texture pathTexture;
     
-    private StatusHUD statusHUD;
-    private HotbarView hotbarView;
-    private InventoryView inventoryView;
+    private ItemView dragItem;
     
-    private AssetBundle bundle;
-    
-    public GameRenderer(GameModel model) {
-        this.model = model;
+    public GameRenderer(GameModel gameModel) {
+        super(new ScreenViewport());
+        
+        this.gameModel = gameModel;
         
         bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
+    
+        mapRenderer = new OrthogonalTiledMapRenderer(gameModel.getWorld().getMap());
         
-        renderer = new OrthogonalTiledMapRenderer(model.getWorld().getMap());
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.update();
-        
+    
         waypoint = bundle.getTexture("path/waypoint");
         pathTexture = bundle.getTexture("path/path");
         
-        batch = new SpriteBatch();
+        Inventory inventory = gameModel.getObservable().getComponent(InventoryComponent.class).getInventory();
+    
+        inventoryView = new ItemListView(6);
+        inventoryView.setItemList(inventory.getItems());
+        addActor(inventoryView);
+    
+        hotbarView = new ItemListView(3);
+        hotbarView.setItemList(inventory.getHotbar());
+        addActor(hotbarView);
         
-        statusHUD = new StatusHUD();
+        statusView = new StatusView();
+        statusView.setStatus(gameModel.getObservable().getComponent(StatusComponent.class));
+        addActor(statusView);
         
-        hotbarView = new HotbarView();
-        inventoryView = new InventoryView();
-        
-        state = State.GAME;
-        
-        // TODO: zooming
+        setState(State.GAME);
     }
     
-    public void render(float delta) {
+    @Override
+    public void draw() {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        if (model.getWorld() == null) {
+    
+        if (gameModel.getWorld() == null) {
             return;
         }
-        
-        World world = model.getWorld();
-        Entity observable = model.getObservable();
+    
+        World world = gameModel.getWorld();
+        Entity observable = gameModel.getObservable();
         MovementComponent observableMovement = observable.getComponent(MovementComponent.class);
-        
+    
         Vector2 observablePosition = cellToMap(observableMovement.getPosition());
         
-        com.badlogic.gdx.math.Vector2 cameraPos = new com.badlogic.gdx.math.Vector2(observablePosition.x,
-                                                                                    observablePosition.y);
+        Vector2 cameraPosition = observablePosition.cpy();
         
-        cameraPos.x = Math.min(cameraPos.x, world.getRealWidth() - camera.viewportWidth / 2f);
-        cameraPos.y = Math.min(cameraPos.y, world.getRealHeight() - camera.viewportHeight / 2f);
-        
-        cameraPos.x = Math.max(cameraPos.x, camera.viewportWidth / 2f);
-        cameraPos.y = Math.max(cameraPos.y, camera.viewportHeight / 2f);
+        cameraPosition.x = Math.max(cameraPosition.x, getWidth() / 2);
+        cameraPosition.y = Math.max(cameraPosition.y, getHeight() / 2);
+    
+        cameraPosition.x = Math.min(cameraPosition.x, world.getRealWidth() - getWidth() / 2);
+        cameraPosition.y = Math.min(cameraPosition.y, world.getRealHeight() - getHeight() / 2);
         
         // TODO: magic number, smoothing camera movement
-        camera.position.x += (cameraPos.x - camera.position.x) / 4f;
-        camera.position.y += (cameraPos.y - camera.position.y) / 4f;
+        camera.position.x += (cameraPosition.x - camera.position.x) / 4f;
+        camera.position.y += (cameraPosition.y - camera.position.y) / 4f;
         
         camera.update();
+    
+        mapRenderer.setView(camera);
+        mapRenderer.render(new int[]{0, 1, 2, 3}); // TODO: magic
         
-        renderer.setView(camera);
-        renderer.render(new int[]{0, 1, 2, 3}); // TODO: magic
-        
-        batch.begin();
-        batch.setProjectionMatrix(camera.combined);
+        getBatch().begin();
+        getBatch().setProjectionMatrix(camera.combined);
         
         for (Entity entity : world.getEntities()) {
             MovementComponent movement = entity.getComponent(MovementComponent.class);
-            
-            Vector2 position = movement.getPosition();
-            position = cellToMap(position);
-            
+        
+            IntVector2 position = movement.getPosition();
+            Vector2 mapPosition = cellToMap(position);
+        
             Texture texture = null;
             
-            if (entity instanceof Npc) {
-                texture = bundle.getTexture("entities/npc");
-            }
-            
-            if (entity instanceof Player) {
-                texture = bundle.getTexture("entities/player");
+            switch (entity.getType()) {
+                case NPC:
+                    texture = bundle.getTexture("entities/npc");
+                    break;
+                case PLAYER:
+                    texture = bundle.getTexture("entities/player");
+                    break;
+                case DROPPED_ITEM:
+                    texture = bundle.getTexture("items/weapons/wooden-sword");
+                    break;
             }
             
             if (texture != null) {
                 // TODO: normal damage animation and handling
                 StatusComponent status = entity.getComponent(StatusComponent.class);
-                HealthParameter health = status.getParameter(HealthParameter.class);
                 
-                if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
-                    batch.setColor(Color.RED);
+                if (status != null) {
+                    HealthParameter health = status.getParameter(HealthParameter.class);
+    
+                    if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
+                        getBatch().setColor(Color.RED);
+                    }
                 }
-                
-                batch.draw(texture, position.x, position.y);
-                batch.setColor(Color.WHITE);
+    
+                getBatch().draw(texture, mapPosition.x, mapPosition.y);
+                getBatch().setColor(Color.WHITE);
             }
         }
-        
+    
         // TODO: beautify
         if (observable.hasComponent(PathMovementComponent.class)) {
-            LinkedList<Vector2> path = ((PathMovementComponent) observableMovement).getPath();
-            
+            List<IntVector2> path = ((PathMovementComponent) observableMovement).getPath();
+        
             if (!path.isEmpty()) {
-                Iterator<Vector2> it = path.iterator();
-                
+                Iterator<IntVector2> it = path.iterator();
+            
                 while (it.hasNext()) {
-                    Vector2 position = it.next();
+                    IntVector2 position = it.next();
                     Vector2 mapPosition = cellToMap(position.x, position.y);
-                    
+                
                     if (it.hasNext()) {
-                        batch.draw(pathTexture, mapPosition.x, mapPosition.y);
+                        getBatch().draw(pathTexture, mapPosition.x, mapPosition.y);
                     } else {
-                        batch.draw(waypoint, mapPosition.x, mapPosition.y);
+                        getBatch().draw(waypoint, mapPosition.x, mapPosition.y);
                     }
                 }
             }
         }
-        
+    
         // TODO: doesn't work when uncommented
         //renderer.render(new int[]{4, 5}); // TODO: magic
         
-        // TODO: magic numbers
+        getBatch().end();
         
-        if (state == State.GAME) {
-            statusHUD.draw(
-                    batch,
-                    observable.getComponent(StatusComponent.class),
-                    camera.position.x - camera.viewportWidth / 2 + 5,
-                    camera.position.y - camera.viewportHeight / 2 + 5);
-        }
-        
-        if (observable.hasComponent(InventoryComponent.class)) {
-            InventoryComponent inventory = observable.getComponent(InventoryComponent.class);
-            
-            if (state == State.GAME) {
-                hotbarView.setInventory(inventory.getInventory());
-                
-                hotbarView.draw(
-                        batch,
-                        camera.position.x + camera.viewportWidth / 2 - hotbarView.getWidth() - 5,
-                        camera.position.y - camera.viewportHeight / 2 + 5);
-            }
-            
-            if (state == State.INVENTORY) {
-                inventoryView.setInventory(inventory.getInventory());
-                
-                inventoryView.draw(
-                        batch,
-                        camera.position.x - camera.viewportWidth / 2 + 5,
-                        camera.position.y - camera.viewportHeight / 2 + 5);
-            }
-        }
-        
-        batch.end();
+        super.draw();
     }
     
-    public Vector2 globalToLocal(int x, int y) {
-        y = (int) camera.viewportHeight - y;
+    public void update() {
+        camera.setToOrtho(false, getWidth(), getHeight());
         
+        inventoryView.setPosition(5f, 5f);
+        
+        hotbarView.setPosition(getWidth() - hotbarView.getRealWidth() - 5f, 5f);
+        
+        statusView.setPosition(5f, 5f);
+    }
+    
+    public Vector2 stageToMap(float x, float y) {
         x += camera.position.x - camera.viewportWidth / 2f;
         y += camera.position.y - camera.viewportHeight / 2f;
         
@@ -209,23 +207,24 @@ public class GameRenderer {
     
     public Vector2 cellToMap(int x, int y) {
         return new Vector2(
-                x * model.getWorld().getTileWidth(),
-                y * model.getWorld().getTileHeight());
+                x * gameModel.getWorld().getTileWidth(),
+                y * gameModel.getWorld().getTileHeight());
     }
     
     // TODO: bad method names
     
-    public Vector2 cellToMap(Vector2 position) {
+    public Vector2 cellToMap(IntVector2 position) {
         return cellToMap(position.x, position.y);
     }
     
-    public Vector2 mapToCell(int x, int y) {
-        return new Vector2(
-                x / model.getWorld().getTileWidth(),
-                y / model.getWorld().getTileHeight());
+    public IntVector2 mapToCell(float x, float y) {
+        return new IntVector2(
+                (int) (x / gameModel.getWorld().getTileWidth()),
+                (int) (y / gameModel.getWorld().getTileHeight())
+        );
     }
     
-    public Vector2 mapToCell(Vector2 position) {
+    public IntVector2 mapToCell(Vector2 position) {
         return mapToCell(position.x, position.y);
     }
     
@@ -233,16 +232,16 @@ public class GameRenderer {
         camera.setToOrtho(false, width, height);
     }
     
-    public StatusHUD getStatusHUD() {
-        return statusHUD;
+    public StatusView getStatusView() {
+        return statusView;
     }
     
-    public HotbarView getHotbarView() {
-        return hotbarView;
-    }
-    
-    public InventoryView getInventoryView() {
+    public ItemListView getInventoryView() {
         return inventoryView;
+    }
+    
+    public ItemListView getHotbarView() {
+        return hotbarView;
     }
     
     public State getState() {
@@ -251,6 +250,35 @@ public class GameRenderer {
     
     public void setState(State state) {
         this.state = state;
+        
+        if(state == State.INVENTORY) {
+            statusView.setVisible(false);
+            inventoryView.setVisible(true);
+        }
+        
+        if(state == State.GAME) {
+            setDragItem(null);
+            
+            statusView.setVisible(true);
+            inventoryView.setVisible(false);
+        }
+    }
+    
+    public ItemView getDragItem() {
+        return dragItem;
+    }
+    
+    public void setDragItem(ItemView dragItem) {
+        if(this.dragItem != null) {
+            this.dragItem.remove();
+            inventoryView.update();
+        }
+        
+        this.dragItem = dragItem;
+        
+        if(dragItem != null) {
+            addActor(dragItem);
+        }
     }
     
     public enum State {

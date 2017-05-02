@@ -1,8 +1,9 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
+import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.CollisionAvoidingAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.AttackBehavior;
+import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.FleeBehavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
@@ -14,12 +15,15 @@ import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.engine.util.LimitedDouble;
 import ru.mikroacse.engine.util.Priority;
 
+import java.util.EnumSet;
+
 /**
  * Created by MikroAcse on 25.03.2017.
  */
 public class Npc extends Entity {
-    private BehaviorAi behaviorAi;
     private CollisionAvoidingAi collisionAvoidingAi;
+    private BehaviorAi<Behavior> movementAi;
+    private AttackAi attackAi;
     
     private PathMovementComponent movement;
     private StatusComponent status;
@@ -39,7 +43,7 @@ public class Npc extends Entity {
                 true) {
             @Override
             public boolean bump(Entity entity) {
-                if (entity instanceof Player) {
+                if (entity.getType() == EntityType.PLAYER) {
                     return super.bump(entity);
                 }
                 return false;
@@ -57,10 +61,12 @@ public class Npc extends Entity {
         collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
         
-        behaviorAi = new BehaviorAi(this, 20);
-        addComponent(behaviorAi);
+        movementAi = new BehaviorAi<>(this, 20);
+        addComponent(movementAi);
+        
+        movementAi.setTargetSelectors(EnumSet.of(BehaviorAi.TargetSelector.CUSTOM));
 
-        /*behaviorAi.addBehavior(
+        /*movementAi.addBehavior(
                 new WanderBehavior(
                         Priority.LOW,
                         WanderBehavior.Guide.POSITION,
@@ -70,7 +76,7 @@ public class Npc extends Entity {
                 )
         );
 
-        behaviorAi.addBehavior(
+        movementAi.addBehavior(
                 new SeekBehavior(
                         Priority.NORMAL,
                         new Interval(2.0),
@@ -78,7 +84,7 @@ public class Npc extends Entity {
                 )
         );*/
         
-        behaviorAi.addBehavior(
+        movementAi.addBehavior(
                 new FleeBehavior(
                         Priority.NORMAL,
                         new Interval(0.2),
@@ -86,12 +92,8 @@ public class Npc extends Entity {
                 )
         );
         
-        behaviorAi.addBehavior(
-                new AttackBehavior(
-                        Priority.NORMAL,
-                        new Interval(new LimitedDouble(3.0, 7.0), true)
-                )
-        );
+        attackAi = new AttackAi(this, new Interval(new LimitedDouble(3.0, 7.0), true));
+        addComponent(attackAi);
     }
     
     public Npc(World world) {
@@ -100,7 +102,7 @@ public class Npc extends Entity {
     
     @Override
     public void dispose() {
-        behaviorAi.dispose();
+        movementAi.dispose();
         collisionAvoidingAi.dispose();
         
         movement.dispose();

@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
@@ -17,7 +17,7 @@ public class SeekBehavior extends Behavior {
     private int randomDistance;
     
     public SeekBehavior(Priority priority, Interval interval, int activationDistance) {
-        super(priority, Type.SOMETIMES, true, Trigger.BOTH);
+        super(priority, false, Trigger.ALL);
         
         setInterval(interval);
         setActivationDistance(activationDistance);
@@ -34,12 +34,13 @@ public class SeekBehavior extends Behavior {
     
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
+        targets.remove(entity);
         if (targets.isEmpty()) {
             return false;
         }
         
         // get centroid of target positions
-        Vector2 destination = new Vector2(0, 0);
+        IntVector2 destination = new IntVector2(0, 0);
         
         int targetCount = 0;
         
@@ -60,7 +61,7 @@ public class SeekBehavior extends Behavior {
         destination.multiply(1 / targetCount);
         
         World world = entity.getWorld();
-        List<Vector2> passableCells = world.getPassableCells(
+        List<IntVector2> passableCells = world.getPassableCells(
                 destination.x,
                 destination.y,
                 true,
@@ -69,7 +70,7 @@ public class SeekBehavior extends Behavior {
                 false
         );
         
-        Vector2 position = entity.getComponent(MovementComponent.class).getPosition();
+        IntVector2 position = entity.getComponent(MovementComponent.class).getPosition();
         
         if (passableCells.isEmpty()) {
             return false;

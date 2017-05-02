@@ -1,6 +1,6 @@
 package ru.mikroacse.engine.media;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +10,12 @@ import java.util.Map;
  */
 public abstract class AssetBundleManager<K, B extends AssetBundle<?>> {
     private float scale;
-    private Vector2 initialSize;
+    private IntVector2 initialSize;
     private Map<K, B> assets;
     
     public AssetBundleManager(int initialWidth, int initialHeight) {
         assets = new HashMap<>();
-        initialSize = new Vector2(initialWidth, initialHeight);
+        initialSize = new IntVector2(initialWidth, initialHeight);
         scale = 1.0f;
     }
     

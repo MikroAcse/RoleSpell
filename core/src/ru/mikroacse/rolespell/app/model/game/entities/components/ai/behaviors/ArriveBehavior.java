@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
-import ru.mikroacse.engine.util.Vector2;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
@@ -9,6 +9,7 @@ import ru.mikroacse.engine.util.ListUtil;
 import ru.mikroacse.engine.util.Priority;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -16,19 +17,20 @@ import java.util.List;
  */
 public class ArriveBehavior extends Behavior {
     public ArriveBehavior(Priority priority, Interval interval) {
-        super(priority, Type.SOMETIMES, true, Trigger.BOTH);
+        super(priority, false, Trigger.ALL);
         
         setInterval(interval);
     }
     
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
+        targets.remove(entity);
         if (targets.isEmpty()) {
             return false;
         }
         
         // get centroid of target positions
-        Vector2 destination = new Vector2(0, 0);
+        IntVector2 destination = new IntVector2(0, 0);
         
         int targetCount = 0;
         
@@ -49,13 +51,13 @@ public class ArriveBehavior extends Behavior {
         destination.multiply(1 / targetCount);
         
         // TODO: better solution
-        List<Vector2> translate = new ArrayList<>();
-        translate.add(new Vector2(-1, -1));
-        translate.add(new Vector2(-1, 0));
-        translate.add(new Vector2(0, -1));
-        translate.add(new Vector2(1, 0));
-        translate.add(new Vector2(0, 1));
-        translate.add(new Vector2(1, 1));
+        List<IntVector2> translate = new ArrayList<>();
+        translate.add(new IntVector2(-1, -1));
+        translate.add(new IntVector2(-1, 0));
+        translate.add(new IntVector2(0, -1));
+        translate.add(new IntVector2(1, 0));
+        translate.add(new IntVector2(0, 1));
+        translate.add(new IntVector2(1, 1));
         
         destination.translate(ListUtil.getRandom(translate));
         

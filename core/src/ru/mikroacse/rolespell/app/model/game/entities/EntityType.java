@@ -10,20 +10,17 @@ public enum EntityType {
     NPC,
     BAT,
     SLIME,
-    PLAYER;
+    PLAYER,
+    DROPPED_ITEM;
     
     public static Entity create(World world, EntityType type) {
-        Entity entity = null;
-        
         switch (type) {
             case NPC:
-                entity = new Npc(world);
-                break;
+                return new Npc(world);
             case PLAYER:
-                entity = new Player(world);
-                break;
+                return new Player(world);
         }
         
-        return entity;
+        return null;
     }
 }

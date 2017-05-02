@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.controller.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +8,12 @@ import java.util.Map;
 /**
  * Created by MikroAcse on 24.03.2017.
  */
-public class GameInputAdapter extends InputAdapter {
+public class InputAdapter extends com.badlogic.gdx.InputAdapter {
     public static final int CLICK_TIMEOUT = 250;
     
     private Map<Integer, Button> buttons;
     
-    public GameInputAdapter() {
+    public InputAdapter() {
         buttons = new HashMap<>();
     }
     
@@ -91,19 +90,19 @@ public class GameInputAdapter extends InputAdapter {
     }
     
     public int getMouseY() {
-        return Gdx.input.getY();
+        return Gdx.graphics.getHeight() - Gdx.input.getY();
     }
     
-    class Button {
-        int code;
-        
-        int taps = 0;
-        long lastTimePressed = 0;
-        long lastTimeReleased = 0;
-        
-        boolean justPressed = false;
-        boolean justReleased = false;
-        boolean isDown = false;
+    public class Button {
+        public int code;
+    
+        public int taps = 0;
+        public long lastTimePressed = 0;
+        public long lastTimeReleased = 0;
+    
+        public boolean justPressed = false;
+        public boolean justReleased = false;
+        public boolean isDown = false;
         
         public Button(int code) {
             this.code = code;

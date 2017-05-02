@@ -2,7 +2,7 @@
 	"files": {
 		"textures": [
 			"entities/*",
-			"items/inventory-cell.png",
+			"inventory/inventory-cell.png",
 			"items/weapons/*",
 			"path/path.png",
 			"path/waypoint.png",

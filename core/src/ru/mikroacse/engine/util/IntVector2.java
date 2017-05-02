@@ -3,21 +3,21 @@ package ru.mikroacse.engine.util;
 /**
  * Created by MikroAcse on 28.03.2017.
  */
-public class Vector2 {
+public class IntVector2 {
     public int x;
     public int y;
     
-    public Vector2(int x, int y) {
+    public IntVector2(int x, int y) {
         this.x = x;
         this.y = y;
     }
     
-    public Vector2() {
+    public IntVector2() {
         this(0, 0);
     }
     
-    public static Vector2 at(int x, int y) {
-        return new Vector2(x, y);
+    public static IntVector2 at(int x, int y) {
+        return new IntVector2(x, y);
     }
     
     public static double distance(int x1, int y1, int x2, int y2) {
@@ -27,7 +27,7 @@ public class Vector2 {
         return Math.sqrt(x1 * x1 + y1 * y1);
     }
     
-    public static double distance(Vector2 vector2A, Vector2 vector2B) {
+    public static double distance(IntVector2 vector2A, IntVector2 vector2B) {
         return distance(vector2A.x, vector2A.y, vector2B.x, vector2B.y);
     }
     
@@ -36,11 +36,11 @@ public class Vector2 {
         this.y = y;
     }
     
-    public void set(Vector2 vector2) {
+    public void set(IntVector2 vector2) {
         set(vector2.x, vector2.y);
     }
     
-    public void translate(Vector2 vector2) {
+    public void translate(IntVector2 vector2) {
         translate(vector2.x, vector2.y);
     }
     
@@ -53,7 +53,7 @@ public class Vector2 {
         y += dy;
     }
     
-    public void multiply(Vector2 vector2) {
+    public void multiply(IntVector2 vector2) {
         multiply(vector2.x, vector2.y);
     }
     
@@ -66,7 +66,7 @@ public class Vector2 {
         y *= dy;
     }
     
-    public double distance(Vector2 vector2) {
+    public double distance(IntVector2 vector2) {
         return distance(this, vector2);
     }
     
@@ -74,7 +74,7 @@ public class Vector2 {
         return distance(this.x, this.y, x, y);
     }
     
-    public void limit(int minX, int maxX, int minY, int maxY) {
+    public void limit(int minX, int minY, int maxX, int maxY) {
         x = Math.max(x, minX);
         y = Math.max(y, minY);
         
@@ -82,7 +82,7 @@ public class Vector2 {
         y = Math.min(y, maxY);
     }
     
-    public void shorten(Vector2 origin, int distance) {
+    public void shorten(IntVector2 origin, int distance) {
         if (this.distance(origin) <= distance) {
             return;
         }
@@ -101,12 +101,12 @@ public class Vector2 {
         return this.x == x && this.y == y;
     }
     
-    public boolean equals(Vector2 vector2) {
+    public boolean equals(IntVector2 vector2) {
         return equals(vector2.x, vector2.y);
     }
     
-    public Vector2 copy() {
-        return new Vector2(x, y);
+    public IntVector2 copy() {
+        return new IntVector2(x, y);
     }
     
     @Override
