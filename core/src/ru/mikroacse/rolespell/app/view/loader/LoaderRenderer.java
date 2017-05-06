@@ -20,16 +20,16 @@ import ru.mikroacse.rolespell.util.AnimationUtil;
  */
 public class LoaderRenderer extends Stage {
     private AnimationActor animation;
-    
+
     private Listener listeners;
-    
+
     private boolean busy;
-    
+
     public LoaderRenderer() {
         super(new ScreenViewport());
-        
+
         listeners = ListenerSupportFactory.create(Listener.class);
-        
+
         animation = new AnimationActor(
                 AnimationUtil.create(
                         AssetManager.Bundle.LOADER,
@@ -37,86 +37,86 @@ public class LoaderRenderer extends Stage {
                         false
                 )
         );
-        
+
         // 20 frames per second TODO: magic number
         animation.setFrameDuration(1 / 20f);
         animation.setRepeatable(true);
-        
+
         addActor(animation);
-    
+
         busy = false;
     }
-    
+
     public void addListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).addListener(listener);
     }
-    
+
     public void removeListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).removeListener(listener);
     }
-    
+
     public void clearListeners() {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
-    
+
     @Override
     public void draw() {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         super.draw();
     }
-    
+
     public void update() {
         animation.setScale(Math.round(getAnimationScale()));
-        
+
         animation.setX((int) (getWidth() - animation.getRealWidth()) / 2);
         animation.setY((int) (getHeight() - animation.getRealHeight()) / 2);
     }
-    
+
     public void show() {
         RoleSpell.getTweenManager().killTarget(animation);
-        
+
         Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
-             .ease(Expo.OUT)
-             .target(1f)
-             .setCallback((type, source) -> {
-                 if (type == TweenCallback.COMPLETE) {
-                     busy = false;
-                 }
-             })
-             .start(RoleSpell.getTweenManager());
-        
+                .ease(Expo.OUT)
+                .target(1f)
+                .setCallback((type, source) -> {
+                    if (type == TweenCallback.COMPLETE) {
+                        busy = false;
+                    }
+                })
+                .start(RoleSpell.getTweenManager());
+
         animation.getColor().a = 1;
-        
+
         busy = true;
     }
-    
+
     public void hide() {
         RoleSpell.getTweenManager().killTarget(animation);
-        
+
         Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
-             .ease(Expo.IN)
-             .target(0f)
-             .setCallback((type, source) -> {
-                 if (type == TweenCallback.COMPLETE) {
-                     busy = false;
-                     listeners.onHidden();
-                 }
-             })
-             .start(RoleSpell.getTweenManager());
-        
+                .ease(Expo.IN)
+                .target(0f)
+                .setCallback((type, source) -> {
+                    if (type == TweenCallback.COMPLETE) {
+                        busy = false;
+                        listeners.onHidden();
+                    }
+                })
+                .start(RoleSpell.getTweenManager());
+
         busy = true;
     }
-    
+
     private float getAnimationScale() {
         return 5f * RoleSpell.getAssetManager().getScale();
     }
-    
+
     public boolean isBusy() {
         return busy;
     }
-    
+
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         void onHidden();
     }

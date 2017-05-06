@@ -16,32 +16,32 @@ public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderP
     private ShaderProgram shader;
     private String vertProgram;
     private String fragProgram;
-    
+
     public ShaderLoader(FileHandleResolver resolver) {
         super(resolver);
     }
-    
+
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, ShaderParameter parameter) {
         String vertPath = fileName.concat(".vert");
         String fragPath = fileName.concat(".frag");
-        
+
         FileHandle vertFile = Gdx.files.internal(vertPath);
         FileHandle fragFile = Gdx.files.internal(fragPath);
-        
+
         if (vertFile.exists() && fragFile.exists()) {
             vertProgram = vertFile.readString();
             fragProgram = fragFile.readString();
         }
     }
-    
+
     @Override
     public ShaderProgram loadSync(AssetManager manager, String fileName, FileHandle file, ShaderParameter parameter) {
         ShaderProgram.pedantic = false;
         shader = new ShaderProgram(vertProgram, fragProgram);
         return shader;
     }
-    
+
     @Override
     public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, ShaderParameter parameter) {
         return null;

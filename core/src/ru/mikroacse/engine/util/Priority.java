@@ -11,17 +11,17 @@ public enum Priority {
     HIGH(1),
     HIGHEST(2),
     IMMEDIATELY(Integer.MAX_VALUE);
-    
+
     private int value;
-    
+
     Priority(int value) {
         this.value = value;
     }
-    
+
     public int getValue() {
         return value;
     }
-    
+
     public int compare(Priority priority) {
         return getValue() - priority.getValue();
     }

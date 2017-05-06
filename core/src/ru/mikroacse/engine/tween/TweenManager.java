@@ -15,14 +15,14 @@ public class TweenManager extends aurelienribon.tweenengine.TweenManager {
             killTarget(target);
             return;
         }
-        
+
         finishObjects(target, getObjects());
     }
-    
+
     private void finishObjects(Object target, List<BaseTween<?>> objects) {
         for (int i = 0, n = objects.size(); i < n; i++) {
             BaseTween<?> baseTween = objects.get(i);
-            
+
             if (baseTween instanceof Tween) {
                 Tween tween = (Tween) objects.get(i);
                 if (tween != null && tween.getTarget().equals(target)) {

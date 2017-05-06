@@ -33,5 +33,5 @@ public class GrayscaleShader {
             "}";
 
     public static ShaderProgram instance = new ShaderProgram(vertexShader,
-                                                             fragmentShader);
+            fragmentShader);
 }

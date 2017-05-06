@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core;
 
-import ru.mikroacse.engine.listeners.Listener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
@@ -12,43 +11,39 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.status.paramete
 public abstract class Parameter {
     private StatusComponent status;
     private ParameterType type;
-    
+
     private Listener listeners;
-    
+
     public Parameter(StatusComponent status, ParameterType type) {
         this.status = status;
         this.type = type;
-        
+
         listeners = ListenerSupportFactory.create(Listener.class);
     }
-    
+
     public boolean update(float delta) {
         listeners.updated(this);
-        
+
         return true;
     }
-    
+
     public void addListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).addListener(listener);
     }
-    
+
     public void removeListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).removeListener(listener);
     }
-    
+
     public void clearListeners() {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
-    
+
     public ParameterType getType() {
         return type;
     }
-    
-    public StatusComponent getStatus() {
-        return status;
-    }
-    
+
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        public void updated(Parameter parameter);
+        void updated(Parameter parameter);
     }
 }

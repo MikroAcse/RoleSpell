@@ -10,19 +10,19 @@ import ru.mikroacse.rolespell.media.AssetManager;
  */
 public class ItemView extends Image {
     private Item item;
-    
+
     public ItemView(Item item) {
         super(RoleSpell.getAssetManager()
-                       .getBundle(AssetManager.Bundle.GAME)
-                       .getTexture("items/weapons/wooden-sword"));
-        
+                .getBundle(AssetManager.Bundle.GAME)
+                .getTexture("items/weapons/wooden-sword"));
+
         this.item = item;
     }
-    
+
     public Item getItem() {
         return item;
     }
-    
+
     public void setItem(Item item) {
         this.item = item;
     }

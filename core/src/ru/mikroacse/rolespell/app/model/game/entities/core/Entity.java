@@ -14,20 +14,20 @@ import java.util.Observable;
 public abstract class Entity extends Observable {
     private World world;
     private EntityType type;
-    
+
     private List<Component> components;
-    
+
     public Entity(EntityType type, World world) {
         this.type = type;
         this.world = world;
-        
+
         components = new ArrayList<>();
     }
-    
+
     public Entity() {
         this(null, null);
     }
-    
+
     /**
      * Updates all entity components.
      */
@@ -36,33 +36,21 @@ public abstract class Entity extends Observable {
             component.update(delta);
         }
     }
-    
+
     public abstract void dispose();
-    
+
     public EntityType getType() {
         return type;
     }
-    
-    public void setType(EntityType type) {
-        this.type = type;
-    }
-    
+
     public World getWorld() {
         return world;
     }
-    
-    public void setWorld(World world) {
-        this.world = world;
-    }
-    
+
     public boolean addComponent(Component component) {
         return components.add(component);
     }
-    
-    public boolean removeComponent(Component component) {
-        return components.remove(component);
-    }
-    
+
     /**
      * @return True if entity has at least one component of given class.
      */
@@ -74,7 +62,7 @@ public abstract class Entity extends Observable {
         }
         return false;
     }
-    
+
     /**
      * @return First matching entity component of given class.
      */
@@ -84,26 +72,22 @@ public abstract class Entity extends Observable {
                 return (T) component;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * @return All entity components of given class.
      */
     public <T extends Component> List<T> getComponents(Class<T> componentClass) {
         List<T> result = new ArrayList<T>();
-        
+
         for (Component component : components) {
             if (componentClass.isInstance(component)) {
                 result.add((T) component);
             }
         }
-        
+
         return result;
-    }
-    
-    public List<Component> getComponents() {
-        return components;
     }
 }

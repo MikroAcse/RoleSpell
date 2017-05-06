@@ -19,37 +19,37 @@ public class PickupBehavior extends Behavior {
     public PickupBehavior() {
         super(Priority.IMMEDIATELY, true, EnumSet.of(Trigger.MOVEMENT));
     }
-    
+
     @Override
     public boolean process(Entity entity, List<Entity> targets) {
-        if(targets.isEmpty()) {
+        if (targets.isEmpty()) {
             return false;
         }
-    
-        if(!entity.hasComponent(InventoryComponent.class)) {
+
+        if (!entity.hasComponent(InventoryComponent.class)) {
             return false;
         }
-    
+
         World world = entity.getWorld();
         Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();
-    
+
         boolean pickedUp = false;
-        
+
         for (Entity target : targets) {
-            if(target.getType() != EntityType.DROPPED_ITEM) {
+            if (target.getType() != EntityType.DROPPED_ITEM) {
                 continue;
             }
-    
+
             DroppedItem droppedItem = (DroppedItem) target;
             Item item = droppedItem.getItem();
-    
+
             world.removeEntity(droppedItem);
-            
+
             inventory.getItems().addItem(item);
-    
+
             pickedUp = true;
         }
-        
+
         return pickedUp;
     }
 }

@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 public class FileUtil {
     public static void getHandles(FileHandle begin, Array<FileHandle> handles) {
         FileHandle[] newHandles = begin.list();
-        
+
         for (FileHandle f : newHandles) {
             if (f.isDirectory()) {
                 getHandles(f, handles);

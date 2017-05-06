@@ -1,65 +1,44 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters;
 
+import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.Parameter;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.NumericParameter;
 import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
-import ru.mikroacse.engine.util.LimitedDouble;
 
 /**
  * Created by MikroAcse on 13-Apr-17.
  */
-public class DamageParameter extends Parameter {
-    private LimitedDouble damage;
-    private int attackDistance;
-    
+public class DamageParameter extends NumericParameter {
+    private double attackDistance;
+
     private boolean randomized;
-    
-    public DamageParameter(StatusComponent status, LimitedDouble damage, int attackDistance, boolean randomized) {
-        super(status, ParameterType.DAMAGE);
-        this.damage = damage;
+
+    public DamageParameter(StatusComponent status, Interval interval, double attackDistance, boolean randomized) {
+        super(status, ParameterType.DAMAGE, interval);
+
         this.attackDistance = attackDistance;
         this.randomized = randomized;
     }
-    
-    public DamageParameter(StatusComponent status) {
-        this(status, new LimitedDouble(0), 0, false);
-    }
-    
+
     public boolean bump(Entity entity) {
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthParameter health = status.getParameter(HealthParameter.class);
-        
-        health.damage(damage.getValue());
-        
+
+        health.damage(getInterval().getValue());
+
         if (randomized) {
-            damage.randomize();
+            randomize();
         }
-        
+
         return true;
     }
-    
+
     @Override
     public boolean update(float delta) {
         return false;
     }
-    
-    public LimitedDouble getDamage() {
-        return damage;
-    }
-    
-    public int getAttackDistance() {
+
+    public double getAttackDistance() {
         return attackDistance;
-    }
-    
-    public void setAttackDistance(int attackDistance) {
-        this.attackDistance = attackDistance;
-    }
-    
-    public boolean isRandomized() {
-        return randomized;
-    }
-    
-    public void setRandomized(boolean randomized) {
-        this.randomized = randomized;
     }
 }

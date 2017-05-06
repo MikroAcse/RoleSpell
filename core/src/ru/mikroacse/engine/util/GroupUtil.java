@@ -20,11 +20,11 @@ public class GroupUtil {
             Actor child = children.get(i);
             float childMinX = child.getX();
             float childMaxX;
-            
+
             if (!child.isVisible()) {
                 continue;
             }
-            
+
             if (child instanceof RealActor) {
                 childMaxX = childMinX + ((RealActor) child).getRealWidth();
             } else if (child instanceof Group) {
@@ -32,7 +32,7 @@ public class GroupUtil {
             } else {
                 childMaxX = childMinX + child.getWidth() * child.getScaleX();
             }
-            
+
             if (childMinX < minX) {
                 minX = childMinX;
             }
@@ -40,10 +40,10 @@ public class GroupUtil {
                 maxX = childMaxX;
             }
         }
-        
+
         return (Math.abs(minX) + Math.abs(maxX)) * group.getScaleX();
     }
-    
+
     /**
      * Returns actual height of group. Calculates only heights of actors (.getHeight() * .getScaleY()).
      */
@@ -55,11 +55,11 @@ public class GroupUtil {
             Actor child = children.get(i);
             float childMinY = child.getY();
             float childMaxY;
-            
+
             if (!child.isVisible()) {
                 continue;
             }
-            
+
             if (child instanceof RealActor) {
                 childMaxY = childMinY + ((RealActor) child).getRealHeight();
             } else if (child instanceof Group) {
@@ -67,7 +67,7 @@ public class GroupUtil {
             } else {
                 childMaxY = childMinY + child.getHeight() * child.getScaleY();
             }
-            
+
             if (childMinY < minY) {
                 minY = childMinY;
             }
@@ -75,7 +75,7 @@ public class GroupUtil {
                 maxY = childMaxY;
             }
         }
-        
+
         return (Math.abs(minY) + Math.abs(maxY)) * group.getScaleY();
     }
 }

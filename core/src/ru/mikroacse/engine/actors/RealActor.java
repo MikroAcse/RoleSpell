@@ -9,9 +9,9 @@ public interface RealActor {
      * @return Real (visible) group width, considering its children.
      */
     float getRealWidth();
-    
+
     /**
      * @return Real (visible) group height, considering its children.
      */
-   float getRealHeight();
+    float getRealHeight();
 }

@@ -7,13 +7,13 @@ import ru.mikroacse.rolespell.app.controller.game.GameController;
  */
 public abstract class StateProcessor {
     private GameController controller;
-    
+
     public StateProcessor(GameController controller) {
         this.controller = controller;
     }
-    
+
     public abstract void process();
-    
+
     public GameController getController() {
         return controller;
     }

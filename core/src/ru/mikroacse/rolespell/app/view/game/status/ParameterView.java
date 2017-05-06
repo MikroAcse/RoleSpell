@@ -3,6 +3,7 @@ package ru.mikroacse.rolespell.app.view.game.status;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import ru.mikroacse.rolespell.RoleSpell;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.ParameterType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.NumericParameter;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.Parameter;
 import ru.mikroacse.rolespell.media.AssetManager;
@@ -12,22 +13,31 @@ import ru.mikroacse.rolespell.media.AssetManager;
  */
 public class ParameterView extends Image {
     private NumericParameter parameter;
-    
+
     public ParameterView(NumericParameter parameter) {
         super(RoleSpell.getAssetManager()
-                       .getBundle(AssetManager.Bundle.GAME)
-                       .getTexture("hud/statusbar"));
-        
+                .getBundle(AssetManager.Bundle.GAME)
+                .getTexture("hud/statusbar"));
+
         setParameter(parameter);
     }
-    
+
+    // TODO: better solution
+    public static boolean canBeRendered(Parameter parameter) {
+        if (!(parameter instanceof NumericParameter)) {
+            return false;
+        }
+
+        return parameter.getType() != ParameterType.DAMAGE;
+    }
+
     public NumericParameter getParameter() {
         return parameter;
     }
-    
+
     public void setParameter(NumericParameter parameter) {
         this.parameter = parameter;
-    
+
         switch (parameter.getType()) {
             case HEALTH:
                 setColor(Color.SCARLET);

@@ -14,26 +14,29 @@ public class GameStateProcessor extends StateProcessor {
     public GameStateProcessor(GameController controller) {
         super(controller);
     }
-    
+
     @Override
     public void process() {
         InputAdapter input = getController().getInput();
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
-        
+
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
-    
+
         InputAdapter.Button mouseLeft = input.getButton(Input.Buttons.LEFT);
         InputAdapter.Button mouseRight = input.getButton(Input.Buttons.RIGHT);
-    
-        IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
-    
+
+
         if (mouseLeft.justPressed) {
+            IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
+
             model.tryRouteTo(cell.x, cell.y);
         }
-    
+
         if (mouseRight.justPressed) {
+            IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
+
             model.tryAttack(cell.x, cell.y);
         }
     }

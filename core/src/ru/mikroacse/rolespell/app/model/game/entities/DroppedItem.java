@@ -10,28 +10,24 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
  */
 public class DroppedItem<T extends Item> extends Entity {
     private MovementComponent movement;
-    
+
     private T item;
-    
+
     public DroppedItem(T item, World world) {
         super(EntityType.DROPPED_ITEM, world);
-        
+
         this.item = item;
-        
+
         movement = new MovementComponent(this, 0, 0, 0);
         addComponent(movement);
     }
-    
+
     @Override
     public void dispose() {
-    
+
     }
-    
+
     public T getItem() {
         return item;
-    }
-    
-    public void setItem(T item) {
-        this.item = item;
     }
 }

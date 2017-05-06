@@ -1,48 +1,67 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core;
 
-import ru.mikroacse.engine.listeners.Listener;
+import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.ParameterType;
-import ru.mikroacse.engine.util.LimitedDouble;
 
 /**
  * Created by MikroAcse on 09-Apr-17.
  */
 public abstract class NumericParameter extends Parameter {
-    protected LimitedDouble value;
-    protected double speed;
-    
-    public NumericParameter(StatusComponent status, ParameterType type) {
+    private Interval interval;
+    private double speed;
+
+    public NumericParameter(StatusComponent status, ParameterType type, Interval interval, double speed) {
         super(status, type);
-        
-        value = new LimitedDouble();
-        value.setMin(0);
+
+        this.interval = interval;
+        this.speed = speed;
     }
-    
+
+    public NumericParameter(StatusComponent status, ParameterType type, Interval interval) {
+        this(status, type, interval, 0.0);
+    }
+
     @Override
     public boolean update(float delta) {
-        value.setValue(value.getValue() + speed * delta);
-        
+        interval.setValue(interval.getValue() + speed * delta);
+
         return super.update(delta);
     }
-    
-    public LimitedDouble getValue() {
-        return value;
+
+    public void randomize() {
+        interval.randomize();
     }
-    
+
+    public Interval getInterval() {
+        return interval;
+    }
+
+    public void setInterval(Interval interval) {
+        this.interval = interval;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getValue() {
+        return interval.getValue();
+    }
+
     public void setValue(double value) {
-        this.value.setValue(value);
+        this.interval.setValue(value);
     }
-    
-    public double getCurrentValue() {
-        return value.getValue();
-    }
-    
+
     public double getPercentage() {
-        return value.getPercentage();
+        return interval.getPercentage();
     }
-    
+
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-    
+
     }
 }

@@ -13,39 +13,39 @@ import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 public class GameController {
     private GameRenderer renderer;
     private GameModel model;
-    
+
     private GameStateProcessor gameState;
     private InventoryStateProcessor inventoryState;
-    
+
     private InputAdapter input;
-    
+
     public GameController(GameRenderer renderer, GameModel model) {
         this.renderer = renderer;
         this.model = model;
-        
+
         input = new InputAdapter();
         Gdx.input.setInputProcessor(input);
-    
+
+        // TODO: don't depend on concrete implementations of StateProcessor
         gameState = new GameStateProcessor(this);
         inventoryState = new InventoryStateProcessor(this);
     }
-    
+
     public void update(float delta) {
         GameRenderer.State state = renderer.getState();
-        
+
         InputAdapter.Button inventoryButton = input.getButton(Input.Keys.I);
-    
+
         if (inventoryButton.justPressed) {
             if (state == GameRenderer.State.GAME) {
                 state = GameRenderer.State.INVENTORY;
-            }
-            else if (state == GameRenderer.State.INVENTORY){
+            } else if (state == GameRenderer.State.INVENTORY) {
                 state = GameRenderer.State.GAME;
             }
-    
+
             renderer.setState(state);
         }
-        
+
         switch (state) {
             case GAME:
                 gameState.process();
@@ -56,20 +56,20 @@ public class GameController {
             case QUESTS:
                 break;
         }
-        
-        
+
+
         model.update(delta);
         input.update();
     }
-    
+
     public GameRenderer getRenderer() {
         return renderer;
     }
-    
+
     public GameModel getModel() {
         return model;
     }
-    
+
     public InputAdapter getInput() {
         return input;
     }

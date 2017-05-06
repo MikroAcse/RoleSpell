@@ -5,8 +5,8 @@ package ru.mikroacse.engine.listeners;
  */
 public interface ListenerSupport<T extends Listener> {
     void addListener(T listener);
-    
+
     void removeListener(T listener);
-    
+
     void clearListeners();
 }

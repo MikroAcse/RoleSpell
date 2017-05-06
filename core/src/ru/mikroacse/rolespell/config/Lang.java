@@ -10,7 +10,7 @@ import ru.mikroacse.rolespell.media.AssetManager;
 public class Lang extends Language {
     public Lang() {
         Gdx.app.log("LOADING", "loading languages");
-        
+
         load(AssetManager.ASSETS_DIRECTORY + "languages/lang");
     }
 }

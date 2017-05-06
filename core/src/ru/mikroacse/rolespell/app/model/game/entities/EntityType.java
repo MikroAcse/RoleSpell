@@ -8,11 +8,9 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
  */
 public enum EntityType {
     NPC,
-    BAT,
-    SLIME,
     PLAYER,
     DROPPED_ITEM;
-    
+
     public static Entity create(World world, EntityType type) {
         switch (type) {
             case NPC:
@@ -20,7 +18,7 @@ public enum EntityType {
             case PLAYER:
                 return new Player(world);
         }
-        
+
         return null;
     }
 }

@@ -8,10 +8,10 @@ import ru.mikroacse.rolespell.app.view.loader.LoaderRenderer;
  */
 public class LoaderController {
     private LoaderRenderer renderer;
-    
+
     public LoaderController(LoaderRenderer renderer) {
         this.renderer = renderer;
-        
+
         renderer.addListener(new LoaderRenderer.Listener() {
             @Override
             public void onHidden() {
@@ -19,14 +19,14 @@ public class LoaderController {
             }
         });
     }
-    
+
     public void update(float delta) {
         renderer.act(delta);
-        
+
         if (renderer.isBusy()) {
             return;
         }
-        
+
         if (RoleSpell.getAssetManager().isLoaded()) {
             renderer.hide();
         }

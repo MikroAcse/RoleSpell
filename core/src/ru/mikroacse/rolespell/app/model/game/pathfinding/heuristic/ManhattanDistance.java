@@ -9,19 +9,19 @@ public class ManhattanDistance extends PathFinderHeuristic {
     public ManhattanDistance(double d) {
         super(d);
     }
-    
+
     public ManhattanDistance() {
-    
+
     }
-    
+
     @Override
     public double get(GraphNode node, GraphNode goal, double d) {
         int dx = Math.abs(node.getCellX() - goal.getCellX());
         int dy = Math.abs(node.getCellY() - goal.getCellY());
-        
+
         return d * Math.max(dx, dy);
     }
-    
+
     @Override
     public double get(GraphNode node, GraphNode goal) {
         return get(node, goal, getD());

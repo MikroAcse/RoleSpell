@@ -20,10 +20,10 @@ public class ActorAccessor implements TweenAccessor<Actor> {
     public static final int SIZE = 10;
     public static final int SCALE = 11;
     public static final int VISIBILITY = 12;
-    
+
     @Override
     public int getValues(Actor target, int tweenType, float[] returnValues) {
-        
+
         switch (tweenType) {
             case X:
                 returnValues[0] = target.getX();
@@ -74,7 +74,7 @@ public class ActorAccessor implements TweenAccessor<Actor> {
         }
         return 0;
     }
-    
+
     @Override
     public void setValues(Actor target, int tweenType, float[] newValues) {
         switch (tweenType) {

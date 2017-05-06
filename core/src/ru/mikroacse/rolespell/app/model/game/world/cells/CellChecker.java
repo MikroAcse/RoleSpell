@@ -8,8 +8,4 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
  */
 public abstract class CellChecker {
     public abstract boolean check(World world, int x, int y);
-    
-    public boolean check(World world, IntVector2 position) {
-        return check(world, position.x, position.y);
-    }
 }

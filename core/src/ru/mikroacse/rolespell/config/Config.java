@@ -10,7 +10,7 @@ import ru.mikroacse.rolespell.media.AssetManager;
 public class Config extends Configuration {
     public Config() {
         Gdx.app.log("LOADING", "loading config");
-        
+
         load(AssetManager.ASSETS_DIRECTORY + "config.json");
     }
 }

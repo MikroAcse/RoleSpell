@@ -14,21 +14,21 @@ public class AnimationUtil {
     public static Animation<TextureRegion> create(AssetManager.Bundle bundle, String name, boolean smoothing) {
         return create(RoleSpell.getAssetManager().getBundle(bundle).getAtlas(name), smoothing);
     }
-    
+
     public static Animation<TextureRegion> create(AssetManager.Bundle bundle, String name) {
         return create(bundle, name, true);
     }
-    
+
     public static Animation<TextureRegion> create(TextureAtlas atlas, boolean smoothing) {
         if (smoothing) {
             for (TextureRegion region : atlas.getRegions()) {
                 region.getTexture()
-                      .setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+                        .setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
             }
         }
         return new Animation<>(1 / 30f, atlas.getRegions());
     }
-    
+
     public static Animation<TextureRegion> create(TextureAtlas atlas) {
         return create(atlas, true);
     }

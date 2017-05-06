@@ -10,7 +10,7 @@ import ru.mikroacse.rolespell.media.AssetManager;
 public class InventoryCell extends Image {
     public InventoryCell() {
         super(RoleSpell.getAssetManager()
-                       .getBundle(AssetManager.Bundle.GAME)
-                       .getTexture("inventory/inventory-cell"));
+                .getBundle(AssetManager.Bundle.GAME)
+                .getTexture("inventory/inventory-cell"));
     }
 }

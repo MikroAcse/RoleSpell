@@ -10,7 +10,7 @@ import static com.badlogic.gdx.Gdx.files;
  * Created by MikroAcse on 08.07.2016.
  */
 public class JSONLoader {
-    
+
     /**
      * Loads json file and returns parsed JsonValue.
      */

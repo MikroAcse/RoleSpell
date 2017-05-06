@@ -12,48 +12,48 @@ import ru.mikroacse.rolespell.app.view.loader.LoaderRenderer;
 public class LoaderScreen implements Screen {
     private LoaderRenderer renderer;
     private LoaderController controller;
-    
+
     public LoaderScreen(Game game) {
         renderer = new LoaderRenderer();
         controller = new LoaderController(renderer);
     }
-    
+
     @Override
     public void show() {
-    
+
     }
-    
+
     @Override
     public void render(float delta) {
         controller.update(delta);
         renderer.draw();
     }
-    
+
     @Override
     public void resize(int width, int height) {
         RoleSpell.getAssetManager().updateScale(width, height);
-        
+
         renderer.getViewport().update(width, height, true);
         renderer.update();
     }
-    
+
     @Override
     public void pause() {
-    
+
     }
-    
+
     @Override
     public void resume() {
-    
+
     }
-    
+
     @Override
     public void hide() {
-    
+
     }
-    
+
     @Override
     public void dispose() {
-    
+
     }
 }

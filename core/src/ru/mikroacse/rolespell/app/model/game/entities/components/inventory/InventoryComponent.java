@@ -9,18 +9,14 @@ import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
  */
 public class InventoryComponent extends Component {
     private Inventory inventory;
-    
+
     public InventoryComponent(Entity entity, Inventory inventory) {
         super(entity);
-        
+
         this.inventory = inventory;
     }
-    
+
     public Inventory getInventory() {
         return inventory;
-    }
-    
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
     }
 }

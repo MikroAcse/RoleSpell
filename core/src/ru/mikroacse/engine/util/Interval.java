@@ -1,134 +1,122 @@
 package ru.mikroacse.engine.util;
 
-import ru.mikroacse.engine.listeners.ListenerSupport;
-import ru.mikroacse.engine.listeners.ListenerSupportFactory;
-
 /**
- * Created by MikroAcse on 14-Apr-17.
+ * Created by MikroAcse on 29.03.2017.
  */
 public class Interval {
-    private LimitedDouble interval;
-    
-    private float speed;
-    private double time;
-    
-    private boolean randomized;
-    private boolean enabled;
-    
-    private Listener listeners;
-    
-    public Interval(LimitedDouble interval, boolean randomized, float speed) {
-        this.interval = interval;
-        this.speed = speed;
-        
-        listeners = ListenerSupportFactory.create(Listener.class);
-        
-        enabled = true;
-        this.randomized = randomized;
+    private double min;
+    private double max;
+    private double value;
+
+    public Interval(double min, double max, double value) {
+        this.min = min;
+        this.max = max;
+        this.value = value;
+
+        trim();
     }
-    
-    public Interval(LimitedDouble interval, boolean randomized) {
-        this(interval, randomized, 1f);
+
+    public Interval(double min, double max) {
+        this(min, max, min);
     }
-    
-    public Interval(LimitedDouble interval) {
-        this(interval, false);
+
+    public Interval(double value) {
+        this(Double.MIN_VALUE, Double.MAX_VALUE, value);
     }
-    
-    public Interval(double interval, boolean randomized) {
-        this(new LimitedDouble(interval), randomized);
+
+    public Interval() {
+        this(0);
     }
-    
-    public Interval(double interval) {
-        this(interval, false);
-    }
-    
-    public boolean update(float delta) {
-        if (!enabled) {
-            return false;
+
+    public void randomize() {
+        if (min != max) {
+            value = min + Math.random() * (max - min);
         }
-        
-        boolean actionPerformed = false;
-        double intervalValue = interval.getValue();
-        
-        time += delta * speed;
-        
-        while (time >= intervalValue) {
-            actionPerformed = true;
-            
-            listeners.action(this);
-            
-            time -= intervalValue;
+    }
+
+    public double getPercentage() {
+        if (min == max) {
+            return 1;
         }
-        
-        if (actionPerformed && randomized) {
-            interval.randomize();
+        if (value == min) {
+            return 0;
         }
-        
-        return actionPerformed;
+
+        return (value - min) / (max - min);
     }
-    
-    public void addListener(Listener listener) {
-        ((ListenerSupport<Listener>) listeners).addListener(listener);
+
+    public void setPercentage(double percentage) {
+        value = min + percentage * (max - min);
+        trim();
     }
-    
-    public void removeListener(Listener listener) {
-        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+
+    private void trim() {
+        if (min == max) {
+            value = min;
+            return;
+        }
+
+        if (min > max) {
+            double temp = min;
+            max = min;
+            min = temp;
+        }
+
+        value = Math.max(value, min);
+        value = Math.min(value, max);
     }
-    
-    public void clearListeners() {
-        ((ListenerSupport<Listener>) listeners).clearListeners();
+
+    public void add(double value) {
+        this.value += value;
+        trim();
     }
-    
-    public void pause() {
-        enabled = false;
+
+    public void multiply(double value) {
+        this.value *= value;
+        trim();
     }
-    
-    public void resume() {
-        enabled = true;
+
+    public boolean isMax() {
+        return value == max;
     }
-    
-    public void reset() {
-        time = 0;
+
+    public boolean isMin() {
+        return value == min;
     }
-    
-    public LimitedDouble get() {
-        return interval;
+
+    public double getMin() {
+        return min;
     }
-    
-    public void set(LimitedDouble interval) {
-        this.interval = interval;
+
+    public void setMin(double min) {
+        this.min = min;
+        trim();
     }
-    
-    public void set(double interval) {
-        this.interval.setValue(interval);
+
+    public double getMax() {
+        return max;
     }
-    
-    public float getSpeed() {
-        return speed;
+
+    public void setMax(double max) {
+        this.max = max;
+        trim();
     }
-    
-    public void setSpeed(float speed) {
-        this.speed = speed;
+
+    public double getValue() {
+        return value;
     }
-    
-    public boolean isEnabled() {
-        return enabled;
+
+    public void setValue(double value) {
+        this.value = value;
+        trim();
     }
-    
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
-    public boolean isRandomized() {
-        return randomized;
-    }
-    
-    public void setRandomized(boolean randomized) {
-        this.randomized = randomized;
-    }
-    
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void action(Interval interval);
+
+    @Override
+    public String toString() {
+        return "LimitedDouble{" +
+                "min=" + min +
+                ", max=" + max +
+                ", interval=" + value +
+                '}';
     }
 }
