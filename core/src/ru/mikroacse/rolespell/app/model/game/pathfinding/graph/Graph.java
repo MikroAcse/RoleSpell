@@ -1,11 +1,11 @@
 package ru.mikroacse.rolespell.app.model.game.pathfinding.graph;
 
-import java.util.LinkedList;
+import com.badlogic.gdx.utils.Array;
 
 public class Graph {
     private double[][] adjacencyMatrix;
 
-    private LinkedList<AdjacencyListItem>[] adjacencyList;
+    private Array<AdjacencyListItem>[] adjacencyList;
 
     private GraphNode[] nodes;
 
@@ -13,11 +13,11 @@ public class Graph {
         createNodes(numberOfVertices);
 
         adjacencyMatrix = new double[numberOfVertices][];
-        adjacencyList = new LinkedList[numberOfVertices];
+        adjacencyList = new Array[numberOfVertices];
 
         for (int i = 0; i < numberOfVertices; i++) {
             adjacencyMatrix[i] = new double[numberOfVertices];
-            adjacencyList[i] = new LinkedList<>();
+            adjacencyList[i] = new Array<>();
         }
     }
 
@@ -67,10 +67,9 @@ public class Graph {
 
         for (AdjacencyListItem item : adjacencyList[nodeIndexA]) {
             if (item.getNode().getNodeIndex() == nodeIndexB) {
-                adjacencyList[nodeIndexA].remove();
+                adjacencyList[nodeIndexA].removeIndex(0);
             }
         }
-
     }
 
     public void removeEdge(int nodeIndexA, int nodeIndexB, boolean twoDirection) {
@@ -86,7 +85,7 @@ public class Graph {
         return adjacencyMatrix[nodeIndexA][nodeIndexB];
     }
 
-    public LinkedList<AdjacencyListItem>[] getAdjacencyList() {
+    public Array<AdjacencyListItem>[] getAdjacencyList() {
         return adjacencyList;
     }
 

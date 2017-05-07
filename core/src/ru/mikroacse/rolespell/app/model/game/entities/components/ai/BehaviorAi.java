@@ -1,29 +1,33 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior.Trigger;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
 
 /**
  * Created by MikroAcse on 29.03.2017.
  */
-public class BehaviorAi extends Component {
-    private List<Entity> targets;
+public abstract class BehaviorAi extends Component {
+    private Array<Entity> targets;
 
-    private int activationDistance;
-    private int deactivationDistance;
+    private double activationDistance;
+    private double deactivationDistance;
 
     private int maxTargets;
 
-    private List<Behavior> behaviors;
+    private Array<Behavior> behaviors;
     private EnumSet<TargetSelector> targetSelectors;
 
     private MovementComponent.Listener movementListener;
@@ -41,9 +45,9 @@ public class BehaviorAi extends Component {
 
         maxTargets = Integer.MAX_VALUE;
 
-        behaviors = new ArrayList<>();
+        behaviors = new Array<>();
 
-        targets = new ArrayList<>();
+        targets = new Array<>();
         targetSelectors = TargetSelector.ALL;
 
         World world = entity.getWorld();
@@ -55,12 +59,7 @@ public class BehaviorAi extends Component {
             }
         });
 
-        movementListener = new MovementComponent.Listener() {
-            @Override
-            public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-
-            }
-
+        movementListener = new MovementListener() {
             @Override
             public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
@@ -83,15 +82,15 @@ public class BehaviorAi extends Component {
     public boolean update(float delta) {
         boolean updated = false;
 
-        for (Behavior behavior : behaviors) {
-            updated |= behavior.update(delta);
+        for (int i = behaviors.size - 1; i >= 0; i--) {
+            updated |= behaviors.get(i).update(delta);
         }
 
         return updated;
     }
 
     public boolean process(EnumSet<Trigger> triggers, Timer timer) {
-        if (behaviors.isEmpty()) {
+        if (behaviors.size == 0) {
             return false;
         }
 
@@ -101,26 +100,30 @@ public class BehaviorAi extends Component {
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
         IntVector2 position = movement.getPosition();
 
-        List<Entity> targets = new ArrayList<>();
+        Array<Entity> targets = new Array<>();
 
         if (targetSelectors.contains(TargetSelector.NEAREST)) {
-            targets.addAll(world.getEntitiesAt(position, deactivationDistance));
-            targets.remove(entity);
+            targets.addAll(world.getEntitiesAt(position, (int) deactivationDistance));
+            targets.removeValue(entity, true);
         }
 
         if (targetSelectors.contains(TargetSelector.CUSTOM)) {
             targets.addAll(this.targets);
         }
 
-        // remove inactivated targets
-        targets.removeIf(target -> {
+        // remove inactivate targets
+        for (int i = targets.size - 1; i >= 0; i--) {
+            Entity target = targets.get(i);
+
             MovementComponent targetMovement = target.getComponent(MovementComponent.class);
             IntVector2 targetPosition = targetMovement.getPosition();
 
             double distance = position.distance(targetPosition);
 
-            return distance < activationDistance || distance > deactivationDistance;
-        });
+            if(distance < activationDistance || distance > deactivationDistance) {
+                targets.removeValue(target, true);
+            }
+        }
 
         // sort targets by distance
         targets.sort(new Comparator<Entity>() {
@@ -141,8 +144,8 @@ public class BehaviorAi extends Component {
         });
 
         // truncate target list
-        if (targets.size() > maxTargets) {
-            targets = targets.subList(0, maxTargets);
+        if (targets.size > maxTargets) {
+            targets.truncate(maxTargets);
         }
 
         boolean actionPerformed = false;
@@ -209,7 +212,7 @@ public class BehaviorAi extends Component {
         }
     }
 
-    public void setTargetSelectors(Entity targetSelectors) {
+    public void setTarget(Entity targetSelectors) {
         clearTargets();
         addTarget(targetSelectors);
     }
@@ -221,7 +224,7 @@ public class BehaviorAi extends Component {
 
     public boolean removeTarget(Entity target) {
         detachTarget(target);
-        return targets.remove(target);
+        return targets.removeValue(target, true);
     }
 
     public void clearTargets() {
@@ -236,12 +239,13 @@ public class BehaviorAi extends Component {
         attachBehavior(behavior);
 
         // TODO: move to list implementation?
-        Collections.sort(behaviors, Collections.reverseOrder());
+        behaviors.sort();
+        behaviors.sort(Collections.reverseOrder());
     }
 
     public boolean removeBehavior(Behavior behavior) {
         detachBehavior(behavior);
-        return behaviors.remove(behavior);
+        return behaviors.removeValue(behavior, true);
     }
 
     public void clearBehaviors() {
@@ -250,23 +254,23 @@ public class BehaviorAi extends Component {
         behaviors.clear();
     }
 
-    public List<Entity> getTargets() {
+    public Array<Entity> getTargets() {
         return targets;
     }
 
-    public int getActivationDistance() {
+    public double getActivationDistance() {
         return activationDistance;
     }
 
-    public void setActivationDistance(int activationDistance) {
+    public void setActivationDistance(double activationDistance) {
         this.activationDistance = activationDistance;
     }
 
-    public int getDeactivationDistance() {
+    public double getDeactivationDistance() {
         return deactivationDistance;
     }
 
-    public void setDeactivationDistance(int deactivationDistance) {
+    public void setDeactivationDistance(double deactivationDistance) {
         this.deactivationDistance = deactivationDistance;
     }
 
@@ -274,8 +278,8 @@ public class BehaviorAi extends Component {
         return targetSelectors;
     }
 
-    public void setTargetSelectors(EnumSet<TargetSelector> targetSelector) {
-        this.targetSelectors = targetSelector;
+    public void setTargetSelectors(EnumSet<TargetSelector> targetSelectors) {
+        this.targetSelectors = targetSelectors;
     }
 
     public int getMaxTargets() {
@@ -286,7 +290,7 @@ public class BehaviorAi extends Component {
         this.maxTargets = maxTargets;
     }
 
-    public List<Behavior> getBehaviors() {
+    public Array<Behavior> getBehaviors() {
         return behaviors;
     }
 

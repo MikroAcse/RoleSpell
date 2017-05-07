@@ -11,6 +11,7 @@ import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.app.view.game.status.StatusView;
+import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
 import ru.mikroacse.rolespell.app.view.game.world.WorldRenderer;
 
 /**
@@ -29,24 +30,30 @@ public class GameRenderer extends Stage {
     private ItemListView hotbarView;
     private ItemView dragItem;
 
+    private GameCursor cursor;
+
     public GameRenderer(GameModel gameModel) {
         super(new ScreenViewport());
 
         this.gameModel = gameModel;
 
+        cursor = new GameCursor();
+
         Inventory inventory = gameModel.getObservable().getComponent(InventoryComponent.class).getInventory();
 
         inventoryView = new ItemListView(6);
         inventoryView.setItemList(inventory.getItems());
-        addActor(inventoryView);
 
         hotbarView = new ItemListView(3);
         hotbarView.setItemList(inventory.getHotbar());
-        addActor(hotbarView);
 
         statusView = new StatusView();
         statusView.setStatus(gameModel.getObservable().getComponent(StatusComponent.class));
+
+        addActor(inventoryView);
+        addActor(hotbarView);
         addActor(statusView);
+        addActor(cursor);
 
         worldRenderer = new WorldRenderer(gameModel.getWorld());
         worldRenderer.setZoom(2);
@@ -60,6 +67,9 @@ public class GameRenderer extends Stage {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         worldRenderer.draw(gameModel.getObservable(), getBatch());
+
+        // move to top
+        cursor.toFront();
 
         super.draw();
     }
@@ -78,6 +88,27 @@ public class GameRenderer extends Stage {
         worldRenderer.resize(width, height);
 
         update();
+    }
+
+    public void setCursorVisibility(boolean visible) {
+        cursor.setVisible(visible);
+    }
+
+    public void setCursor(GameCursor.Type type) {
+        cursor.setType(type);
+    }
+
+    public void setCursorPosition(int x, int y) {
+        float cursorWidth = cursor.getWidth() * cursor.getScaleX();
+        float cursorHeight = cursor.getHeight() * cursor.getScaleY();
+
+        cursor.setX((int) (x - cursorWidth / 2));
+        cursor.setY((int) (y - cursorHeight / 2));
+    }
+
+    public void setDragPosition(float x, float y) {
+        dragItem.setX(x - dragItem.getWidth() * dragItem.getScaleX() / 2);
+        dragItem.setY(y - dragItem.getHeight() * dragItem.getScaleY() / 2);
     }
 
     public ItemListView getInventoryView() {
@@ -122,6 +153,7 @@ public class GameRenderer extends Stage {
 
         if (dragItem != null) {
             addActor(dragItem);
+            dragItem.setScale(2);
         }
     }
 

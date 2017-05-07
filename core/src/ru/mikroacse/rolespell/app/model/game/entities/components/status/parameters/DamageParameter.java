@@ -1,9 +1,9 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters;
 
 import ru.mikroacse.engine.util.Interval;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.NumericParameter;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 
 /**
  * Created by MikroAcse on 13-Apr-17.

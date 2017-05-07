@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 

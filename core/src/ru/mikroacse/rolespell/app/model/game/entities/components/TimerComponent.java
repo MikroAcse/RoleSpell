@@ -1,7 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components;
 
 import ru.mikroacse.engine.util.Timer;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 
 /**
  * Created by MikroAcse on 09-Apr-17.

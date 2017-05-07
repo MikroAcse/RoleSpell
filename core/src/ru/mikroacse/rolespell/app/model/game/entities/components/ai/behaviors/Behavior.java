@@ -1,13 +1,13 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Created by MikroAcse on 14-Apr-17.
@@ -15,8 +15,8 @@ import java.util.List;
 public abstract class Behavior implements Comparable<Behavior> {
     private EnumSet<Trigger> triggers;
 
-    private int activationDistance;
-    private int deactivationDistance;
+    private double activationDistance;
+    private double deactivationDistance;
 
     private Timer timer;
     private Priority priority;
@@ -33,7 +33,7 @@ public abstract class Behavior implements Comparable<Behavior> {
         this.triggers = triggers;
 
         this.activationDistance = 0;
-        this.deactivationDistance = Integer.MAX_VALUE;
+        this.deactivationDistance = Double.POSITIVE_INFINITY;
     }
 
     public boolean update(float delta) {
@@ -44,7 +44,7 @@ public abstract class Behavior implements Comparable<Behavior> {
         return timer.update(delta);
     }
 
-    public abstract boolean process(Entity entity, List<Entity> targets);
+    public abstract boolean process(Entity entity, Array<Entity> targets);
 
     public boolean isTargetActivated(Entity entity, Entity target) {
         MovementComponent movement = entity.getComponent(MovementComponent.class);
@@ -78,11 +78,19 @@ public abstract class Behavior implements Comparable<Behavior> {
         this.timer = timer;
     }
 
-    public void setActivationDistance(int activationDistance) {
+    public double getActivationDistance() {
+        return activationDistance;
+    }
+
+    public void setActivationDistance(double activationDistance) {
         this.activationDistance = activationDistance;
     }
 
-    public void setDeactivationDistance(int deactivationDistance) {
+    public double getDeactivationDistance() {
+        return deactivationDistance;
+    }
+
+    public void setDeactivationDistance(double deactivationDistance) {
         this.deactivationDistance = deactivationDistance;
     }
 

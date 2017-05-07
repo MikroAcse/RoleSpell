@@ -1,19 +1,17 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.Parameter;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by MikroAcse on 03.04.2017.
  */
 public class StatusComponent extends Component {
-    private List<Parameter> parameters;
+    private Array<Parameter> parameters;
 
     private Listener listeners;
 
@@ -24,7 +22,7 @@ public class StatusComponent extends Component {
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
-        parameters = new ArrayList<>();
+        parameters = new Array<>();
 
         parameterListener = listeners::parameterUpdated;
     }
@@ -60,7 +58,7 @@ public class StatusComponent extends Component {
     public boolean removeParameter(Parameter parameter) {
         parameter.removeListener(parameterListener);
 
-        return parameters.remove(parameter);
+        return parameters.removeValue(parameter, true);
     }
 
     /**
@@ -90,8 +88,8 @@ public class StatusComponent extends Component {
     /**
      * @return All status parameters of given class.
      */
-    public <T extends Parameter> List<T> getParameters(Class<T> parameterClass) {
-        List<T> result = new ArrayList<T>();
+    public <T extends Parameter> Array<T> getParameters(Class<T> parameterClass) {
+        Array<T> result = new Array<T>();
 
         for (Parameter parameter : parameters) {
             if (parameterClass.isInstance(parameter)) {
@@ -102,7 +100,7 @@ public class StatusComponent extends Component {
         return result;
     }
 
-    public List<Parameter> getParameters() {
+    public Array<Parameter> getParameters() {
         return parameters;
     }
 

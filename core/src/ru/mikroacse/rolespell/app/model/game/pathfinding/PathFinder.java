@@ -1,15 +1,11 @@
 package ru.mikroacse.rolespell.app.model.game.pathfinding;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.AdjacencyListItem;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.GraphNode;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.heuristic.PathFinderHeuristic;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by MikroAcse on 24.03.2017.
@@ -17,7 +13,7 @@ import java.util.List;
 public class PathFinder {
     private Graph graph;
     private GraphNode[] nodes;
-    private List<AdjacencyListItem>[] adjacencyList;
+    private Array<AdjacencyListItem>[] adjacencyList;
 
     private PathFinderHeuristic heuristic;
 
@@ -25,18 +21,18 @@ public class PathFinder {
         this.heuristic = heuristic;
     }
 
-    public LinkedList<IntVector2> getPath(Graph mapGraph, int startingPoint, int endPoint) {
+    public Array<IntVector2> getPath(Graph mapGraph, int startingPoint, int endPoint) {
         this.graph = mapGraph;
         this.nodes = this.graph.getNodes();
         this.adjacencyList = this.graph.getAdjacencyList();
 
-        LinkedList<IntVector2> path = new LinkedList<>();
+        Array<IntVector2> path = new Array<>();
         getShortestPathBetweenTwoNodes(startingPoint, endPoint, path);
 
         return path;
     }
 
-    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, LinkedList<IntVector2> path) {
+    private void getShortestPathBetweenTwoNodes(int indexNodeStart, int indexNodeFinish, Array<IntVector2> path) {
         Cell[] cells = new Cell[graph.getNodes().length];
 
         // TODO: priority queue
@@ -50,7 +46,7 @@ public class PathFinder {
 
             return (int) (cells[o1.getNodeIndex()].getFCost() - cells[o2.getNodeIndex()].getFCost());
         });*/
-        ArrayList<GraphNode> open = new ArrayList<>();
+        Array<GraphNode> open = new Array<>();
 
         GraphNode start = nodes[indexNodeStart];
         GraphNode finish = nodes[indexNodeFinish];
@@ -68,7 +64,7 @@ public class PathFinder {
         GraphNode current = start;
         open.add(current);
 
-        while (!open.isEmpty()) {
+        while (open.size != 0) {
             // position cell = open cell with the lowest f cost
             /*position = open.get(0);
             for (int i = 0; i < open.size(); i++) {
@@ -96,7 +92,7 @@ public class PathFinder {
             });
 
             //position = open.removeParameter(0);
-            current = open.remove(0);
+            current = open.removeIndex(0);
 
             Cell currentCell = cells[current.getNodeIndex()];
 
@@ -109,7 +105,7 @@ public class PathFinder {
             }
 
             // for each neighbour of the position node
-            List<AdjacencyListItem> neighbours = adjacencyList[current.getNodeIndex()];
+            Array<AdjacencyListItem> neighbours = adjacencyList[current.getNodeIndex()];
 
             for (AdjacencyListItem neighbourItem : neighbours) {
                 GraphNode neighbour = neighbourItem.getNode();
@@ -125,8 +121,8 @@ public class PathFinder {
                 // if not checked yet or new path from position cell is shorter
                 double newCost = currentCell.gCost + weight;
 
-                if (!open.contains(neighbour) || newCost < neighbourCell.gCost) {
-                    if (!open.contains(neighbour)) {
+                if (!open.contains(neighbour, true) || newCost < neighbourCell.gCost) {
+                    if (!open.contains(neighbour, true)) {
                         open.add(neighbour);
                     }
 
@@ -149,14 +145,7 @@ public class PathFinder {
             path.add(new IntVector2(current.getCellX(), current.getCellY()));
         }
 
-        Collections.reverse(path);
-    }
-
-    private double heuristic(GraphNode node, GraphNode goal) {
-        int dx = Math.abs(node.getCellX() - goal.getCellX());
-        int dy = Math.abs(node.getCellY() - goal.getCellY());
-
-        return Math.min(dx, dy);
+        path.reverse();
     }
 
     private final class Cell {

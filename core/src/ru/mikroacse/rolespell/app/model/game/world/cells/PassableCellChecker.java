@@ -14,7 +14,7 @@ public class PassableCellChecker extends CellChecker {
 
     @Override
     public boolean check(World world, int x, int y) {
-        if (checkEntities && !world.getEntitiesAt(x, y).isEmpty()) {
+        if (checkEntities && world.getEntitiesAt(x, y).size != 0) {
             return false;
         }
 

@@ -4,8 +4,8 @@ import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.TimerComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 
 /**
  * Created by MikroAcse on 28.03.2017.
@@ -126,6 +126,7 @@ public class MovementComponent extends TimerComponent {
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current);
+
         void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current);
     }
 }

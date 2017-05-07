@@ -1,14 +1,13 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-
-import java.util.List;
 
 /**
  * Move towards a target (land near target)
@@ -33,11 +32,14 @@ public class SeekBehavior extends Behavior {
     }
 
     @Override
-    public boolean process(Entity entity, List<Entity> targets) {
-        targets.remove(entity);
-        if (targets.isEmpty()) {
+    public boolean process(Entity entity, Array<Entity> targets) {
+        targets.removeValue(entity, true);
+        if (targets.size == 0) {
             return false;
         }
+
+        PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
+        IntVector2 position = movement.getPosition();
 
         // get centroid of target positions
         IntVector2 destination = new IntVector2(0, 0);
@@ -61,29 +63,25 @@ public class SeekBehavior extends Behavior {
         destination.multiply(1 / targetCount);
 
         World world = entity.getWorld();
-        List<IntVector2> passableCells = world.getPassableCells(
+        Array<IntVector2> passableCells = world.getPassableCells(
                 destination.x,
                 destination.y,
                 true,
                 1,
                 randomDistance,
-                false
-        );
+                false);
 
-        IntVector2 position = entity.getComponent(MovementComponent.class).getPosition();
-
-        if (passableCells.isEmpty()) {
+        if (passableCells.size == 0) {
             return false;
         }
 
         // TODO: magic numbers
-        return entity
-                .getComponent(PathMovementComponent.class)
-                .tryRouteTo(
-                        passableCells,
-                        getPriority(),
-                        5,
-                        15
-                );
+        return movement.tryRouteTo(
+                destination,
+                getPriority(),
+                5,
+                15,
+                1,
+                (int) Math.ceil(getDeactivationDistance())) != null;
     }
 }

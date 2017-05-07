@@ -1,11 +1,9 @@
-package ru.mikroacse.rolespell.app.model.game.entities.core;
+package ru.mikroacse.rolespell.app.model.game.entities;
 
-import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 
 /**
@@ -15,13 +13,15 @@ public abstract class Entity extends Observable {
     private World world;
     private EntityType type;
 
-    private List<Component> components;
+    private String name;
+
+    private Array<Component> components;
 
     public Entity(EntityType type, World world) {
         this.type = type;
         this.world = world;
 
-        components = new ArrayList<>();
+        components = new Array<>();
     }
 
     public Entity() {
@@ -32,23 +32,19 @@ public abstract class Entity extends Observable {
      * Updates all entity components.
      */
     public void update(float delta) {
-        for (Component component : components) {
-            component.update(delta);
+        for (int i = components.size - 1; i >= 0; i--) {
+            components.get(i).update(delta);
         }
+    }
+
+    public void remove() {
+        world.removeEntity(this);
     }
 
     public abstract void dispose();
 
-    public EntityType getType() {
-        return type;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public boolean addComponent(Component component) {
-        return components.add(component);
+    public void addComponent(Component component) {
+        components.add(component);
     }
 
     /**
@@ -79,8 +75,8 @@ public abstract class Entity extends Observable {
     /**
      * @return All entity components of given class.
      */
-    public <T extends Component> List<T> getComponents(Class<T> componentClass) {
-        List<T> result = new ArrayList<T>();
+    public <T extends Component> Array<T> getComponents(Class<T> componentClass) {
+        Array<T> result = new Array<T>();
 
         for (Component component : components) {
             if (componentClass.isInstance(component)) {
@@ -89,5 +85,21 @@ public abstract class Entity extends Observable {
         }
 
         return result;
+    }
+
+    public EntityType getType() {
+        return type;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

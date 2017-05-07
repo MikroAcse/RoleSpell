@@ -3,6 +3,7 @@ package ru.mikroacse.rolespell;
 import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.engine.tween.TweenManager;
@@ -53,6 +54,11 @@ public class RoleSpell extends Game {
         assetManager = new AssetManager(1280, 720);
 
         screenManager = new ScreenManager(this);
+
+        // hide mouse TODO: beautify
+        Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+        pm.dispose();
 
         assetManager.loadBundle(AssetManager.Bundle.LOADER, true);
 

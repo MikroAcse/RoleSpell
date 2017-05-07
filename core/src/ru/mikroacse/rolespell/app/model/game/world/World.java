@@ -6,14 +6,16 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.Player;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
+import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
@@ -21,21 +23,18 @@ import ru.mikroacse.rolespell.app.model.game.pathfinding.heuristic.ManhattanDist
 import ru.mikroacse.rolespell.app.model.game.world.cells.CellChecker;
 import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellChecker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Created by MikroAcse on 23.03.2017.
  */
 // TODO: refactor
-public class World implements MovementComponent.Listener {
+public class World {
     // TODO: separate map parser
     private TiledMap map;
-    private List<Entity> entities;
+    private Array<Entity> entities;
 
     private Listener listeners;
+
+    private MovementListener movementListener;
 
     private Player player;
 
@@ -45,11 +44,18 @@ public class World implements MovementComponent.Listener {
 
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("META");
 
+        movementListener = new MovementListener() {
+            @Override
+            public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+                listeners.entityMoved(movement.getEntity(), previous, current);
+            }
+        };
+
         initialize();
     }
 
     private void initialize() {
-        entities = new ArrayList<>();
+        entities = new Array<>();
 
         // TODO: make this less horrible and tryRouteTo to separate class
         for (MapObject mapObject : getLayer(Layer.SPAWNERS).getObjects()) {
@@ -74,15 +80,14 @@ public class World implements MovementComponent.Listener {
 
             movementComponent.setBoth(new IntVector2(realX / getTileWidth(), realY / getTileHeight()));
 
-            movementComponent.addListener(this);
+            movementComponent.addListener(movementListener);
             entities.add(entity);
         }
 
         // TODO: remove
         for (Entity entity : entities) {
-            if (entity.hasComponent(BehaviorAi.class)) {
-                entity
-                        .getComponent(BehaviorAi.class)
+            if (entity.hasComponent(AttackAi.class)) {
+                entity.getComponent(AttackAi.class)
                         .addTarget(player);
             }
         }
@@ -100,17 +105,7 @@ public class World implements MovementComponent.Listener {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
-    @Override
-    public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-
-    }
-
-    @Override
-    public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-        listeners.entityMoved(movement.getEntity(), previous, current);
-    }
-
-    public LinkedList<IntVector2> getPath(IntVector2 from, IntVector2 to, int radius) {
+    public Array<IntVector2> getPath(IntVector2 from, IntVector2 to, int radius) {
         int minX = Math.min(from.x, to.x);
         int minY = Math.min(from.y, to.y);
 
@@ -185,8 +180,8 @@ public class World implements MovementComponent.Listener {
         return isPassable(position.x, position.y, checkEntities);
     }
 
-    public List<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
-                                             boolean reverse) {
+    public Array<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
+                                              boolean reverse) {
         return getCells(
                 Layer.META,
                 new PassableCellChecker(checkEntities),
@@ -197,11 +192,12 @@ public class World implements MovementComponent.Listener {
 
     /**
      * Rhombus search around given position (checks the position itself too).
+     * TODO: make this circular
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public List<IntVector2> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
-                                     boolean reverse) {
-        List<IntVector2> result = new ArrayList<>();
+    public Array<IntVector2> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
+                                      boolean reverse) {
+        Array<IntVector2> result = new Array<>();
         int radius = minRadius;
 
         while (radius <= maxRadius) {
@@ -230,14 +226,14 @@ public class World implements MovementComponent.Listener {
         }
 
         if (reverse) {
-            Collections.reverse(result);
+            result.reverse();
         }
 
         return result;
     }
 
-    public List<Entity> getEntitiesAt(int x, int y, int radius) {
-        List<Entity> result = new ArrayList<>();
+    public Array<Entity> getEntitiesAt(int x, int y, double radius) {
+        Array<Entity> result = new Array<>();
 
         for (Entity entity : entities) {
             MovementComponent movement = entity.getComponent(MovementComponent.class);
@@ -250,15 +246,37 @@ public class World implements MovementComponent.Listener {
         return result;
     }
 
-    public List<Entity> getEntitiesAt(int x, int y) {
+    /**
+     * @return First found entity at position
+     */
+    public Entity getEntityAt(int x, int y) {
+        for (Entity entity : entities) {
+            MovementComponent movement = entity.getComponent(MovementComponent.class);
+
+            if (movement.getPosition().equals(x, y)) {
+                return entity;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return First found entity at position
+     */
+    public Entity getEntityAt(IntVector2 position) {
+        return getEntityAt(position.x, position.y);
+    }
+
+    public Array<Entity> getEntitiesAt(int x, int y) {
         return getEntitiesAt(x, y, 0);
     }
 
-    public List<Entity> getEntitiesAt(IntVector2 position, int radius) {
+    public Array<Entity> getEntitiesAt(IntVector2 position, int radius) {
         return getEntitiesAt(position.x, position.y, radius);
     }
 
-    public List<Entity> getEntitiesAt(IntVector2 position) {
+    public Array<Entity> getEntitiesAt(IntVector2 position) {
         return getEntitiesAt(position.x, position.y);
     }
 
@@ -276,16 +294,16 @@ public class World implements MovementComponent.Listener {
         }
     }
 
-    public List<Entity> getEntities() {
+    public Array<Entity> getEntities() {
         return entities;
     }
 
-    public boolean addEntity(Entity entity) {
-        return entities.add(entity);
+    public void addEntity(Entity entity) {
+        entities.add(entity);
     }
 
     public boolean removeEntity(Entity entity) {
-        return entities.remove(entity);
+        return entities.removeValue(entity, true);
     }
 
     public Player getPlayer() {
@@ -330,6 +348,7 @@ public class World implements MovementComponent.Listener {
         META, // meta layer for collisions/etc markup
         TOP,
         ROOFS,
+        BUILDINGS_TOP,
         ADDITIONAL,
         OBJECTS,
         BOTTOM,

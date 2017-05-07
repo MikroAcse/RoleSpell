@@ -1,7 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.PickupBehavior;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 
 /**
  * Created by MikroAcse on 02-May-17.

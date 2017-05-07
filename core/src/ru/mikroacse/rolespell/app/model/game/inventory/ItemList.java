@@ -46,7 +46,7 @@ public class ItemList {
             if (item == removableItem) {
                 items[i] = null;
 
-                listeners.itemSet(this, i, null, item);
+                listeners.itemRemoved(this, item, i);
                 return true;
             }
         }
@@ -54,10 +54,35 @@ public class ItemList {
         return false;
     }
 
+    public boolean swapItems(int index1, int index2) {
+        Item temp = items[index1];
+
+        setItem(index1, items[index2]);
+        setItem(index2, temp);
+
+        listeners.itemsSwapped(this, index1, index2);
+
+        return true;
+    }
+
+    public boolean swapItems(Item item1, Item item2) {
+        int index1 = indexOf(item1);
+        int index2 = indexOf(item2);
+
+        if (index1 != -1 && index2 != -1) {
+            return swapItems(index1, index2);
+        }
+
+        return false;
+    }
+
     public void setItem(int index, Item item) {
+        int prevIndex = -1;
         for (int i = 0; i < items.length; i++) {
             if (items[i] == item) {
                 items[i] = null;
+
+                prevIndex = i;
                 break;
             }
         }
@@ -66,11 +91,29 @@ public class ItemList {
 
         items[index] = item;
 
-        listeners.itemSet(this, index, item, prev);
+        if (prevIndex != -1) {
+            listeners.itemMoved(this, index, prevIndex);
+        } else {
+            listeners.itemAdded(this, index);
+        }
     }
 
     public Item getItem(int index) {
         return items[index];
+    }
+
+    public int indexOf(Item item) {
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] == item) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public boolean hasItem(Item item) {
+        return indexOf(item) != -1;
     }
 
     /**
@@ -121,8 +164,14 @@ public class ItemList {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void itemSet(ItemList itemList, int index, Item item, Item prev);
+        void itemAdded(ItemList itemList, int index);
+
+        void itemRemoved(ItemList itemList, Item item, int index);
+
+        void itemMoved(ItemList itemList, int index, int prevIndex);
 
         void sizeChanged(ItemList itemList, int size);
+
+        void itemsSwapped(ItemList itemList, int index1, int index2);
     }
 }

@@ -27,9 +27,9 @@ public class ScreenManager {
     private Screen createScreen(BundledScreen bundledScreen) {
         switch (bundledScreen) {
             case GAME:
-                return new GameScreen(game);
+                return new GameScreen();
             case LOADER:
-                return new LoaderScreen(game);
+                return new LoaderScreen();
         }
         return null;
     }

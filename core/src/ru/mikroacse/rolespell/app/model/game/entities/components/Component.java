@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components;
 
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 
 /**
  * Created by MikroAcse on 28.03.2017.

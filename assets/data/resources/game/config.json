@@ -2,11 +2,11 @@
 	"files": {
 		"textures": [
 			"entities/*",
-			"inventory/inventory-cell.png",
+			"inventory/*",
 			"items/weapons/*",
-			"path/path.png",
-			"path/waypoint.png",
-			"hud/statusbar.png"
+			"path/*",
+			"hud/*",
+			"ui/cursor/*"
 		],
 		"sounds": [
 

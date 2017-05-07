@@ -1,15 +1,13 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.engine.util.ListUtil;
 import ru.mikroacse.engine.util.Priority;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-
-import java.util.List;
 
 /**
  * Created by MikroAcse on 29.03.2017.
@@ -48,16 +46,16 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
             return false;
         }
 
-        List<Entity> entities = world.getEntitiesAt(movement.getPosition());
-        entities.remove(entity);
+        Array<Entity> entities = world.getEntitiesAt(movement.getPosition());
+        entities.removeValue(entity, true);
 
-        if (entities.isEmpty()) {
+        if (entities.size == 0) {
             return false;
         }
 
         IntVector2 position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
 
-        List<IntVector2> passableCells = world.getPassableCells(
+        Array<IntVector2> passableCells = world.getPassableCells(
                 position.x,
                 position.y,
                 true,
@@ -68,11 +66,12 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
         IntVector2 destination = null;
 
         // checking passable cells for available paths
-        while (!passableCells.isEmpty()) {
-            IntVector2 passableCell = ListUtil.getRandom(passableCells);
-            passableCells.remove(passableCell);
+        while (passableCells.size != 0) {
+            IntVector2 passableCell = passableCells.random();
+            passableCells.removeValue(passableCell, true);
 
-            if (movement.tryRouteTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius)) {
+            // TODO: magic numbers
+            if (movement.tryRouteTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius, 0, 15) != null) {
                 destination = passableCell;
                 break;
             }

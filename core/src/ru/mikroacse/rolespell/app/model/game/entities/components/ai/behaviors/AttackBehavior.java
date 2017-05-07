@@ -1,15 +1,15 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.DamageParameter;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Created by MikroAcse on 18-Apr-17.
@@ -22,9 +22,9 @@ public class AttackBehavior extends Behavior {
     }
 
     @Override
-    public boolean process(Entity entity, List<Entity> targets) {
-        targets.remove(entity);
-        if (targets.isEmpty()) {
+    public boolean process(Entity entity, Array<Entity> targets) {
+        targets.removeValue(entity, true);
+        if (targets.size == 0) {
             return false;
         }
 

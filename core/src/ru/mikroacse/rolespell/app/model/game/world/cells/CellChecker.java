@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.model.game.world.cells;
 
-import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**

@@ -1,16 +1,16 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.ListUtil;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Move around [target/origin/position] randomly.
@@ -32,18 +32,18 @@ public class WanderBehavior extends Behavior {
     }
 
     @Override
-    public boolean process(Entity entity, List<Entity> targets) {
-        targets.remove(entity);
+    public boolean process(Entity entity, Array<Entity> targets) {
+        targets.removeValue(entity, true);
 
         World world = entity.getWorld();
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
-        List<IntVector2> path = movement.getPath();
+        Array<IntVector2> path = movement.getPath();
 
         IntVector2 destination = null;
 
         switch (guide) {
             case TARGET:
-                if (targets.isEmpty()) {
+                if (targets.size == 0) {
                     return false;
                 }
 
@@ -75,20 +75,25 @@ public class WanderBehavior extends Behavior {
         int y = destination.y;
 
         // looking for empty cells to tryRouteTo
-        List<IntVector2> passableCells = world.getPassableCells(
+        Array<IntVector2> passableCells = world.getPassableCells(
                 x, y,
                 false,
                 minRadius, maxRadius,
                 false);
 
-        if (passableCells.isEmpty()) {
+        if (passableCells.size == 0) {
             return false;
         }
 
-        destination = ListUtil.getRandom(passableCells);
+        destination = passableCells.random();
 
         // TODO: magic numbers
-        return movement.tryRouteTo(destination, Priority.LOW, 5, 15);
+        return movement.tryRouteTo(destination,
+                getPriority(),
+                5,
+                15,
+                0,
+                (int) Math.ceil(getDeactivationDistance())) != null;
     }
 
     public enum Guide {

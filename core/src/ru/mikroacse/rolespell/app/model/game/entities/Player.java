@@ -1,28 +1,21 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import ru.mikroacse.engine.util.Interval;
-import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.PickupAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.SeekBehavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.*;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-
-import java.util.EnumSet;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
 public class Player extends Entity {
-    private BehaviorAi movementAi;
     private AttackAi attackAi;
     private PickupAi pickupAi;
 
@@ -77,20 +70,6 @@ public class Player extends Entity {
             }
         });
 
-        movementAi = new BehaviorAi(this, 20);
-        addComponent(movementAi);
-
-        movementAi.setTargetSelectors(EnumSet.of(BehaviorAi.TargetSelector.CUSTOM));
-        movementAi.setMaxTargets(1);
-
-        movementAi.addBehavior(
-                new SeekBehavior(
-                        Priority.NORMAL,
-                        new Timer(0.2),
-                        2
-                )
-        );
-
         attackAi = new AttackAi(this, new Timer(3.0));
         addComponent(attackAi);
 
@@ -104,6 +83,9 @@ public class Player extends Entity {
 
     @Override
     public void dispose() {
+        attackAi.dispose();
+        pickupAi.dispose();
+
         movement.dispose();
         status.dispose();
     }

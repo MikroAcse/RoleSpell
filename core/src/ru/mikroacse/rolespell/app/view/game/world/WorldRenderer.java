@@ -6,30 +6,28 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.RoleSpell;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.HealthParameter;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager;
 
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Created by MikroAcse on 02-May-17.
  */
+// TODO: make this Group, and separate map renderer from world renderer
 public class WorldRenderer {
     private final OrthographicCamera camera;
-
+    private AssetBundle bundle;
+    private CellSelector selector;
     private Texture waypoint;
     private Texture pathTexture;
-
-    private AssetBundle bundle;
 
     private OrthogonalTiledMapRenderer mapRenderer;
     private World world;
@@ -46,6 +44,8 @@ public class WorldRenderer {
 
         waypoint = bundle.getTexture("path/waypoint");
         pathTexture = bundle.getTexture("path/path");
+
+        selector = new CellSelector();
     }
 
     public void draw(Entity viewEntity, Batch batch) {
@@ -82,6 +82,7 @@ public class WorldRenderer {
 
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
+
 
         for (Entity entity : world.getEntities()) {
             MovementComponent movement = entity.getComponent(MovementComponent.class);
@@ -121,22 +122,18 @@ public class WorldRenderer {
             }
         }
 
-        // TODO: beautify
-        if (viewEntity.hasComponent(PathMovementComponent.class)) {
-            List<IntVector2> path = ((PathMovementComponent) observableMovement).getPath();
+        PathMovementComponent pathMovement = viewEntity.getComponent(PathMovementComponent.class);
+        if (pathMovement != null && !pathMovement.isPathEmpty()) {
+            Array<IntVector2> path = pathMovement.getPath();
 
-            if (!path.isEmpty()) {
-                Iterator<IntVector2> it = path.iterator();
+            for (int i = 0; i < path.size; i++) {
+                IntVector2 position = path.get(i);
+                Vector2 mapPosition = cellToMap(position.x, position.y);
 
-                while (it.hasNext()) {
-                    IntVector2 position = it.next();
-                    Vector2 mapPosition = cellToMap(position.x, position.y);
-
-                    if (it.hasNext()) {
-                        batch.draw(pathTexture, mapPosition.x, mapPosition.y);
-                    } else {
-                        batch.draw(waypoint, mapPosition.x, mapPosition.y);
-                    }
+                if (i < path.size - 1) {
+                    batch.draw(pathTexture, mapPosition.x, mapPosition.y);
+                } else {
+                    batch.draw(waypoint, mapPosition.x, mapPosition.y);
                 }
             }
         }
@@ -145,8 +142,15 @@ public class WorldRenderer {
 
         renderLayers(new World.Layer[]{
                 World.Layer.ADDITIONAL,
+                World.Layer.BUILDINGS_TOP,
                 World.Layer.ROOFS,
                 World.Layer.TOP});
+
+        batch.begin();
+
+        selector.draw(batch, 1f);
+
+        batch.end();
     }
 
     public void resize(int width, int height) {
@@ -161,6 +165,15 @@ public class WorldRenderer {
         }
 
         mapRenderer.getBatch().end();
+    }
+
+    public void setSelectorPosition(int x, int y) {
+        Vector2 position = cellToMap(x, y);
+        selector.setPosition(position.x, position.y);
+    }
+
+    public void setSelectorVisible(boolean visible) {
+        selector.setVisible(visible);
     }
 
     public IntVector2 stageToCell(float x, float y) {
@@ -209,11 +222,11 @@ public class WorldRenderer {
     }
 
     public float getWidth() {
-        return world.getWidth() * world.getTileWidth() / camera.zoom;
+        return world.getWidth() * world.getTileWidth();
     }
 
     public float getHeight() {
-        return world.getHeight() * world.getTileHeight() / camera.zoom;
+        return world.getHeight() * world.getTileHeight();
     }
 
     public float getZoom() {

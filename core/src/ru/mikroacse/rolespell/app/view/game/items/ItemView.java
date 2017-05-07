@@ -17,6 +17,10 @@ public class ItemView extends Image {
                 .getTexture("items/weapons/wooden-sword"));
 
         this.item = item;
+
+        // TODO: magic numbers
+        setWidth(32);
+        setHeight(32);
     }
 
     public Item getItem() {

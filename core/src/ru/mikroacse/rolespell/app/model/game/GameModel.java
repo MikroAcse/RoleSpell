@@ -1,14 +1,14 @@
 package ru.mikroacse.rolespell.app.model.game;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -22,13 +22,8 @@ public class GameModel {
 
     }
 
-    private void initializeWorld() {
-        observable = world.getPlayer();
-        controllable = world.getPlayer();
-    }
-
     public void update(float delta) {
-        List<Entity> entities = new ArrayList<>(world.getEntities());
+        Array<Entity> entities = new Array<>(world.getEntities());
 
         for (Entity entity : entities) {
             entity.update(delta);
@@ -37,14 +32,14 @@ public class GameModel {
 
     public boolean tryAttack(int x, int y) {
         if (world.isValidPosition(x, y)) {
-            List<Entity> entities = world.getEntitiesAt(x, y);
+            Array<Entity> entities = world.getEntitiesAt(x, y);
 
-            BehaviorAi behaviorAi = controllable.getComponent(BehaviorAi.class);
+            AttackAi attackAi = controllable.getComponent(AttackAi.class);
 
-            if (entities.isEmpty()) {
-                behaviorAi.clearTargets();
+            if (entities.size == 0) {
+                attackAi.clearTargets();
             } else {
-                behaviorAi.setTargetSelectors(entities.get(0));
+                attackAi.setTarget(entities.get(0));
             }
 
             return true;
@@ -53,30 +48,46 @@ public class GameModel {
         return false;
     }
 
-    public boolean tryRouteTo(int x, int y) {
-        if (world.isValidPosition(x, y)) {
-            // TODO: bad and magic
-            // looking for the nearest passable cells
-            List<IntVector2> passableCells = world.getPassableCells(
-                    x,
-                    y,
-                    false,
-                    0,
-                    5,
-                    false);
+    public boolean tryPickup(Entity entity) {
+        MovementComponent movement = controllable.getComponent(MovementComponent.class);
+        MovementComponent entityMovement = entity.getComponent(MovementComponent.class);
 
-            // checking passable cells for available paths
-            return tryRouteTo(passableCells, Priority.HIGH);
+        // TODO: magic number (maximum pickup distance)
+        if (movement.getPosition().distance(entityMovement.getPosition()) > 2) {
+            return false;
         }
 
-        return false;
+        InventoryComponent inventory = controllable.getComponent(InventoryComponent.class);
+
+        return inventory.pickup(entity);
     }
 
-    private boolean tryRouteTo(List<IntVector2> destinations, Priority priority) {
+    public boolean tryRouteTo(int x, int y) {
         PathMovementComponent movement = controllable.getComponent(PathMovementComponent.class);
 
         // TODO: magic numbers
-        return movement.tryRouteTo(destinations, priority, 10, 15);
+        return movement.tryRouteTo(
+                new IntVector2(x, y),
+                Priority.HIGH,
+                10,
+                15,
+                0,
+                15) != null;
+    }
+
+    public void stopAttacking() {
+        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+
+        attackAi.clearTargets();
+    }
+
+    private void attachWorld(World world) {
+        observable = world.getPlayer();
+        controllable = world.getPlayer();
+    }
+
+    private void detachWorld(World world) {
+
     }
 
     public Entity getControllable() {
@@ -92,8 +103,14 @@ public class GameModel {
     }
 
     public void setWorld(World world) {
+        if (this.world != null) {
+            detachWorld(this.world);
+        }
+
         this.world = world;
 
-        initializeWorld();
+        if (world != null) {
+            attachWorld(world);
+        }
     }
 }

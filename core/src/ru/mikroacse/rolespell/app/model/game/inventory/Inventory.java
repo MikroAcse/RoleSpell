@@ -9,14 +9,20 @@ public class Inventory {
     private ItemList items;
     private ItemList hotbar;
 
+    private ItemListListener itemListListener;
+
     public Inventory(int size, int hotbarSize) {
         items = new ItemList(size);
         hotbar = new ItemList(hotbarSize);
-    }
 
-    public void removeItem(Item item) {
-        items.removeItem(item);
-        hotbar.removeItem(item);
+        itemListListener = new ItemListListener() {
+            @Override
+            public void itemRemoved(ItemList itemList, Item item, int index) {
+                hotbar.removeItem(item);
+            }
+        };
+
+        items.addListener(itemListListener);
     }
 
     public ItemList getItems() {

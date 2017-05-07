@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import ru.mikroacse.engine.actors.RealActor;
 import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
+import ru.mikroacse.rolespell.app.model.game.inventory.ItemListListener;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 
@@ -13,8 +14,8 @@ import ru.mikroacse.rolespell.app.view.game.items.ItemView;
  */
 public class ItemListView extends Group implements RealActor {
     private static final int CELL_OFFSET = 5;
-    private static final int CELL_WIDTH = 64;
-    private static final int CELL_HEIGHT = 64;
+    private static final int CELL_WIDTH = 48;
+    private static final int CELL_HEIGHT = 48;
 
     private ItemView[] itemViews;
     private InventoryCell[] cells;
@@ -32,16 +33,12 @@ public class ItemListView extends Group implements RealActor {
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
 
-        // TODO: bad
-        itemListListener = new ItemList.Listener() {
+        itemListListener = new ItemListListener() {
             @Override
-            public void itemSet(ItemList itemList, int index, Item item, Item prev) {
-                retouchItemList();
-            }
-
-            @Override
-            public void sizeChanged(ItemList itemList, int size) {
-                retouchItemList();
+            public void updated(ItemList itemList) {
+                // TODO: this has bad performance and memory use
+                detachItemList(itemList);
+                attachItemList(itemList);
             }
         };
     }
@@ -81,22 +78,20 @@ public class ItemListView extends Group implements RealActor {
                 }
             }
 
-            cell.setSize(CELL_WIDTH, CELL_HEIGHT);
+            cell.setScaleX(CELL_WIDTH / cell.getWidth());
+            cell.setScaleY(CELL_HEIGHT / cell.getHeight());
+
             cell.setPosition(cellX, cellY);
 
             if (itemView != null) {
-                itemView.setSize(CELL_WIDTH, CELL_HEIGHT);
+                itemView.setScaleX(CELL_WIDTH / itemView.getWidth());
+                itemView.setScaleY(CELL_HEIGHT / itemView.getHeight());
+
                 itemView.setPosition(cellX, cellY);
 
                 addActor(itemView);
             }
         }
-    }
-
-    // TODO: this is bad
-    public void retouchItemList() {
-        detachItemList(itemList);
-        attachItemList(itemList);
     }
 
     private void attachItemList(ItemList itemList) {
@@ -158,8 +153,8 @@ public class ItemListView extends Group implements RealActor {
         for (int i = 0; i < cells.length; i++) {
             InventoryCell cell = cells[i];
 
-            if (x >= cell.getX() && x <= cell.getX() + cell.getWidth()
-                    && y >= cell.getY() && y < +cell.getY() + cell.getHeight()) {
+            if (x >= cell.getX() && x <= cell.getX() + cell.getWidth() * cell.getScaleX()
+                    && y >= cell.getY() && y < +cell.getY() + cell.getHeight() * cell.getScaleY()) {
                 return i;
             }
         }

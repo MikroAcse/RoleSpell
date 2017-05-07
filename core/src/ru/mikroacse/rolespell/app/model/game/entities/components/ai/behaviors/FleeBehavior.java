@@ -1,14 +1,12 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.core.Entity;
-import ru.mikroacse.rolespell.app.model.game.world.World;
-
-import java.util.List;
 
 /**
  * Move away from a target.
@@ -27,9 +25,9 @@ public class FleeBehavior extends Behavior {
     }
 
     @Override
-    public boolean process(Entity entity, List<Entity> targets) {
-        targets.remove(entity);
-        if (targets.isEmpty()) {
+    public boolean process(Entity entity, Array<Entity> targets) {
+        targets.removeValue(entity, true);
+        if (targets.size == 0) {
             return false;
         }
 
@@ -54,58 +52,20 @@ public class FleeBehavior extends Behavior {
 
         destination.multiply(1 / targetCount);
 
-        // trying to move away in opposite direction
-
-        World world = entity.getWorld();
-        MovementComponent movement = entity.getComponent(MovementComponent.class);
+        PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
         IntVector2 position = movement.getPosition();
-        List<IntVector2> passableCells;
 
+        // trying to move away in opposite direction
         destination = moveAway(destination, position, -5);
 
         // TODO: magic numbers
-        passableCells = world.getPassableCells(
-                destination.x,
-                destination.y,
-                true,
-                1,
+        return movement.tryRouteTo(
+                destination,
+                getPriority(),
+                5,
                 15,
-                false
-        );
-
-        // if entity can move in opposite direction (no wall / location corner)
-        if (!passableCells.isEmpty() && tryRouteTo(entity, passableCells)) {
-            return true;
-        }
-
-        // TODO: magic numbers
-        passableCells = world.getPassableCells(
-                position.x,
-                position.y,
-                true,
-                1,
-                fleeDistance,
-                true
-        );
-
-        if (passableCells.isEmpty()) {
-            return false;
-        }
-
-        return tryRouteTo(entity, passableCells);
-    }
-
-    private boolean tryRouteTo(Entity entity, List<IntVector2> positions) {
-        // TODO: magic numbers
-
-        return entity
-                .getComponent(PathMovementComponent.class)
-                .tryRouteTo(
-                        positions,
-                        getPriority(),
-                        5,
-                        15
-                );
+                0,
+                (int) Math.ceil(getDeactivationDistance())) != null;
     }
 
     private IntVector2 moveAway(IntVector2 position, IntVector2 origin, int distance) {

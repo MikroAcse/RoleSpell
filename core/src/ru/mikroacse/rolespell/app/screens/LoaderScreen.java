@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.loader.LoaderController;
@@ -13,7 +12,7 @@ public class LoaderScreen implements Screen {
     private LoaderRenderer renderer;
     private LoaderController controller;
 
-    public LoaderScreen(Game game) {
+    public LoaderScreen() {
         renderer = new LoaderRenderer();
         controller = new LoaderController(renderer);
     }

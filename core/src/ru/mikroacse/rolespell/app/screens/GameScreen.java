@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import ru.mikroacse.rolespell.RoleSpell;

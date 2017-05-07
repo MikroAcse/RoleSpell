@@ -86,7 +86,7 @@ public class IntVector2 {
         double x1 = Math.cos(angle) * distance;
         double y1 = Math.sin(angle) * distance;
 
-        this.translate((int) (x1 - x2), (int) (y1 - y2));
+        this.translate((int) Math.round(x1 - x2), (int) Math.round(y1 - y2));
     }
 
     public boolean equals(int x, int y) {
@@ -103,7 +103,7 @@ public class IntVector2 {
 
     @Override
     public String toString() {
-        return "Vector2{" +
+        return "IntVector2{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';
