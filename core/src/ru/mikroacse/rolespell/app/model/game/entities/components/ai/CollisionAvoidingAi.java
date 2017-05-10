@@ -6,19 +6,24 @@ import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 
 /**
  * Created by MikroAcse on 29.03.2017.
  */
 // TODO: Convert it to behavior
 // TODO: It is the heir of the "avoid" behavior
-public class CollisionAvoidingAi extends Component implements World.Listener, MovementComponent.Listener {
+public class CollisionAvoidingAi extends Component {
     private int minRadius;
     private int maxRadius;
 
     private int pathFindRadius;
+
+    private WorldListener worldListener;
+    private MovementListener movementListener;
 
     // TODO: one variable for all AIs?
     private boolean stickToOrigin;
@@ -33,7 +38,25 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
         // TODO: magic number
         pathFindRadius = 5;
 
-        entity.getWorld().addListener(this);
+        // TODO: update listener if world changed
+        entity.getWorld().addListener(worldListener);
+    }
+
+    @Override
+    protected void initListeners() {
+        worldListener = new WorldListener() {
+            @Override
+            public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
+                action();
+            }
+        };
+
+        movementListener = new MovementListener() {
+            @Override
+            public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+                action();
+            }
+        };
     }
 
     @Override
@@ -81,27 +104,12 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
     }
 
     @Override
-    public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-
-    }
-
-    @Override
-    public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-        action();
-    }
-
-    @Override
-    public void entityMoved(Entity entity, IntVector2 previous, IntVector2 current) {
-        action();
-    }
-
-    @Override
     protected void attachEntity(Entity entity) {
         super.attachEntity(entity);
 
         entity
                 .getComponent(MovementComponent.class)
-                .addListener(this);
+                .addListener(movementListener);
     }
 
     @Override
@@ -110,6 +118,6 @@ public class CollisionAvoidingAi extends Component implements World.Listener, Mo
 
         entity
                 .getComponent(MovementComponent.class)
-                .removeListener(this);
+                .removeListener(movementListener);
     }
 }

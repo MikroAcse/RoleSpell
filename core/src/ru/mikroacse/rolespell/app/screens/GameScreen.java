@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
+import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.media.AssetManager;
@@ -25,7 +26,7 @@ public class GameScreen implements Screen {
                 .getBundle(AssetManager.Bundle.GAME)
                 .getMap("rottenville");
 
-        World world = new World(map);
+        World world = new World(new Map(map));
 
         model.setWorld(world);
 

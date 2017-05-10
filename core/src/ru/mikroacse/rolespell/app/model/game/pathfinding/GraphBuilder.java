@@ -36,19 +36,19 @@ public class GraphBuilder {
 
                 // LEFT
                 if (i - 1 >= 0 && world.isPassable(x - 1, y, false)) {
-                    graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getWeight(x - 1, y));
+                    graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getMap().getWeight(x - 1, y));
                 }
                 // RIGHT
                 if (i + 1 < width && world.isPassable(x + 1, y, false)) {
-                    graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getWeight(x + 1, y));
+                    graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getMap().getWeight(x + 1, y));
                 }
                 // BOTTOM
                 if (j - 1 >= 0 && world.isPassable(x, y - 1, false)) {
-                    graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getWeight(x, y - 1));
+                    graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getMap().getWeight(x, y - 1));
                 }
                 // TOP
                 if (j + 1 < height && world.isPassable(x, y + 1, false)) {
-                    graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getWeight(x, y + 1));
+                    graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getMap().getWeight(x, y + 1));
                 }
             }
         }

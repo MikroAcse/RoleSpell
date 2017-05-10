@@ -12,37 +12,36 @@ import ru.mikroacse.rolespell.media.AssetManager;
  * Created by MikroAcse on 06-May-17.
  */
 public class GameCursor extends Image {
-    private Type type;
+    private Cursor cursor;
 
     public GameCursor() {
-        super(RoleSpell
-                .getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("ui/cursor/pointer"));
+        super(getCursorTexture(Cursor.POINTER));
 
-        setScale(2f);
-        setType(Type.POINTER);
+        cursor = Cursor.POINTER;
+        setScale(2f); // TODO: magic number
     }
 
-    public Type getType() {
-        return type;
+    private static Texture getCursorTexture(Cursor cursor) {
+        AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
+
+        return bundle.getTexture("ui/cursor/" + cursor.getName());
     }
 
-    public void setType(Type type) {
-        if (this.type == type) {
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        if (this.cursor == cursor) {
             return;
         }
 
-        this.type = type;
+        this.cursor = cursor;
 
-        AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
-
-        Texture texture = bundle.getTexture("ui/cursor/" + type.getName());
-
-        setDrawable(new SpriteDrawable(new Sprite(texture)));
+        setDrawable(new SpriteDrawable(new Sprite(getCursorTexture(cursor))));
     }
 
-    public enum Type {
+    public enum Cursor {
         POINTER("pointer"),
         TAKE("take"),
         DRAG("drag"),
@@ -51,7 +50,7 @@ public class GameCursor extends Image {
 
         private String name;
 
-        Type(String name) {
+        Cursor(String name) {
             this.name = name;
         }
 

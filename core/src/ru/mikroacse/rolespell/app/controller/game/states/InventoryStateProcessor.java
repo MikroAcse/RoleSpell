@@ -28,11 +28,8 @@ public class InventoryStateProcessor extends StateProcessor {
         super(controller);
     }
 
-    public void process(GameRenderer.State state) {
-        if (state != GameRenderer.State.INVENTORY) {
-            return;
-        }
-
+    @Override
+    public void process() {
         InputAdapter input = getController().getInput();
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
@@ -63,15 +60,21 @@ public class InventoryStateProcessor extends StateProcessor {
         }
 
         if (renderer.getDragItem() != null) {
-            renderer.setCursor(GameCursor.Type.DRAG);
+            renderer.setCursor(GameCursor.Cursor.DRAG);
         } else if (itemView != null) {
-            renderer.setCursor(GameCursor.Type.TAKE);
+            renderer.setCursor(GameCursor.Cursor.TAKE);
         } else {
-            renderer.setCursor(GameCursor.Type.POINTER);
+            renderer.setCursor(GameCursor.Cursor.POINTER);
+        }
+
+        if(inventoryCell != -1) {
+            inventoryView.highlight(inventoryCell, true);
+        } else {
+            inventoryView.resetCells();
         }
 
         // TODO: remove (test, adds an item to the inventory)
-        if (input.getButton(Input.Keys.E).justPressed) {
+        if (input.getButton(Input.Keys.F).justPressed) {
             inventory.getItems().addItem(new WoodenSword());
         }
 
@@ -83,11 +86,18 @@ public class InventoryStateProcessor extends StateProcessor {
         // dragging
         if (mouseLeft.isDown && renderer.getDragItem() != null) {
             updateDrag();
+
+            Item dragItem = renderer.getDragItem().getItem();
+            if(hotbarCell != -1 && inventory.getItems().hasItem(dragItem)) {
+                hotbarView.highlight(hotbarCell, true);
+            }
         }
 
         // drag ended
         if (mouseLeft.justReleased && renderer.getDragItem() != null) {
             Item dragItem = renderer.getDragItem().getItem();
+
+            hotbarView.resetCells();
 
             // item moved from non-inventory location (i.e. map)
             if (!inventory.getItems().hasItem(dragItem)) {
@@ -96,7 +106,8 @@ public class InventoryStateProcessor extends StateProcessor {
                     drop(dragItem);
 
                     renderer.setDragItem(null);
-                    renderer.setState(GameRenderer.State.GAME);
+
+                    getController().setState(GameRenderer.State.GAME);
                     return;
                 }
             }
@@ -122,7 +133,7 @@ public class InventoryStateProcessor extends StateProcessor {
         }
     }
 
-    public void drop(Item item) {
+    private void drop(Item item) {
         GameModel model = getController().getModel();
         InputAdapter input = getController().getInput();
 
@@ -131,13 +142,13 @@ public class InventoryStateProcessor extends StateProcessor {
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
 
-        IntVector2 cell = renderer.getWorldRenderer().stageToCell(mouseX, mouseY);
+        IntVector2 cell = renderer.getWorldRenderer().getMapRenderer().stageToCell(mouseX, mouseY);
 
         drop(item, cell.x, cell.y);
     }
 
     // TODO: move to model
-    public void drop(Item item, int x, int y) {
+    private void drop(Item item, int x, int y) {
         GameModel model = getController().getModel();
         World world = model.getWorld();
         Entity controllable = model.getControllable();
@@ -149,12 +160,11 @@ public class InventoryStateProcessor extends StateProcessor {
         cell.shorten(movement.getPosition(), 2);
 
         DroppedItem<Item> droppedItem = new DroppedItem<>(item, world);
-        world.addEntity(droppedItem);
-
         droppedItem
                 .getComponent(MovementComponent.class)
-                .getPosition()
-                .set(cell.x, cell.y);
+                .setPosition(cell);
+
+        world.addEntity(droppedItem);
 
         Inventory inventory = controllable.getComponent(InventoryComponent.class).getInventory();
 
@@ -178,5 +188,31 @@ public class InventoryStateProcessor extends StateProcessor {
         renderer.setDragItem(itemView);
 
         updateDrag();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+
+        GameRenderer renderer = getController().getRenderer();
+
+        renderer.getHotbarView().resetCells();
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        GameRenderer renderer = getController().getRenderer();
+
+        renderer.setCursor(GameCursor.Cursor.POINTER);
+
+        ItemView dragItemView = renderer.getDragItem();
+
+        if(dragItemView != null) {
+            drop(dragItemView.getItem());
+        }
+
+        renderer.getInventoryView().resetCells();
+        renderer.getHotbarView().resetCells();
     }
 }

@@ -2,12 +2,15 @@ package ru.mikroacse.rolespell.app.controller.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.controller.game.states.GameStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.InventoryStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.StateProcessor;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
+import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -16,7 +19,8 @@ public class GameController {
     private GameRenderer renderer;
     private GameModel model;
 
-    private Array<StateProcessor> stateProcessors;
+    private Map<State, StateProcessor> stateProcessors;
+
     private GameStateProcessor gameState;
     private InventoryStateProcessor inventoryState;
 
@@ -33,34 +37,61 @@ public class GameController {
         gameState = new GameStateProcessor(this);
         inventoryState = new InventoryStateProcessor(this);
 
-        stateProcessors = new Array<>();
-        stateProcessors.add(gameState);
-        stateProcessors.add(inventoryState);
+        stateProcessors = new HashMap<>();
+        stateProcessors.put(State.GAME, gameState);
+        stateProcessors.put(State.INVENTORY, inventoryState);
+
+        setState(State.GAME);
     }
 
     public void update(float delta) {
-        GameRenderer.State state = renderer.getState();
+        State state = renderer.getState();
 
         renderer.setCursorPosition(input.getMouseX(), input.getMouseY());
 
         InputAdapter.Button inventoryButton = input.getButton(Input.Keys.I);
+        InputAdapter.Button questsButton = input.getButton(Input.Keys.TAB);
 
         if (inventoryButton.justPressed) {
-            if (state == GameRenderer.State.GAME) {
-                state = GameRenderer.State.INVENTORY;
-            } else if (state == GameRenderer.State.INVENTORY) {
-                state = GameRenderer.State.GAME;
+            if (state == State.INVENTORY) {
+                state = State.GAME;
+            } else {
+                state = State.INVENTORY;
             }
 
-            renderer.setState(state);
+            setState(state);
         }
 
-        for (StateProcessor stateProcessor : stateProcessors) {
-            stateProcessor.process(state);
+        if(questsButton.justPressed) {
+            if(state == State.QUESTS) {
+                state = State.GAME;
+            } else {
+                state = State.QUESTS;
+            }
+
+            setState(state);
         }
+
+        stateProcessors.get(state).process();
 
         model.update(delta);
         input.update();
+    }
+
+    public void setState(State newState) {
+        State currentState = renderer.getState();
+
+        if(newState == currentState) {
+            return;
+        }
+
+        if(currentState != null) {
+            stateProcessors.get(currentState).pause();
+        }
+
+        renderer.setState(newState);
+
+        stateProcessors.get(newState).resume();
     }
 
     public GameStateProcessor getGameState() {

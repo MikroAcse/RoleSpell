@@ -18,4 +18,11 @@ public class FileUtil {
             }
         }
     }
+
+    /**
+     * Returns filename without extension
+     */
+    public static String getFilename(String nameWithExtension) {
+        return nameWithExtension.replaceAll("\\.([^.]+?)$", "");
+    }
 }

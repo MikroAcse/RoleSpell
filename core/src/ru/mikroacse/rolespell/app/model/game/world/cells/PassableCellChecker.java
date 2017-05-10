@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.world.cells;
 
+import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
@@ -18,6 +19,6 @@ public class PassableCellChecker extends CellChecker {
             return false;
         }
 
-        return world.getMeta(x, y) != World.Meta.SOLID;
+        return world.getMap().getMeta(x, y) != Map.Meta.SOLID;
     }
 }

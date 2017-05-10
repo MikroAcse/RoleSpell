@@ -2,6 +2,7 @@ package ru.mikroacse.rolespell.app.view.game.inventory;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.actors.RealActor;
 import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
@@ -18,7 +19,7 @@ public class ItemListView extends Group implements RealActor {
     private static final int CELL_HEIGHT = 48;
 
     private ItemView[] itemViews;
-    private InventoryCell[] cells;
+    private Array<InventoryCell> cells;
 
     private ItemList itemList;
 
@@ -32,6 +33,8 @@ public class ItemListView extends Group implements RealActor {
 
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
+
+        cells = new Array<>();
 
         itemListListener = new ItemListListener() {
             @Override
@@ -62,7 +65,7 @@ public class ItemListView extends Group implements RealActor {
 
         for (int i = 0; i < itemList.getSize(); i++) {
             ItemView itemView = itemViews[i];
-            InventoryCell cell = cells[i];
+            InventoryCell cell = cells.get(i);
 
             float cellX = x * (CELL_WIDTH + CELL_OFFSET);
             float cellY = y * (CELL_HEIGHT + CELL_OFFSET);
@@ -77,6 +80,8 @@ public class ItemListView extends Group implements RealActor {
                     break;
                 }
             }
+
+            addActor(cell);
 
             cell.setScaleX(CELL_WIDTH / cell.getWidth());
             cell.setScaleY(CELL_HEIGHT / cell.getHeight());
@@ -94,22 +99,58 @@ public class ItemListView extends Group implements RealActor {
         }
     }
 
+    public void highlight(int cellIndex, boolean resetOthers) {
+        if(resetOthers) {
+            resetCells(cellIndex);
+        }
+
+        cells.get(cellIndex).setCellType(InventoryCell.CellType.HIGHLIGHTED);
+    }
+
+    public void select(int cellIndex, boolean resetOthers) {
+        if(resetOthers) {
+            resetCells(cellIndex);
+        }
+
+        cells.get(cellIndex).setCellType(InventoryCell.CellType.SELECTED);
+    }
+
+    public void resetCells() {
+        for (InventoryCell cell : cells) {
+            cell.setCellType(InventoryCell.CellType.DEFAULT);
+        }
+    }
+
+    private void resetCells(int excludedIndex) {
+        for (int i = 0; i < cells.size; i++) {
+            if(i != excludedIndex) {
+                cells.get(i).setCellType(InventoryCell.CellType.DEFAULT);
+            }
+        }
+    }
+
     private void attachItemList(ItemList itemList) {
         itemList.addListener(itemListListener);
 
-        itemViews = new ItemView[itemList.getSize()];
-        cells = new InventoryCell[itemList.getSize()];
+        int size = itemList.getSize();
+
+        itemViews = new ItemView[size];
+
+        if(size < cells.size) {
+            cells.truncate(size);
+        }
+
+        while (size > cells.size) {
+            InventoryCell cell = new InventoryCell();
+
+            cells.add(cell);
+        }
 
         for (int i = 0; i < itemList.getSize(); i++) {
             Item item = itemList.getItem(i);
 
-            cells[i] = new InventoryCell();
-            addActor(cells[i]);
-
             if (item != null) {
                 itemViews[i] = new ItemView(item);
-
-                addActor(itemViews[i]);
             }
         }
 
@@ -120,7 +161,6 @@ public class ItemListView extends Group implements RealActor {
         clearChildren();
 
         itemViews = null;
-        cells = null;
 
         itemList.removeListener(itemListListener);
     }
@@ -150,8 +190,8 @@ public class ItemListView extends Group implements RealActor {
     }
 
     public int getCellIndex(float x, float y) {
-        for (int i = 0; i < cells.length; i++) {
-            InventoryCell cell = cells[i];
+        for (int i = 0; i < cells.size; i++) {
+            InventoryCell cell = cells.get(i);
 
             if (x >= cell.getX() && x <= cell.getX() + cell.getWidth() * cell.getScaleX()
                     && y >= cell.getY() && y < +cell.getY() + cell.getHeight() * cell.getScaleY()) {

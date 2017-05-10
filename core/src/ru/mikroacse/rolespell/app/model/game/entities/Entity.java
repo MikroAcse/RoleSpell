@@ -24,12 +24,8 @@ public abstract class Entity extends Observable {
         components = new Array<>();
     }
 
-    public Entity() {
-        this(null, null);
-    }
-
     /**
-     * Updates all entity components.
+     * Updates all entity's components.
      */
     public void update(float delta) {
         for (int i = components.size - 1; i >= 0; i--) {
@@ -37,6 +33,9 @@ public abstract class Entity extends Observable {
         }
     }
 
+    /**
+     * Removes entity from its world.
+     */
     public void remove() {
         world.removeEntity(this);
     }

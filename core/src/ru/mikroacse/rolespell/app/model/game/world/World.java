@@ -29,7 +29,7 @@ import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellChecker;
 // TODO: refactor
 public class World {
     // TODO: separate map parser
-    private TiledMap map;
+    private Map map;
     private Array<Entity> entities;
 
     private Listener listeners;
@@ -38,16 +38,15 @@ public class World {
 
     private Player player;
 
-    public World(TiledMap map) {
+    public World(Map map) {
         this.map = map;
-        listeners = ListenerSupportFactory.create(Listener.class);
 
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("META");
+        listeners = ListenerSupportFactory.create(Listener.class);
 
         movementListener = new MovementListener() {
             @Override
             public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-                listeners.entityMoved(movement.getEntity(), previous, current);
+                listeners.entityMoved(World.this, movement.getEntity(), previous, current);
             }
         };
 
@@ -58,7 +57,7 @@ public class World {
         entities = new Array<>();
 
         // TODO: make this less horrible and tryRouteTo to separate class
-        for (MapObject mapObject : getLayer(Layer.SPAWNERS).getObjects()) {
+        for (MapObject mapObject : map.getLayer(Map.Layer.SPAWNERS).getObjects()) {
             RectangleMapObject object = (RectangleMapObject) mapObject;
 
             String entityType = object.getProperties().get("type").toString();
@@ -78,19 +77,19 @@ public class World {
 
             MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
 
-            movementComponent.setBoth(new IntVector2(realX / getTileWidth(), realY / getTileHeight()));
+            movementComponent.setBoth(new IntVector2(realX / map.getTileWidth(), realY / map.getTileHeight()));
 
             movementComponent.addListener(movementListener);
             entities.add(entity);
         }
 
         // TODO: remove
-        for (Entity entity : entities) {
+        /*for (Entity entity : entities) {
             if (entity.hasComponent(AttackAi.class)) {
                 entity.getComponent(AttackAi.class)
                         .addTarget(player);
             }
-        }
+        }*/
     }
 
     public void addListener(Listener listener) {
@@ -121,7 +120,7 @@ public class World {
                 width + radius * 2,
                 height + radius * 2);
 
-        PathFinder pathFinder = new PathFinder(new ManhattanDistance(getWeight(World.Meta.PATH)));
+        PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(Map.Meta.PATH)));
 
         // TODO: use actual map instead of generating Graph every time
         Graph graph = GraphBuilder.fromWorld(this, rect);
@@ -131,43 +130,6 @@ public class World {
                 (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
                 (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
         );
-    }
-
-    public IntVector2 getCellPosition(float x, float y) {
-        return new IntVector2(
-                (int) (x / getTileWidth()),
-                (int) (y / getTileHeight()));
-    }
-
-    public double getWeight(int x, int y) {
-        return getWeight(getMeta(x, y));
-    }
-
-    public double getWeight(Meta meta) {
-        switch (meta) {
-            case PATH:
-                return 0.5;
-            default:
-                return 1;
-        }
-    }
-
-    public Meta getMeta(int x, int y) {
-        TiledMapTileLayer.Cell cell = getCell(Layer.META, x, y);
-
-        if (cell == null) {
-            return Meta.EMPTY;
-        }
-
-        return Meta.valueOf((String) cell.getTile().getProperties().get("type"));
-    }
-
-    public Meta getMeta(IntVector2 position) {
-        return getMeta(position.x, position.y);
-    }
-
-    public TiledMapTileLayer.Cell getCell(Layer layer, int x, int y) {
-        return getTileLayer(layer).getCell(x, y);
     }
 
     // TODO: new PassableCellChecker instance every time (fix?)
@@ -183,7 +145,7 @@ public class World {
     public Array<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
                                               boolean reverse) {
         return getCells(
-                Layer.META,
+                Map.Layer.META,
                 new PassableCellChecker(checkEntities),
                 x, y,
                 minRadius, maxRadius,
@@ -195,7 +157,7 @@ public class World {
      * TODO: make this circular
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public Array<IntVector2> getCells(Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
+    public Array<IntVector2> getCells(Map.Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
                                       boolean reverse) {
         Array<IntVector2> result = new Array<>();
         int radius = minRadius;
@@ -210,11 +172,11 @@ public class World {
                     int cellX = x + i;
                     int cellY = y + j;
 
-                    if (!isValidPosition(cellX, cellY)) {
+                    if (!map.isValidPosition(cellX, cellY)) {
                         continue;
                     }
 
-                    TiledMapTileLayer.Cell cell = getCell(layer, cellX, cellY);
+                    TiledMapTileLayer.Cell cell = map.getCell(layer, cellX, cellY);
 
                     if (checker.check(this, cellX, cellY)) {
                         result.add(new IntVector2(cellX, cellY));
@@ -280,92 +242,35 @@ public class World {
         return getEntitiesAt(position.x, position.y);
     }
 
-    public boolean isValidPosition(int x, int y) {
-        return x >= 0 && y >= 0 && x < getWidth() && y < getHeight();
-    }
-
-    public boolean isValidPosition(IntVector2 position) {
-        return isValidPosition(position.x, position.y);
-    }
-
-    public void validatePosition(IntVector2 position) {
-        if (!isValidPosition(position)) {
-            position.limit(0, 0, getWidth() - 1, getHeight() - 1);
-        }
-    }
-
     public Array<Entity> getEntities() {
         return entities;
     }
 
     public void addEntity(Entity entity) {
         entities.add(entity);
+
+        listeners.entityAdded(this, entity);
     }
 
     public boolean removeEntity(Entity entity) {
-        return entities.removeValue(entity, true);
+        if(entities.removeValue(entity, true)) {
+            listeners.entityRemoved(this, entity);
+            return true;
+        }
+        return false;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public TiledMap getMap() {
+    public Map getMap() {
         return map;
     }
 
-    public int getLayerIndex(Layer layer) {
-        return map.getLayers().getIndex(layer.name());
-    }
-
-    public MapLayer getLayer(Layer layer) {
-        return map.getLayers().get(layer.name());
-    }
-
-    public TiledMapTileLayer getTileLayer(World.Layer layer) {
-        return (TiledMapTileLayer) getLayer(layer);
-    }
-
-    public int getWidth() {
-        return getTileLayer(World.Layer.BACKGROUND).getWidth();
-    }
-
-    public int getHeight() {
-        return getTileLayer(World.Layer.BACKGROUND).getHeight();
-    }
-
-    public int getTileWidth() {
-        return (int) getTileLayer(World.Layer.BACKGROUND).getTileWidth();
-    }
-
-    public int getTileHeight() {
-        return (int) getTileLayer(World.Layer.BACKGROUND).getTileHeight();
-    }
-
-    public enum Layer {
-        SPAWNERS, // object layer with entities/player spawn locations
-        TELEPORTS, // object layer with portals spawn locations
-        META, // meta layer for collisions/etc markup
-        TOP,
-        ROOFS,
-        BUILDINGS_TOP,
-        ADDITIONAL,
-        OBJECTS,
-        BOTTOM,
-        BUILDINGS_DECOR,
-        BUILDINGS,
-        LAYOUT,
-        BACKGROUND
-    }
-
-    public enum Meta {
-        SOLID,
-        WATER,
-        PATH,
-        EMPTY
-    }
-
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void entityMoved(Entity entity, IntVector2 previous, IntVector2 current);
+        void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current);
+        void entityAdded(World world, Entity entity);
+        void entityRemoved(World world, Entity entity);
     }
 }

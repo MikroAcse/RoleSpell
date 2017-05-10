@@ -9,7 +9,13 @@ public abstract class Component {
     private Entity entity;
 
     public Component(Entity entity) {
+        initListeners();
+
         setEntity(entity);
+    }
+
+    protected void initListeners() {
+
     }
 
     public boolean update(float delta) {

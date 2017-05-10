@@ -2,7 +2,10 @@ package ru.mikroacse.rolespell.app.view.loader;
 
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Back;
+import aurelienribon.tweenengine.equations.Elastic;
 import aurelienribon.tweenengine.equations.Expo;
+import aurelienribon.tweenengine.equations.Linear;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -77,9 +80,23 @@ public class LoaderRenderer extends Stage {
     public void show() {
         RoleSpell.getTweenManager().killTarget(animation);
 
-        Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
-                .ease(Expo.OUT)
-                .target(1f)
+        update();
+
+        animation.getColor().a = 1f;
+
+        Tween.from(animation, ActorAccessor.POSITION, 1.0f)
+                .ease(Elastic.OUT)
+                .target(getWidth() / 2, getHeight() / 2)
+                .start(RoleSpell.getTweenManager());
+
+        Tween.from(animation, ActorAccessor.ALPHA, 0.5f)
+                .ease(Elastic.OUT)
+                .target(0f)
+                .start(RoleSpell.getTweenManager());
+
+        Tween.from(animation, ActorAccessor.SCALE, 1.0f)
+                .ease(Elastic.OUT)
+                .target(0f)
                 .setCallback((type, source) -> {
                     if (type == TweenCallback.COMPLETE) {
                         busy = false;
@@ -87,16 +104,24 @@ public class LoaderRenderer extends Stage {
                 })
                 .start(RoleSpell.getTweenManager());
 
-        animation.getColor().a = 1;
-
         busy = true;
     }
 
     public void hide() {
         RoleSpell.getTweenManager().killTarget(animation);
 
-        Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
-                .ease(Expo.IN)
+        Tween.to(animation, ActorAccessor.POSITION,0.5f)
+                .ease(Elastic.IN)
+                .target(getWidth() / 2, getHeight() / 2)
+                .start(RoleSpell.getTweenManager());
+
+        Tween.to(animation, ActorAccessor.ALPHA,0.5f)
+                .ease(Elastic.IN)
+                .target(0f)
+                .start(RoleSpell.getTweenManager());
+
+        Tween.to(animation, ActorAccessor.SCALE,0.5f)
+                .ease(Elastic.IN)
                 .target(0f)
                 .setCallback((type, source) -> {
                     if (type == TweenCallback.COMPLETE) {
@@ -110,7 +135,7 @@ public class LoaderRenderer extends Stage {
     }
 
     private float getAnimationScale() {
-        return 5f * RoleSpell.getAssetManager().getScale();
+        return 8f * RoleSpell.getAssetManager().getScale();
     }
 
     public boolean isBusy() {

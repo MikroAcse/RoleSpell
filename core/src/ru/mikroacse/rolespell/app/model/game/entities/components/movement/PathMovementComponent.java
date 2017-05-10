@@ -59,7 +59,7 @@ public class PathMovementComponent extends MovementComponent {
         World world = getEntity().getWorld();
 
         // checking for passable cells
-        if (world.isValidPosition(destination)) {
+        if (world.getMap().isValidPosition(destination)) {
             IntVector2 newDestination = null;
 
             // TODO: magic number

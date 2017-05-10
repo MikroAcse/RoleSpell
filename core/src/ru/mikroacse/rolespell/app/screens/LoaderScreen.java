@@ -19,7 +19,7 @@ public class LoaderScreen implements Screen {
 
     @Override
     public void show() {
-
+        renderer.show();
     }
 
     @Override

@@ -31,7 +31,7 @@ public class GameModel {
     }
 
     public boolean tryAttack(int x, int y) {
-        if (world.isValidPosition(x, y)) {
+        if (world.getMap().isValidPosition(x, y)) {
             Array<Entity> entities = world.getEntitiesAt(x, y);
 
             AttackAi attackAi = controllable.getComponent(AttackAi.class);

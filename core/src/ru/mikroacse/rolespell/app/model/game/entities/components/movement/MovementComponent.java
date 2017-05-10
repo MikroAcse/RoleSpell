@@ -80,9 +80,10 @@ public class MovementComponent extends TimerComponent {
     }
 
     public void setPosition(IntVector2 position) {
-        IntVector2 previous = this.origin;
+        IntVector2 previous = this.position;
 
         this.position.set(position);
+
         listeners.positionChanged(this, previous, position);
     }
 
@@ -94,6 +95,7 @@ public class MovementComponent extends TimerComponent {
         IntVector2 previous = this.origin;
 
         this.origin.set(origin);
+
         listeners.originChanged(this, previous, origin);
     }
 

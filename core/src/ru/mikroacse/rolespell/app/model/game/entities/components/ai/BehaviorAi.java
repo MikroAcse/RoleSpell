@@ -11,6 +11,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.Moveme
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,9 +53,9 @@ public abstract class BehaviorAi extends Component {
 
         World world = entity.getWorld();
 
-        world.addListener(new World.Listener() {
+        world.addListener(new WorldListener() {
             @Override
-            public void entityMoved(Entity entity, IntVector2 previous, IntVector2 current) {
+            public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
             }
         });

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,9 +13,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.media.AssetBundleManager;
-import ru.mikroacse.engine.util.FileUtil;
 import ru.mikroacse.engine.util.JSONLoader;
-import ru.mikroacse.engine.util.StringUtil;
+import ru.mikroacse.engine.util.FileUtil;
 
 /**
  * Created by MikroAcse on 08.07.2016.
@@ -94,13 +94,13 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
 
                     asset = assetPath.replace(path, "");
 
-                    bundle.loadAsset(StringUtil.getFilename(asset), assetPath, assetClass);
+                    bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
                 }
 
                 continue;
             }
 
-            bundle.loadAsset(StringUtil.getFilename(asset), assetPath, assetClass);
+            bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
         }
     }
 

@@ -1,12 +1,12 @@
 package ru.mikroacse.rolespell.app.view.game.world;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
@@ -15,160 +15,161 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMo
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.HealthParameter;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
+import ru.mikroacse.rolespell.app.view.game.entities.EntityView;
 import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager;
 
 /**
- * Created by MikroAcse on 02-May-17.
+ * Created by MikroAcse on 09-May-17.
  */
-// TODO: make this Group, and separate map renderer from world renderer
-public class WorldRenderer {
-    private final OrthographicCamera camera;
-    private AssetBundle bundle;
-    private CellSelector selector;
-    private Texture waypoint;
-    private Texture pathTexture;
-
-    private OrthogonalTiledMapRenderer mapRenderer;
+public class WorldRenderer extends Group {
     private World world;
 
-    private int zoom;
+    private WorldListener worldListener;
+
+    private MapRenderer mapRenderer;
+    private PathRenderer pathRenderer;
+
+    private Pool<EntityView> entityViewPool;
+    private Array<EntityView> entityViews;
+
+    private AssetBundle bundle;
+    private CellSelector selector;
+
+    private Entity observable;
+
+    private float zoom;
 
     public WorldRenderer(World world) {
         this.world = world;
 
-        mapRenderer = new OrthogonalTiledMapRenderer(world.getMap());
-        camera = new OrthographicCamera();
+        worldListener = new WorldListener() {
+            @Override
+            public void entityAdded(World world, Entity entity) {
+                updateEntities();
+                updatePositions();
+            }
+
+            @Override
+            public void entityRemoved(World world, Entity entity) {
+                updateEntities();
+            }
+
+            @Override
+            public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
+                updatePositions();
+            }
+        };
+
+        // TODO: update listener on world change, also update map and other things
+        world.addListener(worldListener);
+
+        mapRenderer = new MapRenderer(world.getMap());
+        zoom = 1f;
+
+        // TODO: remove
+        EntityName name = new EntityName("Test");
+        //addActor(name);
+        name.setPosition(100, 100);
+        name.setSize(200, 100);
 
         bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
 
-        waypoint = bundle.getTexture("path/waypoint");
-        pathTexture = bundle.getTexture("path/path");
-
         selector = new CellSelector();
+        addActor(selector);
+
+        entityViewPool = new Pool<EntityView>() {
+            @Override
+            protected EntityView newObject() {
+                return new EntityView();
+            }
+        };
+
+        pathRenderer = new PathRenderer(this);
+        addActor(pathRenderer);
+
+        entityViews = new Array<>();
+
+        updateEntities();
+        updatePositions();
     }
 
-    public void draw(Entity viewEntity, Batch batch) {
-        if (world == null) {
-            return;
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        for (EntityView entityView : entityViews) {
+            Entity entity = entityView.getEntity();
+
+            // TODO: normal damage animation and handling
+            StatusComponent status = entity.getComponent(StatusComponent.class);
+
+            if (status != null) {
+                HealthParameter health = status.getParameter(HealthParameter.class);
+
+                if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
+                    entityView.setColor(Color.RED);
+                } else {
+                    entityView.setColor(Color.WHITE);
+                }
+            }
         }
 
-        MovementComponent observableMovement = viewEntity.getComponent(MovementComponent.class);
+        PathMovementComponent pathMovement = observable.getComponent(PathMovementComponent.class);
+        if (pathMovement != null) {
+            pathRenderer.setPath(pathMovement.getPath());
+        } else {
+            pathRenderer.setPath(null);
+        }
 
-        Vector2 observablePosition = cellToMap(observableMovement.getPosition());
+        super.draw(batch, parentAlpha);
+    }
 
-        Vector2 cameraPosition = observablePosition.cpy();
+    public void updatePositions() {
+        for (EntityView entityView : entityViews) {
+            Entity entity = entityView.getEntity();
 
-        cameraPosition.x = Math.max(cameraPosition.x, getCameraWidth() / 2);
-        cameraPosition.y = Math.max(cameraPosition.y, getCameraHeight() / 2);
-
-        cameraPosition.x = Math.min(cameraPosition.x, getWidth() - getCameraWidth() / 2);
-        cameraPosition.y = Math.min(cameraPosition.y, getHeight() - getCameraHeight() / 2);
-
-        // TODO: magic number, smoothing camera movement
-        camera.position.x += (cameraPosition.x - camera.position.x) / 4f;
-        camera.position.y += (cameraPosition.y - camera.position.y) / 4f;
-
-        camera.update();
-
-        mapRenderer.setView(camera);
-        renderLayers(new World.Layer[]{
-                World.Layer.BACKGROUND,
-                World.Layer.LAYOUT,
-                World.Layer.BUILDINGS,
-                World.Layer.BUILDINGS_DECOR,
-                World.Layer.BOTTOM,
-                World.Layer.OBJECTS});
-
-        batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-
-
-        for (Entity entity : world.getEntities()) {
             MovementComponent movement = entity.getComponent(MovementComponent.class);
 
             IntVector2 position = movement.getPosition();
-            Vector2 mapPosition = cellToMap(position);
+            Vector2 mapPosition = mapRenderer.cellToMap(position);
 
-            Texture texture = null;
-
-            // TODO: separate entity drawer
-            switch (entity.getType()) {
-                case NPC:
-                    texture = bundle.getTexture("entities/npc");
-                    break;
-                case PLAYER:
-                    texture = bundle.getTexture("entities/player");
-                    break;
-                case DROPPED_ITEM:
-                    texture = bundle.getTexture("items/weapons/wooden-sword");
-                    break;
-            }
-
-            if (texture != null) {
-                // TODO: normal damage animation and handling
-                StatusComponent status = entity.getComponent(StatusComponent.class);
-
-                if (status != null) {
-                    HealthParameter health = status.getParameter(HealthParameter.class);
-
-                    if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
-                        batch.setColor(Color.RED);
-                    }
-                }
-
-                batch.draw(texture, mapPosition.x, mapPosition.y);
-                batch.setColor(Color.WHITE);
-            }
+            entityView.setPosition(mapPosition.x, mapPosition.y);
         }
-
-        PathMovementComponent pathMovement = viewEntity.getComponent(PathMovementComponent.class);
-        if (pathMovement != null && !pathMovement.isPathEmpty()) {
-            Array<IntVector2> path = pathMovement.getPath();
-
-            for (int i = 0; i < path.size; i++) {
-                IntVector2 position = path.get(i);
-                Vector2 mapPosition = cellToMap(position.x, position.y);
-
-                if (i < path.size - 1) {
-                    batch.draw(pathTexture, mapPosition.x, mapPosition.y);
-                } else {
-                    batch.draw(waypoint, mapPosition.x, mapPosition.y);
-                }
-            }
-        }
-
-        batch.end();
-
-        renderLayers(new World.Layer[]{
-                World.Layer.ADDITIONAL,
-                World.Layer.BUILDINGS_TOP,
-                World.Layer.ROOFS,
-                World.Layer.TOP});
-
-        batch.begin();
-
-        selector.draw(batch, 1f);
-
-        batch.end();
     }
 
-    public void resize(int width, int height) {
-        camera.setToOrtho(false, width, height);
-    }
+    public void updateEntities() {
+        Array<Entity> entities = world.getEntities();
+        int size = entities.size;
 
-    private void renderLayers(World.Layer[] layers) {
-        mapRenderer.getBatch().begin();
-
-        for (World.Layer layer : layers) {
-            mapRenderer.renderTileLayer(world.getTileLayer(layer));
+        while (size != entityViews.size) {
+            if(size > entityViews.size) {
+                entityViews.add(entityViewPool.obtain());
+            } else {
+                entityViewPool.free(entityViews.pop());
+            }
         }
 
-        mapRenderer.getBatch().end();
+        for (int i = 0; i < entityViews.size; i++) {
+            EntityView entityView = entityViews.get(i);
+
+            entityView.setEntity(entities.get(i));
+
+            addActor(entityView);
+        }
+    }
+
+    public void updateCamera(Entity observable) {
+        mapRenderer.updateCamera(observable);
+
+        setPosition(-mapRenderer.getCameraX(), -mapRenderer.getCameraY());
+    }
+
+    public void resizeViewport(int width, int height) {
+        mapRenderer.resize(width, height);
     }
 
     public void setSelectorPosition(int x, int y) {
-        Vector2 position = cellToMap(x, y);
+        Vector2 position = mapRenderer.cellToMap(x, y);
         selector.setPosition(position.x, position.y);
     }
 
@@ -176,72 +177,26 @@ public class WorldRenderer {
         selector.setVisible(visible);
     }
 
-    public IntVector2 stageToCell(float x, float y) {
-        return mapToCell(stageToMap(x, y));
-    }
-
-    public Vector2 stageToMap(float x, float y) {
-        x *= camera.zoom;
-        y *= camera.zoom;
-
-        x += camera.position.x - getCameraWidth() / 2f;
-        y += camera.position.y - getCameraHeight() / 2f;
-
-        return new Vector2(x, y);
-    }
-
-    public Vector2 cellToMap(int x, int y) {
-        return new Vector2(
-                x * world.getTileWidth(),
-                y * world.getTileHeight());
-    }
-
-    // TODO: bad method names
-
-    public Vector2 cellToMap(IntVector2 position) {
-        return cellToMap(position.x, position.y);
-    }
-
-    public IntVector2 mapToCell(float x, float y) {
-        return new IntVector2(
-                (int) (x / world.getTileWidth()),
-                (int) (y / world.getTileHeight())
-        );
-    }
-
-    public IntVector2 mapToCell(Vector2 position) {
-        return mapToCell(position.x, position.y);
-    }
-
-    private float getCameraWidth() {
-        return camera.viewportWidth * camera.zoom;
-    }
-
-    private float getCameraHeight() {
-        return camera.viewportHeight * camera.zoom;
-    }
-
-    public float getWidth() {
-        return world.getWidth() * world.getTileWidth();
-    }
-
-    public float getHeight() {
-        return world.getHeight() * world.getTileHeight();
-    }
-
     public float getZoom() {
-        return 1 / camera.zoom;
+        return zoom;
     }
 
     public void setZoom(float zoom) {
-        camera.zoom = 1 / zoom;
+        this.zoom = zoom;
+
+        mapRenderer.setZoom(zoom);
+        setScale(zoom);
     }
 
-    public World getWorld() {
-        return world;
+    public Entity getObservable() {
+        return observable;
     }
 
-    public void setWorld(World world) {
-        this.world = world;
+    public void setObservable(Entity observable) {
+        this.observable = observable;
+    }
+
+    public MapRenderer getMapRenderer() {
+        return mapRenderer;
     }
 }

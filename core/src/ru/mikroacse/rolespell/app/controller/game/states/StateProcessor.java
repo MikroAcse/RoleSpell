@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.controller.game.states;
 
 import ru.mikroacse.rolespell.app.controller.game.GameController;
-import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -9,13 +8,27 @@ import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 public abstract class StateProcessor {
     private GameController controller;
 
+    private boolean paused;
+
     public StateProcessor(GameController controller) {
         this.controller = controller;
     }
 
-    public abstract void process(GameRenderer.State state);
+    public abstract void process();
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+    }
 
     public GameController getController() {
         return controller;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 }

@@ -12,6 +12,7 @@ import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.app.view.game.status.StatusView;
 import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
+import ru.mikroacse.rolespell.app.view.game.world.MapRenderer;
 import ru.mikroacse.rolespell.app.view.game.world.WorldRenderer;
 
 /**
@@ -50,15 +51,16 @@ public class GameRenderer extends Stage {
         statusView = new StatusView();
         statusView.setStatus(gameModel.getObservable().getComponent(StatusComponent.class));
 
+        worldRenderer = new WorldRenderer(gameModel.getWorld());
+        worldRenderer.setZoom(2f);
+
+        worldRenderer.setObservable(gameModel.getObservable());
+
+        //addActor(worldRenderer);
         addActor(inventoryView);
         addActor(hotbarView);
         addActor(statusView);
         addActor(cursor);
-
-        worldRenderer = new WorldRenderer(gameModel.getWorld());
-        worldRenderer.setZoom(2);
-
-        setState(State.GAME);
     }
 
     @Override
@@ -66,9 +68,20 @@ public class GameRenderer extends Stage {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        worldRenderer.draw(gameModel.getObservable(), getBatch());
+        MapRenderer mapRenderer = worldRenderer.getMapRenderer();
 
-        // move to top
+        // TODO: top layer above entities and path, but under entity names
+
+        worldRenderer.updateCamera(gameModel.getObservable());
+        mapRenderer.drawBottomLayers();
+
+        getBatch().begin();
+        worldRenderer.draw(getBatch(), 1f);
+        getBatch().end();
+
+        mapRenderer.drawTopLayers();
+
+
         cursor.toFront();
 
         super.draw();
@@ -85,7 +98,7 @@ public class GameRenderer extends Stage {
 
     public void resize(int width, int height) {
         getViewport().update(width, height, true);
-        worldRenderer.resize(width, height);
+        worldRenderer.resizeViewport(width, height);
 
         update();
     }
@@ -94,8 +107,8 @@ public class GameRenderer extends Stage {
         cursor.setVisible(visible);
     }
 
-    public void setCursor(GameCursor.Type type) {
-        cursor.setType(type);
+    public void setCursor(GameCursor.Cursor cursor) {
+        this.cursor.setCursor(cursor);
     }
 
     public void setCursorPosition(int x, int y) {
@@ -123,20 +136,35 @@ public class GameRenderer extends Stage {
         return state;
     }
 
-    public void setState(State state) {
+    public boolean setState(State state) {
+        if(this.state == state) {
+            return false;
+        }
+
         this.state = state;
 
+        //worldRenderer.setSelectorVisible(false);
+        statusView.setVisible(false);
+        inventoryView.setVisible(false);
+        hotbarView.setVisible(false);
+        setDragItem(null);
+
         if (state == State.INVENTORY) {
-            statusView.setVisible(false);
             inventoryView.setVisible(true);
+            hotbarView.setVisible(true);
         }
 
         if (state == State.GAME) {
-            setDragItem(null);
-
+            //worldRenderer.setSelectorVisible(true);
             statusView.setVisible(true);
-            inventoryView.setVisible(false);
+            hotbarView.setVisible(true);
         }
+
+        if (state == State.QUESTS) {
+
+        }
+
+        return true;
     }
 
     public ItemView getDragItem() {
@@ -153,7 +181,8 @@ public class GameRenderer extends Stage {
 
         if (dragItem != null) {
             addActor(dragItem);
-            dragItem.setScale(2);
+
+            dragItem.setScale(2); // TODO: magic number
         }
     }
 
