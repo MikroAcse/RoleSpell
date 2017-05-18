@@ -1,0 +1,18 @@
+{
+	"files": {
+		"textures": [
+			"entities/*",
+			"inventory/*",
+			"items/*",
+			"hud/*",
+			"ui/*"
+		],
+		"maps" : [
+			"rottenville/map.tmx",
+			"eclipse-chambers/map.tmx"
+		],
+		"configs": [
+			"maps/*"
+		]
+	}
+}

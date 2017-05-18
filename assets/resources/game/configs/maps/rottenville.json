@@ -1,0 +1,70 @@
+{
+	"name": "locations.rottenville.name",
+
+	"spawners": {
+		"player": {
+			"type": "ONCE",
+			"entity-type": "PLAYER",
+			"shared": true
+		},
+
+		"nina": {
+			"type": "ONCE",
+			"entity-type": "NPC",
+			"name": "Nina"
+		},
+
+		"zelda": {
+			"type": "ONCE",
+			"entity-type": "NPC",
+			"name": "Zelda"
+		},
+
+		"elizabeth": {
+			"type": "ONCE",
+			"entity-type": "NPC",
+			"name": "Elizabeth"
+		},
+
+		"lela": {
+			"type": "ONCE",
+			"entity-type": "NPC",
+			"name": "Lela"
+		},
+
+		"dropped-sword": {
+			"type": "ONCE", 
+			"entity-type": "DROPPED_ITEM",
+			"item": {
+				"name": "Wooden Sword"
+			}
+		}
+	},
+
+	"portals": {
+		"eclipse-chambers": {
+			"destination": "eclipse-chambers",
+			"portal-id": "rottenville-eclipse-chambers",
+			"name": "locations.eclipse_chambers.name"
+		}
+	},
+	
+	"meta": {
+		"EMPTY": {
+			"weight": 1.0,
+			"passable": true
+		},
+		"SOLID": {
+			"weight": 0.0,
+			"passable": false
+		},
+		"WATER": {
+			"weight": 0.0, 
+			"passable": false
+		},
+		"PATH": {
+			"weight": 0.9,
+			"passable": true
+		}
+	}
+}

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -13,14 +12,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.media.AssetBundleManager;
-import ru.mikroacse.engine.util.JSONLoader;
+import ru.mikroacse.engine.util.JsonLoader;
 import ru.mikroacse.engine.util.FileUtil;
 
 /**
  * Created by MikroAcse on 08.07.2016.
  */
 public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetBundle> {
-    public static final String ASSETS_DIRECTORY = "data/";
+    public static final String ASSETS_DIRECTORY = "";
     public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
 
     public AssetManager(int initialWidth, int initialHeight) {
@@ -31,7 +30,7 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
     public void loadBundle(Bundle bundle, boolean sync) {
         Gdx.app.log("LOADING", "loading bundle: " + bundle);
 
-        JsonValue config = JSONLoader.load(getBundleConfigPath(bundle));
+        JsonValue config = JsonLoader.load(getBundleMainConfigPath(bundle));
         JsonValue files = config.get("files");
 
         AssetBundle assetBundle = getBundle(bundle);
@@ -42,33 +41,55 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
             addBundle(bundle, assetBundle);
         }
 
-        loadAssets(assetBundle,
-                files.get("textures").asStringArray(),
-                getBundleTexturePath(bundle), Texture.class);
+        // TODO: beautify
 
-        loadAssets(assetBundle,
-                files.get("sounds").asStringArray(),
-                getBundleSoundPath(bundle), Sound.class);
+        JsonValue textures = files.get("textures");
+        if(textures != null)
+            loadAssets(assetBundle,
+                    textures.asStringArray(),
+                    getBundleTexturePath(bundle), Texture.class);
 
-        loadAssets(assetBundle,
-                files.get("music").asStringArray(),
-                getBundleMusicPath(bundle), Music.class);
+        JsonValue sounds = files.get("sounds");
+        if(sounds != null)
+            loadAssets(assetBundle,
+                    sounds.asStringArray(),
+                    getBundleSoundPath(bundle), Sound.class);
 
-        loadAssets(assetBundle,
-                files.get("fonts").asStringArray(),
-                getBundleFontPath(bundle), BitmapFont.class);
+        JsonValue music = files.get("music");
+        if(music != null)
+            loadAssets(assetBundle,
+                    music.asStringArray(),
+                    getBundleMusicPath(bundle), Music.class);
 
-        loadAssets(assetBundle,
-                files.get("maps").asStringArray(),
-                getBundleMapPath(bundle), TiledMap.class);
+        JsonValue fonts = files.get("fonts");
+        if(fonts != null)
+            loadAssets(assetBundle,
+                    fonts.asStringArray(),
+                    getBundleFontPath(bundle), BitmapFont.class);
 
-        loadAssets(assetBundle,
-                files.get("atlases").asStringArray(),
-                getBundleAtlasPath(bundle), TextureAtlas.class);
+        JsonValue maps = files.get("maps");
+        if(maps != null)
+            loadAssets(assetBundle,
+                    maps.asStringArray(),
+                    getBundleMapPath(bundle), TiledMap.class);
 
-        loadAssets(assetBundle,
-                files.get("shaders").asStringArray(),
-                getBundleShaderPath(bundle), ShaderProgram.class);
+        JsonValue atlases = files.get("atlases");
+        if(atlases != null)
+            loadAssets(assetBundle,
+                    atlases.asStringArray(),
+                    getBundleAtlasPath(bundle), TextureAtlas.class);
+
+        JsonValue shaders = files.get("shaders");
+        if(shaders != null)
+            loadAssets(assetBundle,
+                    shaders.asStringArray(),
+                    getBundleShaderPath(bundle), ShaderProgram.class);
+
+        JsonValue configs = files.get("configs");
+        if(configs != null)
+            loadAssets(assetBundle,
+                    configs.asStringArray(),
+                    getBundleConfigPath(bundle), JsonValue.class);
 
         if (sync) {
             assetBundle.finishLoading();
@@ -80,7 +101,7 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
             String assetPath = path + asset;
 
             // recursively load all files in a path (i.e. "files/*")
-            if (asset.endsWith("/*")) {
+            if (asset.endsWith("*")) {
                 asset = asset.substring(0, asset.length() - 1);
 
                 FileHandle assetHandle = Gdx.files.internal(assetPath.substring(0, assetPath.length() - 1));
@@ -142,6 +163,10 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
     }
 
     private String getBundleConfigPath(Bundle bundle) {
+        return getAssetBundlePath(bundle) + "configs/";
+    }
+
+    private String getBundleMainConfigPath(Bundle bundle) {
         return getAssetBundlePath(bundle) + "config.json";
     }
 

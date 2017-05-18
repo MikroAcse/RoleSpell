@@ -94,9 +94,10 @@ public class PathMovementComponent extends MovementComponent {
             return null;
         }
 
-        if (getPosition().equals(destination)) {
+        // TODO: commented because path can change because of entities, but destination would be the same
+        /*if (getPosition().equals(destination)) {
             return destination;
-        }
+        }*/
 
         Array<IntVector2> newPath = world.getPath(getPosition(), destination, searchRadius);
 

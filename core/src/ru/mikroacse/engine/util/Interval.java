@@ -1,5 +1,9 @@
 package ru.mikroacse.engine.util;
 
+import ru.mikroacse.engine.listeners.Listener;
+import ru.mikroacse.engine.listeners.ListenerSupport;
+import ru.mikroacse.engine.listeners.ListenerSupportFactory;
+
 /**
  * Created by MikroAcse on 29.03.2017.
  */
@@ -8,12 +12,15 @@ public class Interval {
     private double max;
     private double value;
 
+    private Listener listeners;
+
     public Interval(double min, double max, double value) {
         this.min = min;
         this.max = max;
-        this.value = value;
 
-        trim();
+        listeners = ListenerSupportFactory.create(Listener.class);
+
+        setValue(value);
     }
 
     public Interval(double min, double max) {
@@ -30,7 +37,7 @@ public class Interval {
 
     public void randomize() {
         if (min != max) {
-            value = min + Math.random() * (max - min);
+            setValue(min + Math.random() * (max - min));
         }
     }
 
@@ -46,8 +53,31 @@ public class Interval {
     }
 
     public void setPercentage(double percentage) {
-        value = min + percentage * (max - min);
-        trim();
+        setValue(min + percentage * (max - min));
+    }
+
+    public void add(double value) {
+        setValue(this.value + value);
+    }
+
+    public void subtract(double value) {
+        setValue(this.value - value);
+    }
+
+    public void multiply(double value) {
+        setValue(this.value * value);
+    }
+
+    public void divide(double value) {
+        setValue(this.value / value);
+    }
+
+    public boolean isMax() {
+        return value == max;
+    }
+
+    public boolean isMin() {
+        return value == min;
     }
 
     private void trim() {
@@ -66,22 +96,16 @@ public class Interval {
         value = Math.min(value, max);
     }
 
-    public void add(double value) {
-        this.value += value;
-        trim();
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
     }
 
-    public void multiply(double value) {
-        this.value *= value;
-        trim();
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
     }
 
-    public boolean isMax() {
-        return value == max;
-    }
-
-    public boolean isMin() {
-        return value == min;
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
     public double getMin() {
@@ -90,7 +114,7 @@ public class Interval {
 
     public void setMin(double min) {
         this.min = min;
-        trim();
+        setValue(value);
     }
 
     public double getMax() {
@@ -99,7 +123,7 @@ public class Interval {
 
     public void setMax(double max) {
         this.max = max;
-        trim();
+        setValue(value);
     }
 
     public double getValue() {
@@ -107,8 +131,15 @@ public class Interval {
     }
 
     public void setValue(double value) {
+        double prev = this.value;
+
         this.value = value;
+
         trim();
+
+        if(prev != this.value) {
+            listeners.valueChanged(this, prev, this.value);
+        }
     }
 
     @Override
@@ -118,5 +149,9 @@ public class Interval {
                 ", max=" + max +
                 ", interval=" + value +
                 '}';
+    }
+
+    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+        void valueChanged(Interval interval, double previousValue, double currentValue);
     }
 }

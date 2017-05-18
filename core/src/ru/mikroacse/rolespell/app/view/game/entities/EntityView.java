@@ -6,8 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.app.model.game.entities.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.media.AssetBundle;
@@ -37,6 +38,12 @@ public class EntityView extends Image implements Pool.Poolable {
                 return bundle.getTexture("entities/npc");
             case PLAYER:
                 return bundle.getTexture("entities/player");
+            case MONSTER:
+                return bundle.getTexture("entities/monsters/monster");
+            case OGREMAGI:
+                return bundle.getTexture("entities/monsters/ogremagi");
+            case PORTAL:
+                return bundle.getTexture("entities/objects/portal");
             case DROPPED_ITEM:
                 Item item = ((DroppedItem) entity).getItem();
 

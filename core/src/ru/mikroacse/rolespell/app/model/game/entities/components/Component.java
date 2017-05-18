@@ -61,4 +61,11 @@ public abstract class Component {
             attachEntity(entity);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "entity=" + entity +
+                '}';
+    }
 }

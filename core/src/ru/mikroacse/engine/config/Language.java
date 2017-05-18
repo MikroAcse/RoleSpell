@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.I18NBundle;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 
 import static com.badlogic.gdx.Gdx.files;
 
@@ -34,16 +35,18 @@ public class Language {
 
     /**
      * Returns formatted text from language bundle.
-     */
-    public String get(String scene, String key, Object... args) {
-        return bundle.format(scene + "." + key, (Object[]) args);
-    }
-
-    /**
-     * Returns formatted text from language bundle.
+     * If bundle doesn't have the key, its value returned.
      */
     public String get(String key, Object... args) {
-        return bundle.format(key, (Object[]) args);
+        String result = null;
+
+        try {
+            result = bundle.format(key, (Object[]) args);
+        } catch (MissingResourceException e) {
+            return key;
+        }
+
+        return result;
     }
 
     public I18NBundle getBundle() {

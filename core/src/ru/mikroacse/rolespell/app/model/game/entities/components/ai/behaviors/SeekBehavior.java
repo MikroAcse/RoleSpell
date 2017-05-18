@@ -48,9 +48,7 @@ public class SeekBehavior extends Behavior {
 
         for (Entity target : targets) {
             if (isTargetActivated(entity, target)) {
-                MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-
-                destination.translate(targetMovement.getPosition());
+                destination.translate(target.getPosition());
 
                 targetCount++;
             }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior.Trigger;
@@ -21,6 +22,9 @@ import java.util.EnumSet;
  * Created by MikroAcse on 29.03.2017.
  */
 public abstract class BehaviorAi extends Component {
+    private EnumSet<EntityType> targetTypes; // limit target types
+    private boolean blacklist; // use target type list as blacklist
+
     private Array<Entity> targets;
 
     private double activationDistance;
@@ -51,18 +55,21 @@ public abstract class BehaviorAi extends Component {
         targets = new Array<>();
         targetSelectors = TargetSelector.ALL;
 
+        targetTypes = EntityType.ALL;
+        blacklist = false;
+
         World world = entity.getWorld();
 
         world.addListener(new WorldListener() {
             @Override
-            public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
+            public void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
             }
         });
 
         movementListener = new MovementListener() {
             @Override
-            public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+            public void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
             }
         };
@@ -98,8 +105,7 @@ public abstract class BehaviorAi extends Component {
         Entity entity = getEntity();
         World world = entity.getWorld();
 
-        PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
-        IntVector2 position = movement.getPosition();
+        IntVector2 position = entity.getPosition();
 
         Array<Entity> targets = new Array<>();
 
@@ -112,12 +118,16 @@ public abstract class BehaviorAi extends Component {
             targets.addAll(this.targets);
         }
 
-        // remove inactivate targets
+        // remove inactivate targets and targets with disabled types
         for (int i = targets.size - 1; i >= 0; i--) {
             Entity target = targets.get(i);
 
-            MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-            IntVector2 targetPosition = targetMovement.getPosition();
+            if(targetTypes.contains(target.getType()) == blacklist) {
+                targets.removeValue(target, true);
+                continue;
+            }
+
+            IntVector2 targetPosition = target.getPosition();
 
             double distance = position.distance(targetPosition);
 
@@ -126,6 +136,7 @@ public abstract class BehaviorAi extends Component {
             }
         }
 
+        // TODO: separate comparator
         // sort targets by distance
         targets.sort(new Comparator<Entity>() {
             @Override
@@ -134,11 +145,9 @@ public abstract class BehaviorAi extends Component {
             }
 
             public double getDistance(Entity target) {
-                MovementComponent movement = entity.getComponent(MovementComponent.class);
-                IntVector2 position = movement.getPosition();
+                IntVector2 position = entity.getPosition();
 
-                MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-                IntVector2 targetPosition = targetMovement.getPosition();
+                IntVector2 targetPosition = target.getPosition();
 
                 return position.distance(targetPosition);
             }
@@ -229,7 +238,7 @@ public abstract class BehaviorAi extends Component {
     }
 
     public void clearTargets() {
-        // detach each entity
+        // detach each target
         targets.forEach(this::detachTarget);
 
         targets.clear();
@@ -281,6 +290,22 @@ public abstract class BehaviorAi extends Component {
 
     public void setTargetSelectors(EnumSet<TargetSelector> targetSelectors) {
         this.targetSelectors = targetSelectors;
+    }
+
+    public EnumSet<EntityType> getTargetTypes() {
+        return targetTypes;
+    }
+
+    public void setTargetTypes(EnumSet<EntityType> targetTypes) {
+        this.targetTypes = targetTypes;
+    }
+
+    public boolean isBlacklist() {
+        return blacklist;
+    }
+
+    public void setBlacklist(boolean blacklist) {
+        this.blacklist = blacklist;
     }
 
     public int getMaxTargets() {

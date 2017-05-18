@@ -11,10 +11,10 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class TextActor extends Actor {
-    protected GlyphLayout layout;
-    protected String text;
-    protected BitmapFont font;
+public class TextActor extends Actor implements MeasurableActor {
+    private GlyphLayout layout;
+    private String text;
+    private BitmapFont font;
 
     public TextActor(BitmapFont font) {
         this(font, "");
@@ -24,10 +24,7 @@ public class TextActor extends Actor {
         super();
         this.font = font;
         this.text = text;
-        init();
-    }
 
-    protected void init() {
         layout = new GlyphLayout(font, text);
         setColor(Color.WHITE);
     }
@@ -55,6 +52,7 @@ public class TextActor extends Actor {
         return layout.width;
     }
 
+    @Override
     public float getRealWidth() {
         return getWidth() * getScaleX();
     }
@@ -64,6 +62,7 @@ public class TextActor extends Actor {
         return layout.height;
     }
 
+    @Override
     public float getRealHeight() {
         return getHeight() * getScaleY();
     }

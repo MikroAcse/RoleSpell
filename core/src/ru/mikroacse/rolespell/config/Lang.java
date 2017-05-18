@@ -11,6 +11,10 @@ public class Lang extends Language {
     public Lang() {
         Gdx.app.log("LOADING", "loading languages");
 
-        load(AssetManager.ASSETS_DIRECTORY + "languages/lang");
+        load(AssetManager.ASSETS_DIRECTORY + "languages/bundle");
+    }
+
+    public String get(AssetManager.Bundle bundle, String key, Object... args) {
+        return super.get(bundle.getName() + "." + key, args);
     }
 }

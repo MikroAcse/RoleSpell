@@ -3,7 +3,7 @@ package ru.mikroacse.rolespell.app.view.game.inventory;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.actors.RealActor;
+import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemListListener;
@@ -13,7 +13,7 @@ import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 /**
  * Created by MikroAcse on 30-Apr-17.
  */
-public class ItemListView extends Group implements RealActor {
+public class ItemListView extends Group implements MeasurableActor {
     private static final int CELL_OFFSET = 5;
     private static final int CELL_WIDTH = 48;
     private static final int CELL_HEIGHT = 48;

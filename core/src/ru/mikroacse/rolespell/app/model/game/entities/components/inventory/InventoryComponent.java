@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.inventory;
 
-import ru.mikroacse.rolespell.app.model.game.entities.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;

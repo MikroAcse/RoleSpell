@@ -1,34 +1,31 @@
 package ru.mikroacse.rolespell.app.model.game.world;
 
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
+import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.Player;
-import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.heuristic.ManhattanDistance;
-import ru.mikroacse.rolespell.app.model.game.world.cells.CellChecker;
-import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellChecker;
+import ru.mikroacse.rolespell.app.model.game.world.cells.CellWeigher;
+import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellWeigher;
 
 /**
  * Created by MikroAcse on 23.03.2017.
  */
 // TODO: refactor
 public class World {
-    // TODO: separate map parser
+    private GameModel gameModel;
+
     private Map map;
     private Array<Entity> entities;
 
@@ -38,15 +35,16 @@ public class World {
 
     private Player player;
 
-    public World(Map map) {
+    public World(GameModel gameModel, Map map) {
+        this.gameModel = gameModel;
         this.map = map;
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
         movementListener = new MovementListener() {
             @Override
-            public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
-                listeners.entityMoved(World.this, movement.getEntity(), previous, current);
+            public void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
+                listeners.entityMoved(World.this, movement.getEntity(), prevX, prevY, current);
             }
         };
 
@@ -56,40 +54,22 @@ public class World {
     private void initialize() {
         entities = new Array<>();
 
-        // TODO: make this less horrible and tryRouteTo to separate class
-        for (MapObject mapObject : map.getLayer(Map.Layer.SPAWNERS).getObjects()) {
-            RectangleMapObject object = (RectangleMapObject) mapObject;
+        entities.addAll(MapParser.parseEntities(this, map));
+        entities.addAll(MapParser.parsePortals(this, map));
 
-            String entityType = object.getProperties().get("type").toString();
-            Entity entity = EntityType.create(this, EntityType.valueOf(entityType));
+        for (Entity entity : entities) {
+            if(entity.getType() == EntityType.PLAYER) {
+                if(player != null) {
+                    System.out.println("World: player entity already exists!");
+                }
 
-            if (entity == null) {
-                System.out.println("Couldn't create entity: " + entityType);
-                continue;
-            }
-
-            if (entity.getType() == EntityType.PLAYER) {
                 player = (Player) entity;
             }
 
-            int realX = (int) object.getRectangle().x;
-            int realY = (int) object.getRectangle().y;
+            MovementComponent movement = entity.getComponent(MovementComponent.class);
 
-            MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
-
-            movementComponent.setBoth(new IntVector2(realX / map.getTileWidth(), realY / map.getTileHeight()));
-
-            movementComponent.addListener(movementListener);
-            entities.add(entity);
+            movement.addListener(movementListener);
         }
-
-        // TODO: remove
-        /*for (Entity entity : entities) {
-            if (entity.hasComponent(AttackAi.class)) {
-                entity.getComponent(AttackAi.class)
-                        .addTarget(player);
-            }
-        }*/
     }
 
     public void addListener(Listener listener) {
@@ -120,22 +100,31 @@ public class World {
                 width + radius * 2,
                 height + radius * 2);
 
+        // TODO: don't create new path finder and cell checker every time
         PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(Map.Meta.PATH)));
 
-        // TODO: use actual map instead of generating Graph every time
-        Graph graph = GraphBuilder.fromWorld(this, rect);
+        CellWeigher cellWeigher = new PassableCellWeigher(true) {
+            @Override
+            public double weigh(World world, int x, int y) {
+                if(from.equals(x, y)) { // don't check 'from' point
+                    return 0;
+                }
+                return super.weigh(world, x, y);
+            }
+        };
+
+        // TODO: use actual map instead of generating Graph every time (?) or optimize it somehow
+        Graph graph = GraphBuilder.fromWorld(this, rect, cellWeigher);
 
         return pathFinder.getPath(
                 graph,
                 (int) (rect.height * (from.x - rect.x) + (from.y - rect.y)),
-                (int) (rect.height * (to.x - rect.x) + (to.y - rect.y))
-        );
+                (int) (rect.height * (to.x - rect.x) + (to.y - rect.y)));
     }
 
     // TODO: new PassableCellChecker instance every time (fix?)
-
     public boolean isPassable(int x, int y, boolean checkEntities) {
-        return new PassableCellChecker(checkEntities).check(this, x, y);
+        return new PassableCellWeigher(checkEntities).weigh(this, x, y) != Double.POSITIVE_INFINITY;
     }
 
     public boolean isPassable(IntVector2 position, boolean checkEntities) {
@@ -146,7 +135,7 @@ public class World {
                                               boolean reverse) {
         return getCells(
                 Map.Layer.META,
-                new PassableCellChecker(checkEntities),
+                new PassableCellWeigher(checkEntities),
                 x, y,
                 minRadius, maxRadius,
                 reverse);
@@ -157,7 +146,7 @@ public class World {
      * TODO: make this circular
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public Array<IntVector2> getCells(Map.Layer layer, CellChecker checker, int x, int y, int minRadius, int maxRadius,
+    public Array<IntVector2> getCells(Map.Layer layer, CellWeigher checker, int x, int y, int minRadius, int maxRadius,
                                       boolean reverse) {
         Array<IntVector2> result = new Array<>();
         int radius = minRadius;
@@ -178,7 +167,7 @@ public class World {
 
                     TiledMapTileLayer.Cell cell = map.getCell(layer, cellX, cellY);
 
-                    if (checker.check(this, cellX, cellY)) {
+                    if (checker.weigh(this, cellX, cellY) != Double.POSITIVE_INFINITY) {
                         result.add(new IntVector2(cellX, cellY));
                     }
                 }
@@ -198,9 +187,7 @@ public class World {
         Array<Entity> result = new Array<>();
 
         for (Entity entity : entities) {
-            MovementComponent movement = entity.getComponent(MovementComponent.class);
-
-            if (movement.getPosition().distance(x, y) <= radius) {
+            if (entity.getPosition().distance(x, y) <= radius) {
                 result.add(entity);
             }
         }
@@ -209,13 +196,11 @@ public class World {
     }
 
     /**
-     * @return First found entity at position
+     * @return First found entity at position.
      */
     public Entity getEntityAt(int x, int y) {
         for (Entity entity : entities) {
-            MovementComponent movement = entity.getComponent(MovementComponent.class);
-
-            if (movement.getPosition().equals(x, y)) {
+            if (entity.getPosition().equals(x, y)) {
                 return entity;
             }
         }
@@ -246,6 +231,10 @@ public class World {
         return entities;
     }
 
+    public boolean hasEntity(Entity entity) {
+        return entities.contains(entity, true);
+    }
+
     public void addEntity(Entity entity) {
         entities.add(entity);
 
@@ -268,8 +257,15 @@ public class World {
         return map;
     }
 
+    @Override
+    public String toString() {
+        return "World{" +
+                "map=" + map +
+                '}';
+    }
+
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current);
+        void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current);
         void entityAdded(World world, Entity entity);
         void entityRemoved(World world, Entity entity);
     }

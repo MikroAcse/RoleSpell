@@ -1,12 +1,13 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.ListenerSupport;
+import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
@@ -18,8 +19,10 @@ public class GameModel {
     private Entity observable;
     private World world;
 
-    public GameModel() {
+    private Listener listeners;
 
+    public GameModel() {
+        listeners = ListenerSupportFactory.create(Listener.class);
     }
 
     public void update(float delta) {
@@ -31,29 +34,26 @@ public class GameModel {
     }
 
     public boolean tryAttack(int x, int y) {
-        if (world.getMap().isValidPosition(x, y)) {
-            Array<Entity> entities = world.getEntitiesAt(x, y);
-
-            AttackAi attackAi = controllable.getComponent(AttackAi.class);
-
-            if (entities.size == 0) {
-                attackAi.clearTargets();
-            } else {
-                attackAi.setTarget(entities.get(0));
-            }
-
-            return true;
+        if (!world.getMap().isValidPosition(x, y)) {
+            return false;
         }
 
-        return false;
+        Array<Entity> entities = world.getEntitiesAt(x, y);
+
+        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+
+        if (entities.size == 0) {
+            attackAi.clearTargets();
+        } else {
+            attackAi.setTarget(entities.get(0));
+        }
+
+        return true;
     }
 
     public boolean tryPickup(Entity entity) {
-        MovementComponent movement = controllable.getComponent(MovementComponent.class);
-        MovementComponent entityMovement = entity.getComponent(MovementComponent.class);
-
         // TODO: magic number (maximum pickup distance)
-        if (movement.getPosition().distance(entityMovement.getPosition()) > 2) {
+        if (controllable.getPosition().distance(entity.getPosition()) > 2) {
             return false;
         }
 
@@ -69,16 +69,26 @@ public class GameModel {
         return movement.tryRouteTo(
                 new IntVector2(x, y),
                 Priority.HIGH,
-                10,
-                15,
-                0,
-                15) != null;
+                10, 15,
+                0, 15) != null;
     }
 
     public void stopAttacking() {
         AttackAi attackAi = controllable.getComponent(AttackAi.class);
 
         attackAi.clearTargets();
+    }
+
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+    }
+
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
     private void attachWorld(World world) {
@@ -103,6 +113,8 @@ public class GameModel {
     }
 
     public void setWorld(World world) {
+        World previous = this.world;
+
         if (this.world != null) {
             detachWorld(this.world);
         }
@@ -112,5 +124,11 @@ public class GameModel {
         if (world != null) {
             attachWorld(world);
         }
+
+        listeners.worldChanged(this, previous, world);
+    }
+
+    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+        void worldChanged(GameModel model, World previous, World current);
     }
 }

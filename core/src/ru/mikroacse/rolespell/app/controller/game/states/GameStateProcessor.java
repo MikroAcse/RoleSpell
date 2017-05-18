@@ -5,7 +5,7 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.model.game.entities.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
@@ -14,6 +14,7 @@ import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
+import ru.mikroacse.rolespell.app.view.game.ui.GameCursor.Cursor;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -33,6 +34,10 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
+        if(model.getWorld() == null) {
+            return;
+        }
+
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
 
@@ -45,17 +50,19 @@ public class GameStateProcessor extends StateProcessor {
 
         Entity entity = model.getWorld().getEntityAt(cell);
 
+        Cursor cursor = Cursor.POINTER;
+
         if (entity != null) {
             if (entity.getType() == EntityType.DROPPED_ITEM) {
-                renderer.setCursor(GameCursor.Cursor.TAKE);
-            } else if (entity.getType() == EntityType.NPC) {
-                renderer.setCursor(GameCursor.Cursor.ATTACK); // maduk ghost
-            } else {
-                renderer.setCursor(GameCursor.Cursor.POINTER);
+                cursor = Cursor.TAKE;
+            } else if (entity.hasParameter(Entity.Parameter.VULNERABLE)) {
+                if(entity.getType() != EntityType.PLAYER) {
+                    cursor = Cursor.ATTACK;
+                }
             }
-        } else {
-            renderer.setCursor(GameCursor.Cursor.POINTER);
         }
+
+        renderer.setCursor(cursor);
 
         if (mouseRight.justPressed) {
             model.tryRouteTo(cell.x, cell.y);
@@ -64,18 +71,18 @@ public class GameStateProcessor extends StateProcessor {
         if (mouseLeft.justPressed) {
             model.stopAttacking();
 
+            boolean route = true;
             // TODO: better solution
             if (entity != null) {
-                if (entity.getType() == EntityType.NPC) {
+                if (entity.getParameters().contains(Entity.Parameter.VULNERABLE)) {
                     model.tryAttack(cell.x, cell.y);
                 } else if (entity.getType() == EntityType.DROPPED_ITEM) {
                     DroppedItem droppedItem = (DroppedItem) entity;
 
-                    MovementComponent movement = model.getControllable().getComponent(MovementComponent.class);
-                    MovementComponent entityMovement = entity.getComponent(MovementComponent.class);
+                    IntVector2 position = model.getControllable().getPosition();
 
                     // TODO: magic number (maximum pickup distance)
-                    if (movement.getPosition().distance(entityMovement.getPosition()) < 3) {
+                    if (position.distance(entity.getPosition()) < 3) {
                         InventoryStateProcessor inventoryState = getController().getInventoryState();
                         ItemView droppedItemView = new ItemView(droppedItem.getItem());
 
@@ -84,11 +91,13 @@ public class GameStateProcessor extends StateProcessor {
                         droppedItem.remove();
 
                         inventoryState.startDrag(droppedItemView);
-                    } else {
-                        model.tryRouteTo(cell.x, cell.y);
+
+                        route = false;
                     }
                 }
-            } else {
+            }
+
+            if(route) {
                 model.tryRouteTo(cell.x, cell.y);
             }
         }
@@ -120,7 +129,9 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         ItemListView hotbarView = renderer.getHotbarView();
 
-        hotbarView.select(hotbarSelected, true);
+        if(hotbarView.getItemList() != null) {
+            hotbarView.select(hotbarSelected, true);
+        }
     }
 
     @Override
@@ -135,6 +146,6 @@ public class GameStateProcessor extends StateProcessor {
         super.pause();
 
         GameRenderer renderer = getController().getRenderer();
-        renderer.setCursor(GameCursor.Cursor.POINTER);
+        renderer.setCursor(Cursor.POINTER);
     }
 }

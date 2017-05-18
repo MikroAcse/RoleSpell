@@ -36,7 +36,7 @@ public class PathRenderer extends Group {
 
         waypoint = new Image(RoleSpell.getAssetManager()
                 .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("path/waypoint"));
+                .getTexture("ui/waypoint"));
     }
 
     public void setPath(Array<IntVector2> path) {
@@ -89,7 +89,7 @@ public class PathRenderer extends Group {
         public PathPoint() {
             super(RoleSpell.getAssetManager()
                     .getBundle(AssetManager.Bundle.GAME)
-                    .getTexture("path/path"));
+                    .getTexture("ui/path"));
         }
 
         @Override

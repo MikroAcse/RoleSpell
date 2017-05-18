@@ -6,7 +6,7 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.model.game.entities.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
@@ -99,8 +99,10 @@ public class InventoryStateProcessor extends StateProcessor {
 
             hotbarView.resetCells();
 
+            boolean nonInventory = !inventory.getItems().hasItem(dragItem);
+
             // item moved from non-inventory location (i.e. map)
-            if (!inventory.getItems().hasItem(dragItem)) {
+            if (nonInventory) {
                 // only if item moved on empty cell in inventory
                 if (inventoryCell == -1 || itemView != null) {
                     drop(dragItem);
@@ -130,6 +132,10 @@ public class InventoryStateProcessor extends StateProcessor {
             }
 
             renderer.setDragItem(null);
+
+            if(nonInventory) {
+                getController().setState(GameRenderer.State.GAME);
+            }
         }
     }
 
@@ -153,16 +159,12 @@ public class InventoryStateProcessor extends StateProcessor {
         World world = model.getWorld();
         Entity controllable = model.getControllable();
 
-        MovementComponent movement = controllable.getComponent(MovementComponent.class);
-
         IntVector2 cell = new IntVector2(x, y);
         // TODO: magic number (maximum drop distance, why is this != max pickup distance?)
-        cell.shorten(movement.getPosition(), 2);
+        cell.shorten(controllable.getPosition(), 2);
 
-        DroppedItem<Item> droppedItem = new DroppedItem<>(item, world);
-        droppedItem
-                .getComponent(MovementComponent.class)
-                .setPosition(cell);
+        DroppedItem<Item> droppedItem = new DroppedItem<>(world, item);
+        droppedItem.setPosition(cell);
 
         world.addEntity(droppedItem);
 

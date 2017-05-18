@@ -46,14 +46,14 @@ public class CollisionAvoidingAi extends Component {
     protected void initListeners() {
         worldListener = new WorldListener() {
             @Override
-            public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
+            public void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current) {
                 action();
             }
         };
 
         movementListener = new MovementListener() {
             @Override
-            public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+            public void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 action();
             }
         };
@@ -94,7 +94,7 @@ public class CollisionAvoidingAi extends Component {
             passableCells.removeValue(passableCell, true);
 
             // TODO: magic numbers
-            if (movement.tryRouteTo(passableCell, Priority.HIGH, pathFindRadius, maxRadius, 0, 15) != null) {
+            if (movement.tryRouteTo(passableCell, Priority.NORMAL, pathFindRadius, maxRadius, 0, 15) != null) {
                 destination = passableCell;
                 break;
             }

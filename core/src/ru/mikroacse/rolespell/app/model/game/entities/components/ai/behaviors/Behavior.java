@@ -47,13 +47,7 @@ public abstract class Behavior implements Comparable<Behavior> {
     public abstract boolean process(Entity entity, Array<Entity> targets);
 
     public boolean isTargetActivated(Entity entity, Entity target) {
-        MovementComponent movement = entity.getComponent(MovementComponent.class);
-        IntVector2 position = movement.getPosition();
-
-        MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-        IntVector2 targetPosition = targetMovement.getPosition();
-
-        double distance = position.distance(targetPosition);
+        double distance = entity.getPosition().distance(target.getPosition());
 
         return distance >= activationDistance && distance <= deactivationDistance;
     }

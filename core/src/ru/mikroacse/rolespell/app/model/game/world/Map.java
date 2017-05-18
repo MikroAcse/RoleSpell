@@ -3,16 +3,27 @@ package ru.mikroacse.rolespell.app.model.game.world;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import ru.mikroacse.engine.config.Configuration;
 import ru.mikroacse.engine.util.IntVector2;
+import ru.mikroacse.rolespell.RoleSpell;
+import ru.mikroacse.rolespell.media.AssetManager;
 
 /**
  * Created by MikroAcse on 09-May-17.
  */
 public class Map {
-    private TiledMap map;
+    private String id;
 
-    public Map(TiledMap map) {
+    private TiledMap map;
+    private Configuration config;
+
+    public Map(TiledMap map, String id) {
         this.map = map;
+        this.id = id;
+
+        config = new Configuration(RoleSpell.getAssetManager()
+                .getBundle(AssetManager.Bundle.GAME)
+                .getConfig("maps/" + id));
     }
 
     public IntVector2 getCellPosition(float x, float y) {
@@ -26,12 +37,15 @@ public class Map {
     }
 
     public double getWeight(Map.Meta meta) {
-        switch (meta) {
-            case PATH:
-                return 0.8;
-            default:
-                return 1;
-        }
+        return config.getDouble("meta." + meta.name() + ".weight");
+    }
+
+    public boolean isPassable(int x, int y) {
+        return isPassable(getMeta(x, y));
+    }
+
+    public boolean isPassable(Map.Meta meta) {
+        return config.getBoolean("meta." + meta.name() + ".passable");
     }
 
     public Map.Meta getMeta(int x, int y) {
@@ -98,10 +112,21 @@ public class Map {
         return map;
     }
 
+    public Configuration getConfig() {
+        return config;
+    }
+
+    @Override
+    public String toString() {
+        return "Map{" +
+                "id='" + id + '\'' +
+                '}';
+    }
+
     public enum Layer {
         SPAWNERS, // object layer with entities/player spawn locations
-        TELEPORTS, // object layer with portals spawn locations
-        META, // meta layer for collisions/etc markup
+        PORTALS, // object layer with portals spawn locations
+        META, // objects layer for collisions/etc markup
         TOP,
         ROOFS,
         BUILDINGS_TOP,

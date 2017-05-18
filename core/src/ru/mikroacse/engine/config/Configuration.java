@@ -1,28 +1,26 @@
 package ru.mikroacse.engine.config;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonValue;
-import ru.mikroacse.engine.util.JSONLoader;
+import ru.mikroacse.engine.util.JsonLoader;
 
 /**
  * Created by MikroAcse on 08.07.2016.
  */
 public class Configuration {
-    protected JsonValue config;
+    protected JsonValue json;
 
-    public Configuration() {
-
+    public Configuration(JsonValue json) {
+        this.json = json;
     }
 
-    public Configuration(JsonValue config) {
-        this.config = config;
+    public Configuration(FileHandle fileHandle) {
+        json = JsonLoader.load(fileHandle);
     }
 
     public Configuration(String path) {
-        load(path);
-    }
-
-    public void load(String path) {
-        config = JSONLoader.load(path);
+        this(Gdx.files.internal(path));
     }
 
     public String getString(String key, String defaultValue) {
@@ -34,7 +32,7 @@ public class Configuration {
     }
 
     public String getString(String key) {
-        return getString(key, null);
+        return getNode(key).asString();
     }
 
     public int getInt(String key, int defaultValue) {
@@ -46,27 +44,47 @@ public class Configuration {
     }
 
     public int getInt(String key) {
-        return getInt(key, 0);
+        return getNode(key).asInt();
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
-        return config.getBoolean(key, defaultValue);
+        JsonValue node = getNode(key);
+        if (node == null) {
+            return defaultValue;
+        }
+        return node.asBoolean();
     }
 
     public boolean getBoolean(String key) {
-        return getBoolean(key, false);
+        return getNode(key).asBoolean();
     }
 
     public float getFloat(String key, float defaultValue) {
-        return config.getFloat(key, defaultValue);
+        JsonValue node = getNode(key);
+        if (node == null) {
+            return defaultValue;
+        }
+        return node.asFloat();
     }
 
     public float getFloat(String key) {
-        return getFloat(key, 0);
+        return getNode(key).asFloat();
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        JsonValue node = getNode(key);
+        if (node == null) {
+            return defaultValue;
+        }
+        return node.asDouble();
+    }
+
+    public double getDouble(String key) {
+        return getNode(key).asDouble();
     }
 
     public int getColor(String key, int defaultValue) {
-        String value = getString(key, null);
+        String value = getString(key);
         if (value == null) {
             return defaultValue;
         }
@@ -78,10 +96,15 @@ public class Configuration {
         return getColor(key, 0);
     }
 
-    protected JsonValue getNode(String nodePath) {
+
+
+    /**
+     * Parses node path (i.e. node1.subnode2.somevalue) and returns the node.
+     */
+    public JsonValue getNode(String nodePath) {
         String[] keys = nodePath.split("\\.");
 
-        JsonValue node = config;
+        JsonValue node = json;
 
         for (String key : keys) {
             if (node == null) {
@@ -91,5 +114,23 @@ public class Configuration {
         }
 
         return node;
+    }
+
+    /**
+     * Parses node path (i.e. node1.subnode2.somevalue) and returns the node as new Configuration instance.
+     */
+
+    public Configuration extractNode(String nodePath) {
+        JsonValue node = getNode(nodePath);
+
+        if(node != null) {
+            return new Configuration(node);
+        }
+
+        return null;
+    }
+
+    public JsonValue getJson() {
+        return json;
     }
 }

@@ -7,7 +7,7 @@ import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.DamageParameter;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.DamageProperty;
 
 import java.util.EnumSet;
 
@@ -28,20 +28,16 @@ public class AttackBehavior extends Behavior {
             return false;
         }
 
-        MovementComponent movement = entity.getComponent(MovementComponent.class);
-        IntVector2 position = movement.getPosition();
+        IntVector2 position = entity.getPosition();
 
         StatusComponent status = entity.getComponent(StatusComponent.class);
-        DamageParameter damage = status.getParameter(DamageParameter.class);
+        DamageProperty damage = status.getParameter(DamageProperty.class);
 
         boolean bumped = false;
 
         for (Entity target : targets) {
             if (isTargetActivated(entity, target)) {
-                MovementComponent targetMovement = target.getComponent(MovementComponent.class);
-                IntVector2 targetPosition = targetMovement.getPosition();
-
-                if (position.distance(targetPosition) <= damage.getAttackDistance()) {
+                if (position.distance(target.getPosition()) <= damage.getAttackDistance()) {
                     bumped |= damage.bump(target);
                 }
             }

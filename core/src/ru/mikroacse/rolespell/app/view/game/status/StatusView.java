@@ -2,16 +2,16 @@ package ru.mikroacse.rolespell.app.view.game.status;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.actors.RealActor;
+import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.NumericParameter;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.parameters.core.Parameter;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.NumericProperty;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.Property;
 
 /**
  * Created by MikroAcse on 01-May-17.
  */
-public class StatusView extends Group implements RealActor {
+public class StatusView extends Group implements MeasurableActor {
     private static final int PARAMETER_WIDTH = 100;
     private static final int PARAMETER_HEIGHT = 16;
     private static final int PARAMETER_OFFSET = 5;
@@ -37,7 +37,7 @@ public class StatusView extends Group implements RealActor {
                 continue;
             }
 
-            NumericParameter parameter = parameterView.getParameter();
+            NumericProperty parameter = parameterView.getParameter();
 
             parameterView.setWidth(PARAMETER_WIDTH * (float) parameter.getPercentage());
             parameterView.setHeight(PARAMETER_HEIGHT);
@@ -49,12 +49,12 @@ public class StatusView extends Group implements RealActor {
     private void attachStatus(StatusComponent status) {
         status.addListener(statusListener);
 
-        for (Parameter parameter : status.getParameters()) {
-            if (!ParameterView.canBeRendered(parameter)) {
+        for (Property property : status.getParameters()) {
+            if (!ParameterView.canBeRendered(property)) {
                 continue;
             }
 
-            ParameterView parameterView = new ParameterView((NumericParameter) parameter);
+            ParameterView parameterView = new ParameterView((NumericProperty) property);
             parameterViews.add(parameterView);
 
             addActor(parameterView);

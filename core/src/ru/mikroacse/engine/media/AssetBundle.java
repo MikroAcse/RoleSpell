@@ -6,6 +6,9 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.JsonValue;
+import ru.mikroacse.engine.media.loaders.JsonLoader;
+import ru.mikroacse.engine.media.loaders.ShaderLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +23,9 @@ public class AssetBundle<K> {
 
     public AssetBundle() {
         manager = new AssetManager();
+
         manager.setLoader(ShaderProgram.class, new ShaderLoader(new InternalFileHandleResolver()));
+        manager.setLoader(JsonValue.class, new JsonLoader(new InternalFileHandleResolver()));
 
         pathAliases = new HashMap<>();
     }

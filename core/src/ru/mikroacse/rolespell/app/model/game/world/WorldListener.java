@@ -8,7 +8,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.Entity;
  */
 public class WorldListener implements World.Listener {
     @Override
-    public void entityMoved(World world, Entity entity, IntVector2 previous, IntVector2 current) {
+    public void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current) {
         updated(world);
     }
 

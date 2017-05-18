@@ -12,6 +12,6 @@ public class CellSelector extends Image {
         super(RoleSpell
                 .getAssetManager()
                 .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("path/cell-selector"));
+                .getTexture("ui/cell-selector"));
     }
 }

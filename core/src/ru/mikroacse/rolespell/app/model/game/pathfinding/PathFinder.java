@@ -66,14 +66,15 @@ public class PathFinder {
 
         while (open.size != 0) {
             // position cell = open cell with the lowest f cost
-            /*position = open.get(0);
-            for (int i = 0; i < open.size(); i++) {
-                if(cells[open.get(i).getNodeIndex()].getFCost() < cells[position.getNodeIndex()].getFCost()) {
-                    position = open.get(i);
+            current = open.get(0);
+            for (int i = 0; i < open.size; i++) {
+                if(cells[open.get(i).getNodeIndex()].getFCost() < cells[current.getNodeIndex()].getFCost()) {
+                    current = open.get(i);
                 }
             }
-            open.removeParameter(position);*/
-            open.sort((o1, o2) -> {
+
+            open.removeValue(current, true);
+            /*open.sort((o1, o2) -> {
                 double f1 = cells[o1.getNodeIndex()].getFCost();
                 double f2 = cells[o2.getNodeIndex()].getFCost();
 
@@ -92,7 +93,7 @@ public class PathFinder {
             });
 
             //position = open.removeParameter(0);
-            current = open.removeIndex(0);
+            current = open.removeIndex(0);*/
 
             Cell currentCell = cells[current.getNodeIndex()];
 

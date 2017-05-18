@@ -1,0 +1,69 @@
+{
+	"name": "locations.eclipse_chambers.name",
+
+	"spawners": {
+		"player": {
+			"type": "ONCE",
+			"entity-type": "PLAYER",
+			"shared": true
+		},
+
+		"monster-spawner": {
+			"type": "SPAWNER",
+			"entity-type": "MONSTER",
+			"interval": 2,
+			"radius": 1,
+			"checker": {
+				"type": "MONSTER_SPAWNER",
+				"radius": "5"
+			}
+		},
+
+		"ogremagi": {
+			"type": "ONCE",
+			"entity-type": "OGREMAGI",
+			"name": "Ogremagi",
+			"drop": [
+				{
+					"name": "Wooden Sword",
+					"chance": 0.5
+				}
+			]
+		},
+
+		"dropped-sword": {
+			"type": "ONCE", 
+			"entity-type": "DROPPED_ITEM",
+			"item": {
+				"name": "Wooden Sword"
+			}
+		}
+	},
+
+	"portals": {
+		"rottenville": {
+			"destination": "rottenville",
+			"portal-id": "rottenville-eclipse-chambers",
+			"name": "locations.rottenville.name"
+		}
+	},
+	
+	"meta": {
+		"EMPTY": {
+			"weight": 1.0,
+			"passable": true
+		},
+		"SOLID": {
+			"weight": 0.0,
+			"passable": false
+		},
+		"WATER": {
+			"weight": 0.0, 
+			"passable": false
+		},
+		"PATH": {
+			"weight": 0.9,
+			"passable": true
+		}
+	}
+}

@@ -3,12 +3,13 @@ package ru.mikroacse.rolespell.app.model.game.pathfinding;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.cells.CellWeigher;
 
 /**
  * Created by MikroAcse on 24.03.2017.
  */
 public class GraphBuilder {
-    public static Graph fromWorld(World world, Rectangle bounds) {
+    public static Graph fromWorld(World world, Rectangle bounds, CellWeigher cellWeigher) {
         int startX = (int) bounds.x;
         int startY = (int) bounds.y;
 
@@ -19,7 +20,7 @@ public class GraphBuilder {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                graph.setCellXY(i * height + j, i + startX, j + startY);
+                graph.setCellXY(getIndex(i, j, height), i + startX, j + startY);
             }
         }
 
@@ -28,27 +29,34 @@ public class GraphBuilder {
                 int x = i + startX;
                 int y = j + startY;
 
-                int cellIndex = getIndex(i, j, height);
-
-                if (!world.isPassable(x, y, false)) {
+                if (cellWeigher.weigh(world, x, y) < 0) {
                     continue;
                 }
 
+                int cellIndex = getIndex(i, j, height);
+
                 // LEFT
-                if (i - 1 >= 0 && world.isPassable(x - 1, y, false)) {
-                    graph.addEdge(cellIndex, getIndex(i - 1, j, height), world.getMap().getWeight(x - 1, y));
+                double leftWeight = cellWeigher.weigh(world, x - 1, y);
+                if (i - 1 >= 0 && leftWeight >= 0) {
+                    graph.addEdge(cellIndex, getIndex(i - 1, j, height), leftWeight);
                 }
+
                 // RIGHT
-                if (i + 1 < width && world.isPassable(x + 1, y, false)) {
-                    graph.addEdge(cellIndex, getIndex(i + 1, j, height), world.getMap().getWeight(x + 1, y));
+                double rightWeight = cellWeigher.weigh(world, x + 1, y);
+                if (i + 1 < width && rightWeight >= 0) {
+                    graph.addEdge(cellIndex, getIndex(i + 1, j, height), rightWeight);
                 }
+
                 // BOTTOM
-                if (j - 1 >= 0 && world.isPassable(x, y - 1, false)) {
-                    graph.addEdge(cellIndex, getIndex(i, j - 1, height), world.getMap().getWeight(x, y - 1));
+                double bottomWeight = cellWeigher.weigh(world, x, y - 1);
+                if (j - 1 >= 0 && bottomWeight >= 0) {
+                    graph.addEdge(cellIndex, getIndex(i, j - 1, height), bottomWeight);
                 }
+
                 // TOP
-                if (j + 1 < height && world.isPassable(x, y + 1, false)) {
-                    graph.addEdge(cellIndex, getIndex(i, j + 1, height), world.getMap().getWeight(x, y + 1));
+                double topWeight = cellWeigher.weigh(world, x, y + 1);
+                if (j + 1 < height && topWeight >= 0) {
+                    graph.addEdge(cellIndex, getIndex(i, j + 1, height), topWeight);
                 }
             }
         }

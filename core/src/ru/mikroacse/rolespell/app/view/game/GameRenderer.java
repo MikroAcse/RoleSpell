@@ -2,9 +2,11 @@ package ru.mikroacse.rolespell.app.view.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
@@ -40,27 +42,19 @@ public class GameRenderer extends Stage {
 
         cursor = new GameCursor();
 
-        Inventory inventory = gameModel.getObservable().getComponent(InventoryComponent.class).getInventory();
-
-        inventoryView = new ItemListView(6);
-        inventoryView.setItemList(inventory.getItems());
-
-        hotbarView = new ItemListView(3);
-        hotbarView.setItemList(inventory.getHotbar());
-
-        statusView = new StatusView();
-        statusView.setStatus(gameModel.getObservable().getComponent(StatusComponent.class));
-
-        worldRenderer = new WorldRenderer(gameModel.getWorld());
+        worldRenderer = new WorldRenderer();
         worldRenderer.setZoom(2f);
 
-        worldRenderer.setObservable(gameModel.getObservable());
+        inventoryView = new ItemListView(6);
+        hotbarView = new ItemListView(3);
+        statusView = new StatusView();
 
-        //addActor(worldRenderer);
         addActor(inventoryView);
         addActor(hotbarView);
         addActor(statusView);
         addActor(cursor);
+
+        refreshWorld();
     }
 
     @Override
@@ -69,22 +63,61 @@ public class GameRenderer extends Stage {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         MapRenderer mapRenderer = worldRenderer.getMapRenderer();
+        Batch batch = getBatch();
 
         // TODO: top layer above entities and path, but under entity names
 
-        worldRenderer.updateCamera(gameModel.getObservable());
+        worldRenderer.moveCameraTo(gameModel.getObservable());
+
         mapRenderer.drawBottomLayers();
 
-        getBatch().begin();
-        worldRenderer.draw(getBatch(), 1f);
-        getBatch().end();
+        batch.begin();
+        worldRenderer.draw(batch, 1f);
+        batch.end();
 
         mapRenderer.drawTopLayers();
-
 
         cursor.toFront();
 
         super.draw();
+    }
+
+    // TODO: beautify
+    public void refreshWorld() {
+        if(gameModel.getWorld() == null) {
+            statusView.setVisible(false);
+            inventoryView.setVisible(false);
+            hotbarView.setVisible(false);
+
+            worldRenderer.setWorld(null);
+            return;
+        }
+
+        worldRenderer.setWorld(gameModel.getWorld());
+
+        worldRenderer.setObservable(gameModel.getObservable());
+
+        Entity controllable = gameModel.getControllable();
+
+        // TODO: update on observable change
+        if(controllable.hasComponent(InventoryComponent.class)) {
+            Inventory inventory = controllable.getComponent(InventoryComponent.class).getInventory();
+
+            inventoryView.setItemList(inventory.getItems());
+
+            hotbarView.setItemList(inventory.getHotbar());
+        }
+
+        if(controllable.hasComponent(StatusComponent.class)) {
+            statusView.setStatus(controllable.getComponent(StatusComponent.class));
+
+        }
+
+        worldRenderer.setObservable(gameModel.getObservable());
+
+        resize(getViewport().getScreenWidth(), getViewport().getScreenHeight());
+
+        setState(State.GAME);
     }
 
     public void update() {
@@ -143,10 +176,14 @@ public class GameRenderer extends Stage {
 
         this.state = state;
 
-        //worldRenderer.setSelectorVisible(false);
+        worldRenderer.setSelectorVisible(false);
         statusView.setVisible(false);
-        inventoryView.setVisible(false);
-        hotbarView.setVisible(false);
+        if(inventoryView != null) {
+            inventoryView.setVisible(false);
+        }
+        if(hotbarView != null) {
+            hotbarView.setVisible(false);
+        }
         setDragItem(null);
 
         if (state == State.INVENTORY) {
@@ -155,9 +192,11 @@ public class GameRenderer extends Stage {
         }
 
         if (state == State.GAME) {
-            //worldRenderer.setSelectorVisible(true);
+            worldRenderer.setSelectorVisible(true);
             statusView.setVisible(true);
-            hotbarView.setVisible(true);
+            if(hotbarView != null) {
+                hotbarView.setVisible(true);
+            }
         }
 
         if (state == State.QUESTS) {

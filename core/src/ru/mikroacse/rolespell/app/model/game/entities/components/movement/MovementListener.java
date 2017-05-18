@@ -7,12 +7,12 @@ import ru.mikroacse.engine.util.IntVector2;
  */
 public class MovementListener implements MovementComponent.Listener {
     @Override
-    public void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+    public void originChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
 
     }
 
     @Override
-    public void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current) {
+    public void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
 
     }
 }

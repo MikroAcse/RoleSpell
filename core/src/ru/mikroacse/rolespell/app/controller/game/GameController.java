@@ -33,7 +33,6 @@ public class GameController {
         input = new InputAdapter();
         Gdx.input.setInputProcessor(input);
 
-        // TODO: don't depend on concrete implementations of StateProcessor
         gameState = new GameStateProcessor(this);
         inventoryState = new InventoryStateProcessor(this);
 

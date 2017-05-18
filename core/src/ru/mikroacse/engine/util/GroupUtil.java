@@ -3,7 +3,7 @@ package ru.mikroacse.engine.util;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.SnapshotArray;
-import ru.mikroacse.engine.actors.RealActor;
+import ru.mikroacse.engine.actors.MeasurableActor;
 
 /**
  * Created by MikroAcse on 10.07.2016.
@@ -25,8 +25,8 @@ public class GroupUtil {
                 continue;
             }
 
-            if (child instanceof RealActor) {
-                childMaxX = childMinX + ((RealActor) child).getRealWidth();
+            if (child instanceof MeasurableActor) {
+                childMaxX = childMinX + ((MeasurableActor) child).getRealWidth();
             } else if (child instanceof Group) {
                 childMaxX = childMinX + GroupUtil.getWidth((Group) child);
             } else {
@@ -60,8 +60,8 @@ public class GroupUtil {
                 continue;
             }
 
-            if (child instanceof RealActor) {
-                childMaxY = childMinY + ((RealActor) child).getRealHeight();
+            if (child instanceof MeasurableActor) {
+                childMaxY = childMinY + ((MeasurableActor) child).getRealHeight();
             } else if (child instanceof Group) {
                 childMaxY = childMinY + GroupUtil.getHeight((Group) child);
             } else {

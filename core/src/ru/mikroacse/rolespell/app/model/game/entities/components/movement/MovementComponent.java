@@ -79,24 +79,34 @@ public class MovementComponent extends TimerComponent {
         return position;
     }
 
+    public void setPosition(int x, int y) {
+        int prevX = position.x;
+        int prevY = position.y;
+
+        position.set(x, y);
+
+        listeners.positionChanged(this, prevX, prevY, position);
+    }
+
     public void setPosition(IntVector2 position) {
-        IntVector2 previous = this.position;
-
-        this.position.set(position);
-
-        listeners.positionChanged(this, previous, position);
+        setPosition(position.x, position.y);
     }
 
     public IntVector2 getOrigin() {
         return origin;
     }
 
+    public void setOrigin(int x, int y) {
+        int prevX = origin.x;
+        int prevY = origin.y;
+
+        origin.set(x, y);
+
+        listeners.originChanged(this, prevX, prevY, origin);
+    }
+
     public void setOrigin(IntVector2 origin) {
-        IntVector2 previous = this.origin;
-
-        this.origin.set(origin);
-
-        listeners.originChanged(this, previous, origin);
+        setOrigin(origin.x, origin.y);
     }
 
     public void setBoth(IntVector2 position) {
@@ -127,8 +137,8 @@ public class MovementComponent extends TimerComponent {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void originChanged(MovementComponent movement, IntVector2 previous, IntVector2 current);
+        void originChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current);
 
-        void positionChanged(MovementComponent movement, IntVector2 previous, IntVector2 current);
+        void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current);
     }
 }

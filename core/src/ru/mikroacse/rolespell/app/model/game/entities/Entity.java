@@ -1,27 +1,39 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
+import java.util.EnumSet;
 import java.util.Observable;
 
 /**
  * Created by MikroAcse on 23.03.2017.
  */
-public abstract class Entity extends Observable {
+public abstract class Entity {
     private World world;
     private EntityType type;
 
     private String name;
 
+    private Configuration config;
+
     private Array<Component> components;
+    private EnumSet<Parameter> parameters;
 
     public Entity(EntityType type, World world) {
+        this(type, world, null);
+    }
+
+    public Entity(EntityType type, World world, String name) {
         this.type = type;
         this.world = world;
+        this.name = name;
 
         components = new Array<>();
+        parameters = Parameter.NONE;
     }
 
     /**
@@ -40,7 +52,11 @@ public abstract class Entity extends Observable {
         world.removeEntity(this);
     }
 
-    public abstract void dispose();
+    public void dispose() {
+        for (Component component : components) {
+            component.dispose();
+        }
+    }
 
     public void addComponent(Component component) {
         components.add(component);
@@ -86,6 +102,27 @@ public abstract class Entity extends Observable {
         return result;
     }
 
+    public EnumSet<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public boolean hasParameter(Parameter parameter) {
+        return parameters.contains(parameter);
+    }
+
+    public boolean hasParameters(EnumSet<Parameter> parameters) {
+        for (Parameter parameter : parameters) {
+            if(!parameters.contains(parameter)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setParameters(EnumSet<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
     public EntityType getType() {
         return type;
     }
@@ -100,5 +137,58 @@ public abstract class Entity extends Observable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public abstract void setPosition(int x, int y);
+
+    public void setPosition(IntVector2 position) {
+        setPosition(position.x, position.y);
+    }
+
+    public abstract IntVector2 getPosition();
+
+    public int getX() {
+        return getPosition().x;
+    }
+
+    public int getY() {
+        return getPosition().y;
+    }
+
+    public abstract void setOrigin(int x, int y);
+
+    public void setOrigin(IntVector2 position) {
+        setOrigin(position.x, position.y);
+    }
+
+    public abstract IntVector2 getOrigin();
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public void setConfig(Configuration config) {
+        this.config = config;
+    }
+
+    public String getId() {
+        return config == null? null : config.getString("id", null);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "world=" + world +
+                ", type=" + type +
+                ", id=" + getId() +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    public enum Parameter {
+        SOLID, // TODO: collisions not allowed
+        VULNERABLE; // can be attacked
+
+        public static final EnumSet<Parameter> NONE = EnumSet.noneOf(Parameter.class);
     }
 }

@@ -18,7 +18,6 @@ import ru.mikroacse.rolespell.media.AssetManager;
 /**
  * Created by MikroAcse on 02-May-17.
  */
-// TODO: make this Group, and separate map renderer from world renderer
 public class MapRenderer {
     private final OrthographicCamera camera;
 
@@ -33,9 +32,7 @@ public class MapRenderer {
     }
 
     public void updateCamera(Entity observable) {
-        MovementComponent observableMovement = observable.getComponent(MovementComponent.class);
-
-        Vector2 observablePosition = cellToMap(observableMovement.getPosition());
+        Vector2 observablePosition = cellToMap(observable.getPosition());
 
         Vector2 cameraPosition = observablePosition.cpy();
 
@@ -61,66 +58,6 @@ public class MapRenderer {
                 Map.Layer.BUILDINGS_DECOR,
                 Map.Layer.BOTTOM,
                 Map.Layer.OBJECTS});
-
-        /*batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-
-
-        for (Entity entity : map.getEntities()) {
-            MovementComponent movement = entity.getComponent(MovementComponent.class);
-
-            IntVector2 position = movement.getPosition();
-            Vector2 mapPosition = cellToMap(position);
-
-            Texture texture = null;
-
-            // TODO: separate entity drawer
-            switch (entity.getType()) {
-                case NPC:
-                    texture = bundle.getTexture("entities/npc");
-                    break;
-                case PLAYER:
-                    texture = bundle.getTexture("entities/player");
-                    break;
-                case DROPPED_ITEM:
-                    texture = bundle.getTexture("items/weapons/wooden-sword");
-                    break;
-            }
-
-            if (texture != null) {
-                // TODO: normal damage animation and handling
-                StatusComponent status = entity.getComponent(StatusComponent.class);
-
-                if (status != null) {
-                    HealthParameter health = status.getParameter(HealthParameter.class);
-
-                    if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
-                        batch.setColor(Color.RED);
-                    }
-                }
-
-                batch.draw(texture, mapPosition.x, mapPosition.y);
-                batch.setColor(Color.WHITE);
-            }
-        }
-
-        PathMovementComponent pathMovement = viewEntity.getComponent(PathMovementComponent.class);
-        if (pathMovement != null && !pathMovement.isPathEmpty()) {
-            Array<IntVector2> path = pathMovement.getPath();
-
-            for (int i = 0; i < path.size; i++) {
-                IntVector2 position = path.get(i);
-                Vector2 mapPosition = cellToMap(position.x, position.y);
-
-                if (i < path.size - 1) {
-                    batch.draw(pathTexture, mapPosition.x, mapPosition.y);
-                } else {
-                    batch.draw(waypoint, mapPosition.x, mapPosition.y);
-                }
-            }
-        }
-
-        batch.end();*/
     }
 
     public void drawTopLayers() {
@@ -129,12 +66,6 @@ public class MapRenderer {
                 Map.Layer.BUILDINGS_TOP,
                 Map.Layer.ROOFS,
                 Map.Layer.TOP});
-
-        /*batch.begin();
-
-        selector.draw(batch, 1f);
-
-        batch.end();*/
     }
 
     public void resize(int width, int height) {
@@ -171,8 +102,6 @@ public class MapRenderer {
                 y * map.getTileHeight());
     }
 
-    // TODO: bad method names
-
     public Vector2 cellToMap(IntVector2 position) {
         return cellToMap(position.x, position.y);
     }
@@ -180,8 +109,7 @@ public class MapRenderer {
     public IntVector2 mapToCell(float x, float y) {
         return new IntVector2(
                 (int) (x / map.getTileWidth()),
-                (int) (y / map.getTileHeight())
-        );
+                (int) (y / map.getTileHeight()));
     }
 
     public IntVector2 mapToCell(Vector2 position) {
@@ -218,17 +146,5 @@ public class MapRenderer {
 
     public void setZoom(float zoom) {
         camera.zoom = 1 / zoom;
-    }
-
-    public Map getMap() {
-        return map;
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
-    public OrthogonalTiledMapRenderer getMapRenderer() {
-        return mapRenderer;
     }
 }
