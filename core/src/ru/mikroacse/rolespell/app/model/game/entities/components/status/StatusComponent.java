@@ -17,6 +17,8 @@ public class StatusComponent extends Component {
 
     private Property.Listener propertyListener;
 
+    private boolean paused;
+
     public StatusComponent(Entity entity) {
         super(entity, true);
 
@@ -34,12 +36,29 @@ public class StatusComponent extends Component {
 
     @Override
     public boolean update(float delta) {
+        if(paused) {
+            return false;
+        }
+
         boolean updated = false;
+
         for (Property property : properties) {
             updated |= property.update(delta);
         }
 
         return updated;
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public void addListener(Listener listener) {

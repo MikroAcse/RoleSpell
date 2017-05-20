@@ -7,9 +7,11 @@ import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
+import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.media.AssetManager;
 
@@ -37,7 +39,7 @@ public class GameScreen implements Screen {
                 .getBundle(AssetManager.Bundle.GAME)
                 .getMap(id + "/map");
 
-        World world = new World(model, new Map(map, id));
+        World world = new World(new Map(map, id));
 
         model.setWorld(world);
 
@@ -53,6 +55,13 @@ public class GameScreen implements Screen {
                 }
             }
         }
+
+        world.addListener(new WorldListener() {
+            @Override
+            public void mobDied(World world, MobController controller) {
+                System.out.println("died: " + controller.getEntity().getType());
+            }
+        });
 
         renderer.refreshWorld();
     }

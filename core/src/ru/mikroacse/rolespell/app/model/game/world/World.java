@@ -6,12 +6,16 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
-import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
+import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
+import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusListener;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
@@ -24,27 +28,50 @@ import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellWeigher;
  */
 // TODO: refactor
 public class World {
-    private GameModel gameModel;
-
     private Map map;
     private Array<Entity> entities;
 
-    private Listener listeners;
-
+    private MobListener mobListener;
+    private StatusListener statusListener;
     private MovementListener movementListener;
+
+    private Listener listeners;
 
     private Player player;
 
-    public World(GameModel gameModel, Map map) {
-        this.gameModel = gameModel;
+    public World(Map map) {
         this.map = map;
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
+        mobListener = new MobListener() {
+            @Override
+            public void died(MobController controller) {
+                listeners.mobDied(World.this, controller);
+            }
+
+            @Override
+            public void resurrected(MobController controller) {
+                listeners.mobResurrected(World.this, controller);
+            }
+        };
+
+        statusListener = new StatusListener() {
+            @Override
+            public void propertyUpdated(StatusComponent status, Property property, double previousValue, double currentValue) {
+                listeners.propertyUpdated(World.this, status, property, previousValue, currentValue);
+            }
+        };
+
         movementListener = new MovementListener() {
             @Override
+            public void originChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
+                listeners.originChanged(World.this, movement, prevX, prevY, current);
+            }
+
+            @Override
             public void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current) {
-                listeners.entityMoved(World.this, movement.getEntity(), prevX, prevY, current);
+                listeners.positionChanged(World.this, movement, prevX, prevY, current);
             }
         };
 
@@ -66,9 +93,7 @@ public class World {
                 player = (Player) entity;
             }
 
-            MovementComponent movement = entity.getComponent(MovementComponent.class);
-
-            movement.addListener(movementListener);
+            attachEntity(entity);
         }
     }
 
@@ -235,14 +260,46 @@ public class World {
         return entities.contains(entity, true);
     }
 
+    private void attachEntity(Entity entity) {
+        if(entity.hasComponent(MobController.class)) {
+            entity.getComponent(MobController.class).addListener(mobListener);
+        }
+
+        if(entity.hasComponent(MovementComponent.class)) {
+            entity.getComponent(MovementComponent.class).addListener(movementListener);
+        }
+
+        if(entity.hasComponent(StatusComponent.class)) {
+            entity.getComponent(StatusComponent.class).addListener(statusListener);
+        }
+    }
+
+    private void detachEntity(Entity entity) {
+        if(entity.hasComponent(MobController.class)) {
+            entity.getComponent(MobController.class).removeListener(mobListener);
+        }
+
+        if(entity.hasComponent(MovementComponent.class)) {
+            entity.getComponent(MovementComponent.class).removeListener(movementListener);
+        }
+
+        if(entity.hasComponent(StatusComponent.class)) {
+            entity.getComponent(StatusComponent.class).removeListener(statusListener);
+        }
+    }
+
     public void addEntity(Entity entity) {
         entities.add(entity);
+
+        attachEntity(entity);
 
         listeners.entityAdded(this, entity);
     }
 
     public boolean removeEntity(Entity entity) {
         if(entities.removeValue(entity, true)) {
+            detachEntity(entity);
+
             listeners.entityRemoved(this, entity);
             return true;
         }
@@ -265,7 +322,18 @@ public class World {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current);
+        // MobController.Listener
+        void mobDied(World world, MobController controller);
+        void mobResurrected(World world, MobController controller);
+
+        // MovementComponent.Listener
+        void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
+        void originChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
+
+        // StatusComponent.Listener
+        void propertyUpdated(World world, StatusComponent status, Property property, double previousValue, double currentValue);
+
+        // Original events
         void entityAdded(World world, Entity entity);
         void entityRemoved(World world, Entity entity);
     }

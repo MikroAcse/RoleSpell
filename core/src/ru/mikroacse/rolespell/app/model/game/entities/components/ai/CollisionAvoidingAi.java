@@ -46,7 +46,7 @@ public class CollisionAvoidingAi extends Component {
     protected void initListeners() {
         worldListener = new WorldListener() {
             @Override
-            public void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current) {
+            public void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 action();
             }
         };

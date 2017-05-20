@@ -17,6 +17,8 @@ public abstract class Property implements Interval.Listener {
 
     private Listener listeners;
 
+    private boolean paused;
+
     public Property(StatusComponent status, PropertyType type, Interval interval, double speed) {
         this.status = status;
         this.type = type;
@@ -32,6 +34,10 @@ public abstract class Property implements Interval.Listener {
     }
 
     public boolean update(float delta) {
+        if(paused) {
+            return false;
+        }
+
         interval.setValue(interval.getValue() + speed * delta);
 
         return true;
@@ -80,6 +86,18 @@ public abstract class Property implements Interval.Listener {
         if(interval != null) {
             attachInterval(interval);
         }
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public double getSpeed() {

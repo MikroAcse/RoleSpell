@@ -64,7 +64,7 @@ public abstract class Mob extends Entity {
         return status;
     }
 
-    public MobController getMobController() {
+    public MobController getController() {
         return mobController;
     }
 }

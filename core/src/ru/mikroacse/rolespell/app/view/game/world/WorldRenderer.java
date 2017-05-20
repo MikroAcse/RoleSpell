@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
+import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
@@ -60,7 +61,7 @@ public class WorldRenderer extends Group {
             }
 
             @Override
-            public void entityMoved(World world, Entity entity, int prevX, int prevY, IntVector2 current) {
+            public void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 updatePositions();
             }
         };
