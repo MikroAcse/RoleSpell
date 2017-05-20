@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
@@ -111,7 +110,7 @@ public class WorldRenderer extends Group {
             StatusComponent status = entity.getComponent(StatusComponent.class);
 
             if (status != null) {
-                HealthProperty health = status.getParameter(HealthProperty.class);
+                HealthProperty health = status.getProperty(HealthProperty.class);
 
                 if (System.currentTimeMillis() - health.getLastTimeDamaged() <= 400) {
                     entityView.setColor(Color.RED);
@@ -224,6 +223,10 @@ public class WorldRenderer extends Group {
         mapRenderer.updateCamera(observable);
 
         setPosition(-mapRenderer.getCameraX(), -mapRenderer.getCameraY());
+    }
+
+    public void moveCamera() {
+        moveCameraTo(observable);
     }
 
     public void resizeViewport(int width, int height) {

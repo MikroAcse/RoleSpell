@@ -29,7 +29,7 @@ public class CollisionAvoidingAi extends Component {
     private boolean stickToOrigin;
 
     public CollisionAvoidingAi(Entity entity, int minRadius, int maxRadius, boolean stickToOrigin) {
-        super(entity);
+        super(entity, true);
 
         this.minRadius = minRadius;
         this.maxRadius = maxRadius;

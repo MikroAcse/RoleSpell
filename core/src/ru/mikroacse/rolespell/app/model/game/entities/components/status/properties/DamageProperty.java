@@ -3,12 +3,11 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.status.propert
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.NumericProperty;
 
 /**
  * Created by MikroAcse on 13-Apr-17.
  */
-public class DamageProperty extends NumericProperty {
+public class DamageProperty extends Property {
     private double attackDistance;
 
     private boolean randomized;
@@ -22,7 +21,7 @@ public class DamageProperty extends NumericProperty {
 
     public boolean bump(Entity entity) {
         StatusComponent status = entity.getComponent(StatusComponent.class);
-        HealthProperty health = status.getParameter(HealthProperty.class);
+        HealthProperty health = status.getProperty(HealthProperty.class);
 
         health.damage(getInterval().getValue());
 

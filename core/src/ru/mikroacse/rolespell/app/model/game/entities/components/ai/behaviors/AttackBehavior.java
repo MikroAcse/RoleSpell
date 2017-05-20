@@ -5,7 +5,6 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.DamageProperty;
 
@@ -31,7 +30,7 @@ public class AttackBehavior extends Behavior {
         IntVector2 position = entity.getPosition();
 
         StatusComponent status = entity.getComponent(StatusComponent.class);
-        DamageProperty damage = status.getParameter(DamageProperty.class);
+        DamageProperty damage = status.getProperty(DamageProperty.class);
 
         boolean bumped = false;
 

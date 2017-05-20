@@ -21,7 +21,7 @@ public class MovementComponent extends TimerComponent {
     private Listener listeners;
 
     public MovementComponent(Entity entity, int x, int y, float speed) {
-        super(entity, new Timer(1.0));
+        super(entity, new Timer(1.0), true);
         this.speed = speed;
 
         listeners = ListenerSupportFactory.create(Listener.class);

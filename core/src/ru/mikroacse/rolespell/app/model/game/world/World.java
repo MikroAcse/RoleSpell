@@ -9,7 +9,7 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
-import ru.mikroacse.rolespell.app.model.game.entities.Player;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.GraphBuilder;

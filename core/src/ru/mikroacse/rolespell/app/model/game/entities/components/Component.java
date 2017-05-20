@@ -8,7 +8,14 @@ import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 public abstract class Component {
     private Entity entity;
 
-    public Component(Entity entity) {
+    private boolean single;
+
+    /**
+     * @param single Only one instance of the component can be added to the entity.
+     */
+    public Component(Entity entity, boolean single) {
+        this.single = single;
+
         initListeners();
 
         setEntity(entity);
@@ -60,6 +67,10 @@ public abstract class Component {
         if (entity != null) {
             attachEntity(entity);
         }
+    }
+
+    public boolean isSingle() {
+        return single;
     }
 
     @Override

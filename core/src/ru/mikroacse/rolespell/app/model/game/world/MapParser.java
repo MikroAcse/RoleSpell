@@ -4,17 +4,16 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.config.Configuration;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.*;
-import ru.mikroacse.rolespell.app.model.game.entities.monsters.Monster;
-import ru.mikroacse.rolespell.app.model.game.entities.monsters.Ogremagi;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Monster;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.Npc;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Ogremagi;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
-import ru.mikroacse.rolespell.media.AssetManager;
 
 /**
  * Created by MikroAcse on 11-May-17.

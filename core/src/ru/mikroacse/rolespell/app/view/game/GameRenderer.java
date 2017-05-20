@@ -67,7 +67,7 @@ public class GameRenderer extends Stage {
 
         // TODO: top layer above entities and path, but under entity names
 
-        worldRenderer.moveCameraTo(gameModel.getObservable());
+        worldRenderer.moveCamera();
 
         mapRenderer.drawBottomLayers();
 

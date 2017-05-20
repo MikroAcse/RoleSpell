@@ -44,7 +44,7 @@ public abstract class BehaviorAi extends Component {
      * @param deactivationDistance Global target deactivation distance (smaller values — better performance)
      */
     public BehaviorAi(Entity entity, int activationDistance, int deactivationDistance) {
-        super(entity);
+        super(entity, true);
         this.activationDistance = activationDistance;
         this.deactivationDistance = deactivationDistance;
 

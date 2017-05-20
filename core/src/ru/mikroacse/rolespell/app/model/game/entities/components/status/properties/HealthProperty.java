@@ -2,13 +2,11 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.status.propert
 
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.NumericProperty;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.Property;
 
 /**
  * Created by MikroAcse on 04.04.2017.
  */
-public class HealthProperty extends NumericProperty {
+public class HealthProperty extends Property {
     private long lastTimeDamaged;
     private long lastTimeHealed;
 
@@ -17,15 +15,6 @@ public class HealthProperty extends NumericProperty {
 
         lastTimeDamaged = 0;
         lastTimeHealed = 0;
-
-        addListener(new Listener() {
-            @Override
-            public void valueChanged(Property property, double previousValue, double currentValue) {
-                if(currentValue <= 0) {
-                    System.out.println("dead: " + getStatus().getEntity());
-                }
-            }
-        });
     }
 
     public boolean heal(double value) {

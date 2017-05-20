@@ -5,32 +5,37 @@ import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.Property;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 
 /**
  * Created by MikroAcse on 03.04.2017.
  */
 public class StatusComponent extends Component {
-    private Array<Property> parameters;
+    private Array<Property> properties;
 
     private Listener listeners;
 
-    private Property.Listener parameterListener;
+    private Property.Listener propertyListener;
 
     public StatusComponent(Entity entity) {
-        super(entity);
+        super(entity, true);
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
-        parameters = new Array<>();
+        properties = new Array<>();
 
-        parameterListener = listeners::parameterUpdated;
+        propertyListener = new Property.Listener() {
+            @Override
+            public void updated(Property property, double previousValue, double currentValue) {
+                listeners.propertyUpdated(StatusComponent.this, property, previousValue, currentValue);
+            }
+        };
     }
 
     @Override
     public boolean update(float delta) {
         boolean updated = false;
-        for (Property property : parameters) {
+        for (Property property : properties) {
             updated |= property.update(delta);
         }
 
@@ -49,23 +54,32 @@ public class StatusComponent extends Component {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
-    public void addParameter(Property property) {
-        parameters.add(property);
+    public void addProperty(Property property) {
+        properties.add(property);
 
-        property.addListener(parameterListener);
+        property.addListener(propertyListener);
+
+        listeners.propertyAdded(this, property);
     }
 
-    public boolean removeParameter(Property property) {
-        property.removeListener(parameterListener);
+    public boolean removeProperty(Property property) {
+        property.removeListener(propertyListener);
 
-        return parameters.removeValue(property, true);
+        boolean result = properties.removeValue(property, true);
+
+        if(result) {
+            listeners.propertyRemoved(this, property);
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * @return True if status has at least one parameter of given class.
      */
-    public boolean hasParameter(Class<? extends Component> parameterClass) {
-        for (Property property : parameters) {
+    public <T extends Property> boolean hasProperty(Class<?> parameterClass) {
+        for (Property property : properties) {
             if (parameterClass.isInstance(property)) {
                 return true;
             }
@@ -76,8 +90,8 @@ public class StatusComponent extends Component {
     /**
      * @return First matching status parameter of given class.
      */
-    public <T extends Property> T getParameter(Class<T> parameterClass) {
-        for (Property property : parameters) {
+    public <T extends Property> T getProperty(Class<T> parameterClass) {
+        for (Property property : properties) {
             if (parameterClass.isInstance(property)) {
                 return (T) property;
             }
@@ -88,10 +102,10 @@ public class StatusComponent extends Component {
     /**
      * @return All status properties of given class.
      */
-    public <T extends Property> Array<T> getParameters(Class<T> parameterClass) {
+    public <T extends Property> Array<T> getProperties(Class<T> parameterClass) {
         Array<T> result = new Array<T>();
 
-        for (Property property : parameters) {
+        for (Property property : properties) {
             if (parameterClass.isInstance(property)) {
                 result.add((T) property);
             }
@@ -100,8 +114,8 @@ public class StatusComponent extends Component {
         return result;
     }
 
-    public Array<Property> getParameters() {
-        return parameters;
+    public Array<Property> getProperties() {
+        return properties;
     }
 
     @Override
@@ -110,6 +124,8 @@ public class StatusComponent extends Component {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void parameterUpdated(Property property);
+        void propertyUpdated(StatusComponent status, Property property, double previousValue, double currentValue);
+        void propertyAdded(StatusComponent status, Property property);
+        void propertyRemoved(StatusComponent status, Property property);
     }
 }

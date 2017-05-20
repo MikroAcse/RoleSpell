@@ -14,7 +14,7 @@ public class InventoryComponent extends Component {
     private Inventory inventory;
 
     public InventoryComponent(Entity entity, Inventory inventory) {
-        super(entity);
+        super(entity, true);
 
         this.inventory = inventory;
     }

@@ -7,7 +7,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
-import java.util.Observable;
 
 /**
  * Created by MikroAcse on 23.03.2017.
@@ -34,6 +33,12 @@ public abstract class Entity {
 
         components = new Array<>();
         parameters = Parameter.NONE;
+
+        preInit();
+    }
+
+    protected void preInit() {
+
     }
 
     /**
@@ -58,8 +63,16 @@ public abstract class Entity {
         }
     }
 
-    public void addComponent(Component component) {
+    public boolean addComponent(Component component)  {
+        if(component.isSingle()) {
+            if(hasComponent(component.getClass())) {
+                System.err.println("Trying to add more than one instance of a single component to an entity.");
+                return false;
+            }
+        }
+
         components.add(component);
+        return true;
     }
 
     /**

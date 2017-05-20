@@ -5,8 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.NumericProperty;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.core.Property;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -26,7 +25,22 @@ public class StatusView extends Group implements MeasurableActor {
 
         parameterViews = new Array<>(0);
 
-        statusListener = parameter -> update();
+        statusListener = new StatusComponent.Listener() {
+            @Override
+            public void propertyUpdated(StatusComponent status, Property property, double previousValue, double currentValue) {
+                update();
+            }
+
+            @Override
+            public void propertyAdded(StatusComponent status, Property property) {
+                // TODO: refresh properties
+            }
+
+            @Override
+            public void propertyRemoved(StatusComponent status, Property property) {
+                // TODO: refresh properties
+            }
+        };
     }
 
     public void update() {
@@ -37,7 +51,7 @@ public class StatusView extends Group implements MeasurableActor {
                 continue;
             }
 
-            NumericProperty parameter = parameterView.getParameter();
+            Property parameter = parameterView.getParameter();
 
             parameterView.setWidth(PARAMETER_WIDTH * (float) parameter.getPercentage());
             parameterView.setHeight(PARAMETER_HEIGHT);
@@ -49,12 +63,12 @@ public class StatusView extends Group implements MeasurableActor {
     private void attachStatus(StatusComponent status) {
         status.addListener(statusListener);
 
-        for (Property property : status.getParameters()) {
+        for (Property property : status.getProperties()) {
             if (!ParameterView.canBeRendered(property)) {
                 continue;
             }
 
-            ParameterView parameterView = new ParameterView((NumericProperty) property);
+            ParameterView parameterView = new ParameterView((Property) property);
             parameterViews.add(parameterView);
 
             addActor(parameterView);

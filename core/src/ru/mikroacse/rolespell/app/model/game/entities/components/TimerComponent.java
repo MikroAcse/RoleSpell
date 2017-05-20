@@ -10,16 +10,12 @@ public abstract class TimerComponent extends Component {
     private Timer timer;
     private Timer.Listener listener;
 
-    public TimerComponent(Entity entity, Timer timer) {
-        super(entity);
+    public TimerComponent(Entity entity, Timer timer, boolean single) {
+        super(entity, single);
 
         listener = this::action;
 
         setTimer(timer);
-    }
-
-    public TimerComponent(Entity entity) {
-        this(entity, null);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.app.model.game.entities.monsters;
+package ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters;
 
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Interval;
@@ -12,6 +12,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMo
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.DamageProperty;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.Mob;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
@@ -19,38 +20,27 @@ import java.util.EnumSet;
 /**
  * Created by MikroAcse on 11-May-17.
  */
-public class Ogremagi extends Entity {
+public class Ogremagi extends Mob {
     private CollisionAvoidingAi collisionAvoidingAi;
     private AttackAi attackAi;
 
-    private PathMovementComponent movement;
-    private StatusComponent status;
-
     public Ogremagi(World world, String name, int x, int y) {
-        super(EntityType.OGREMAGI, world, name);
+        super(EntityType.OGREMAGI, world, name, x, y, 1f);
 
-        setParameters(EnumSet.of(Parameter.SOLID, Parameter.VULNERABLE));
+        getParameters().add(Parameter.VULNERABLE);
 
-        status = new StatusComponent(this);
-
-        status.addParameter(new HealthProperty(status,
+        getStatus().addProperty(new HealthProperty(getStatus(),
                 new Interval(0, 100, 100),
                 3));
 
         // TODO: this is bad
-        status.addParameter(new DamageProperty(
-                status,
+        getStatus().addProperty(new DamageProperty(
+                getStatus(),
                 new Interval(10.0, 20.0),
                 1,
                 true));
 
-        addComponent(status);
-
         // TODO: magic numbers everywhere
-
-        movement = new PathMovementComponent(this, x, y, 1f);
-        movement.setType(PathMovementComponent.UpdateType.POSITION);
-        addComponent(movement);
 
         collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
@@ -61,25 +51,5 @@ public class Ogremagi extends Entity {
         attackAi.setTargetTypes(EnumSet.of(EntityType.PLAYER));
 
         attackAi.setTargetSelectors(BehaviorAi.TargetSelector.ALL);
-    }
-
-    @Override
-    public void setPosition(int x, int y) {
-        movement.setPosition(x, y);
-    }
-
-    @Override
-    public IntVector2 getPosition() {
-        return movement.getPosition();
-    }
-
-    @Override
-    public void setOrigin(int x, int y) {
-        movement.setOrigin(x, y);
-    }
-
-    @Override
-    public IntVector2 getOrigin() {
-        return movement.getOrigin();
     }
 }
