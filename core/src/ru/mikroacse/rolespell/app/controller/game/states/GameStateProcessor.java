@@ -7,7 +7,9 @@ import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
@@ -18,12 +20,8 @@ import ru.mikroacse.rolespell.app.view.game.ui.GameCursor.Cursor;
  * Created by MikroAcse on 01-May-17.
  */
 public class GameStateProcessor extends StateProcessor {
-    private int hotbarSelected;
-
     public GameStateProcessor(GameController controller) {
         super(controller);
-
-        hotbarSelected = 0;
     }
 
     @Override
@@ -80,7 +78,7 @@ public class GameStateProcessor extends StateProcessor {
                     IntVector2 position = model.getControllable().getPosition();
 
                     // TODO: magic number (maximum pickup distance)
-                    if (position.distance(entity.getPosition()) < 3) {
+                    if (droppedItem.getItem().isPickable() && position.distance(entity.getPosition()) < 3) {
                         InventoryStateProcessor inventoryState = getController().getInventoryState();
                         ItemView droppedItemView = new ItemView(droppedItem.getItem());
 
@@ -108,35 +106,29 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
+        Inventory inventory = model.getControllable().getComponent(InventoryComponent.class).getInventory();
+
         ItemListView hotbarView = renderer.getHotbarView();
         ItemList hotbar = hotbarView.getItemList();
 
         int key = Input.Keys.NUM_1;
         for (int i = 0; i < hotbar.getSize(); i++) {
             if (input.getButton(key).justPressed) {
-                hotbarSelected = i;
-                updateHotbar();
+                inventory.setSelected(i);
                 break;
             }
 
             key++;
         }
-    }
-
-    private void updateHotbar() {
-        GameRenderer renderer = getController().getRenderer();
-        ItemListView hotbarView = renderer.getHotbarView();
 
         if (hotbarView.getItemList() != null) {
-            hotbarView.select(hotbarSelected, true);
+            hotbarView.select(inventory.getSelected(), true);
         }
     }
 
     @Override
     public void resume() {
         super.resume();
-
-        updateHotbar();
     }
 
     @Override

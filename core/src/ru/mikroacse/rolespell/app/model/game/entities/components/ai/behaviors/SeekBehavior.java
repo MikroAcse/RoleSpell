@@ -14,7 +14,7 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 public class SeekBehavior extends Behavior {
     private int randomDistance;
 
-    public SeekBehavior(Priority priority, Timer timer, int activationDistance) {
+    public SeekBehavior(Priority priority, Timer timer, double activationDistance) {
         super(priority, false, Trigger.ALL);
 
         setTimer(timer);
@@ -24,7 +24,7 @@ public class SeekBehavior extends Behavior {
         randomDistance = 2;
     }
 
-    public SeekBehavior(Priority priority, Timer timer, int activationDistance, int deactivationDistance) {
+    public SeekBehavior(Priority priority, Timer timer, double activationDistance, double deactivationDistance) {
         this(priority, timer, activationDistance);
 
         setDeactivationDistance(deactivationDistance);
@@ -59,26 +59,13 @@ public class SeekBehavior extends Behavior {
 
         destination.multiply(1 / targetCount);
 
-        World world = entity.getWorld();
-        Array<IntVector2> passableCells = world.getPassableCells(
-                destination.x,
-                destination.y,
-                true,
-                1,
-                randomDistance,
-                false);
-
-        if (passableCells.size == 0) {
-            return false;
-        }
-
         // TODO: magic numbers
         return movement.tryRouteTo(
                 destination,
                 getPriority(),
                 5,
                 15,
-                1,
+                (int) getActivationDistance(),
                 (int) Math.ceil(getDeactivationDistance())) != null;
     }
 }

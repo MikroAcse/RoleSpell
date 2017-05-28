@@ -13,14 +13,13 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMo
 public class FleeBehavior extends Behavior {
     private int fleeDistance;
 
-    public FleeBehavior(Priority priority, Timer timer, int deactivationDistance) {
+    public FleeBehavior(Priority priority, Timer timer, double deactivationDistance) {
         super(priority, false, Trigger.ALL);
 
         setTimer(timer);
         setDeactivationDistance(deactivationDistance);
 
-        // TODO: magic number
-        fleeDistance = 5;
+        fleeDistance = 0;
     }
 
     @Override
@@ -53,7 +52,8 @@ public class FleeBehavior extends Behavior {
         IntVector2 position = movement.getPosition();
 
         // trying to move away in opposite direction
-        destination = moveAway(destination, position, -5);
+        double distance = position.distance(destination) - getDeactivationDistance() - fleeDistance;
+        destination = moveAway(destination, position, distance);
 
         // TODO: magic numbers
         return movement.tryRouteTo(
@@ -65,7 +65,7 @@ public class FleeBehavior extends Behavior {
                 (int) Math.ceil(getDeactivationDistance())) != null;
     }
 
-    private IntVector2 moveAway(IntVector2 position, IntVector2 origin, int distance) {
+    private IntVector2 moveAway(IntVector2 position, IntVector2 origin, double distance) {
         double x2 = position.x - origin.x;
         double y2 = position.y - origin.y;
         double angle = Math.atan2(y2, x2);
@@ -74,5 +74,13 @@ public class FleeBehavior extends Behavior {
         double y1 = Math.sin(angle) * distance;
 
         return new IntVector2(position.x + (int) (x1 - x2), position.y + (int) (y1 - y2));
+    }
+
+    public int getFleeDistance() {
+        return fleeDistance;
+    }
+
+    public void setFleeDistance(int fleeDistance) {
+        this.fleeDistance = fleeDistance;
     }
 }

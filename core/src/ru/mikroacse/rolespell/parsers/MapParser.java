@@ -131,6 +131,7 @@ public class MapParser {
                 InventoryParser.parse(config.getNode("inventory"), inventory);
             }
 
+            entity.setId(id);
             entity.setConfig(config);
         }
 

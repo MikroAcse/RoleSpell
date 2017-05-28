@@ -20,21 +20,30 @@ public class DamageProperty extends Property {
     }
 
     public boolean bump(Entity entity) {
+        System.out.println("bump " + entity + ": " + !isPaused());
+
+        if(isPaused()) {
+            return false;
+        }
+
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthProperty health = status.getProperty(HealthProperty.class);
-
-        health.damage(getInterval().getValue());
 
         if (randomized) {
             randomize();
         }
 
+        health.damage(getInterval().getValue());
         return true;
     }
 
     @Override
     public boolean update(float delta) {
         return false;
+    }
+
+    public void setAttackDistance(double attackDistance) {
+        this.attackDistance = attackDistance;
     }
 
     public double getAttackDistance() {

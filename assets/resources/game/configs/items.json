@@ -23,6 +23,22 @@
 		}
 	},
 
+	"hand": {
+		"parent": "abstract-weapon",
+		"texture": "items/weapons/hand",
+		"name": "items.weapons.hand",
+
+		"throwable": false,
+		"pickable": false,
+
+		"parameters": {
+			"weapon-type": "HAND",
+
+			"attack-timer": 1.5,
+			"damage": 5
+		}
+	},
+
 	// --------------- SWORDS
 
 	"abstract-sword": {
@@ -39,7 +55,7 @@
 		"texture": "items/weapons/wooden-sword",
 
 		"parameters": {
-			"damage": { "min": 1.0, "max": 10.0 },
+			"damage": { "min": 5.0, "max": 15.0 },
 			"attack-distance": 1
 		}
 	},

@@ -15,7 +15,7 @@ import java.util.EnumSet;
  */
 public class AttackBehavior extends Behavior {
     public AttackBehavior(Timer timer) {
-        super(Priority.IMMEDIATELY, true, EnumSet.of(Trigger.INTERVAL));
+        super(Priority.IMMEDIATELY, true, EnumSet.of(Trigger.TIMER));
 
         setTimer(timer);
     }

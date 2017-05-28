@@ -5,13 +5,20 @@ import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
+import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusListener;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.DamageProperty;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.PropertyType;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
+import ru.mikroacse.rolespell.app.model.game.items.Item;
+import ru.mikroacse.rolespell.app.model.game.items.ItemType;
+import ru.mikroacse.rolespell.app.model.game.items.weapons.Weapon;
 
 /**
  * Created by Vitaly Rudenko on 19-May-17.
@@ -22,6 +29,8 @@ public class MobController extends Component {
     private StatusListener statusListener;
 
     private MovementListener movementListener;
+
+    private Inventory.Listener inventoryListener;
 
     private Listener listeners;
 
@@ -63,6 +72,50 @@ public class MobController extends Component {
                 listeners.positionChanged(MobController.this, prevX, prevY, current);
             }
         };
+
+        inventoryListener = new Inventory.Listener() {
+            @Override
+            public void selected(Inventory inventory, int index, Item item) {
+                reselectItem();
+            }
+        };
+    }
+
+    public void reselectItem() {
+        if(!getEntity().hasComponent(InventoryComponent.class)) {
+            return;
+        }
+
+        StatusComponent status = getStatus();
+
+        if(!status.hasProperty(DamageProperty.class)) {
+            return;
+        }
+
+        Inventory inventory = getInventory().getInventory();
+        Item item = inventory.getSelectedItem();
+
+        AttackAi attackAi = getEntity().getComponent(AttackAi.class);
+        DamageProperty damage = status.getProperty(DamageProperty.class);
+
+        if(item != null && item.getType() == ItemType.WEAPON) {
+            Weapon weapon = (Weapon) item;
+
+            damage.setInterval(weapon.getDamage());
+
+            damage.setAttackDistance(weapon.getAttackDistance());
+            attackAi.setAttackDistance(weapon.getAttackDistance());
+
+            attackAi.setAttackTimer(weapon.getAttackTimer());
+
+            System.out.println("weapon: " + weapon.getName());
+            System.out.println("timer: " + weapon.getAttackTimer());
+
+            damage.resume();
+        } else {
+            System.out.println("damage paused");
+            damage.pause();
+        }
     }
 
     public void die() {
@@ -70,7 +123,7 @@ public class MobController extends Component {
 
         if (status.hasProperty(HealthProperty.class)) {
             HealthProperty health = status.getProperty(HealthProperty.class);
-            health.pause();
+            //health.pause();
         }
 
         listeners.died(this);
@@ -101,6 +154,12 @@ public class MobController extends Component {
 
         getStatus().addListener(statusListener);
         getMovement().addListener(movementListener);
+
+        if(entity.hasComponent(InventoryComponent.class)) {
+            getInventory().getInventory().addListener(inventoryListener);
+        }
+
+        reselectItem();
     }
 
     @Override
@@ -109,6 +168,10 @@ public class MobController extends Component {
 
         getStatus().removeListener(statusListener);
         getMovement().removeListener(movementListener);
+
+        if(entity.hasComponent(InventoryComponent.class)) {
+            getInventory().getInventory().removeListener(inventoryListener);
+        }
     }
 
     public void addListener(Listener listener) {
@@ -130,6 +193,8 @@ public class MobController extends Component {
     public MovementComponent getMovement() {
         return getEntity().getComponent(MovementComponent.class);
     }
+
+    public InventoryComponent getInventory() { return getEntity().getComponent(InventoryComponent.class); }
 
     public enum State {
         ALIVE,

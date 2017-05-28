@@ -66,6 +66,9 @@ public class Player extends Mob {
         addComponent(pickupAi);
 
         addComponent(new TeleportAi(this));
+
+        // TODO: post init?
+        getController().setEntity(this);
     }
 
     public InventoryComponent getInventory() {

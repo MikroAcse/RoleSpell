@@ -20,7 +20,7 @@ public class WanderBehavior extends Behavior {
     private int maxRadius;
 
     public WanderBehavior(Priority priority, Guide guide, int minRadius, int maxRadius, Timer timer) {
-        super(priority, false, EnumSet.of(Trigger.INTERVAL));
+        super(priority, false, EnumSet.of(Trigger.TIMER));
         this.guide = guide;
         this.minRadius = minRadius;
         this.maxRadius = maxRadius;

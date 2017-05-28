@@ -39,7 +39,6 @@ public abstract class Property implements Interval.Listener {
         }
 
         interval.setValue(interval.getValue() + speed * delta);
-
         return true;
     }
 

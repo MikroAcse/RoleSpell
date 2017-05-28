@@ -15,6 +15,8 @@ public abstract class Entity {
     private World world;
     private EntityType type;
 
+    private String id;
+
     private String name;
 
     private Configuration config;
@@ -185,7 +187,11 @@ public abstract class Entity {
     }
 
     public String getId() {
-        return config == null ? null : config.getString("id", null);
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -193,7 +199,7 @@ public abstract class Entity {
         return this.getClass().getSimpleName() + "{" +
                 "world=" + world +
                 ", type=" + type +
-                ", id=" + getId() +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

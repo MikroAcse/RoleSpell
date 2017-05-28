@@ -35,7 +35,7 @@ public abstract class BehaviorAi extends Component {
     private EnumSet<TargetSelector> targetSelectors;
 
     private MovementComponent.Listener movementListener;
-    private Timer.Listener intervalListener;
+    private Behavior.Listener behaviorListener;
 
     /**
      * @param entity               Entity to which behavior is being applied
@@ -74,7 +74,12 @@ public abstract class BehaviorAi extends Component {
             }
         };
 
-        intervalListener = interval -> process(EnumSet.of(Trigger.INTERVAL), interval);
+        behaviorListener = new Behavior.Listener() {
+            @Override
+            public void timer(Behavior behavior) {
+                process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
+            }
+        };
     }
 
     public BehaviorAi(Entity entity, int deactivationDistance) {
@@ -161,13 +166,17 @@ public abstract class BehaviorAi extends Component {
         boolean actionPerformed = false;
         boolean soloistPerformed = false;
         for (Behavior behavior : behaviors) {
+            if(!behavior.isEnabled()) {
+                continue;
+            }
+
             if (triggers != null) {
                 if (!behavior.getTriggers().containsAll(triggers)) {
                     continue;
                 }
 
                 // if intervals aren't equal
-                if (triggers.contains(Trigger.INTERVAL)) {
+                if (triggers.contains(Trigger.TIMER)) {
                     if (timer != null && behavior.getTimer() != timer) {
                         continue;
                     }
@@ -206,20 +215,14 @@ public abstract class BehaviorAi extends Component {
      * Subscribes to specific behavior events.
      */
     private void attachBehavior(Behavior behavior) {
-        if (behavior.getTriggers().contains(Trigger.INTERVAL)) {
-            behavior.getTimer()
-                    .addListener(intervalListener);
-        }
+        behavior.addListener(behaviorListener);
     }
 
     /**
      * Unsubscribes from specific behavior events.
      */
     private void detachBehavior(Behavior behavior) {
-        if (behavior.getTriggers().contains(Trigger.INTERVAL)) {
-            behavior.getTimer()
-                    .removeListener(intervalListener);
-        }
+        behavior.removeListener(behaviorListener);
     }
 
     public void setTarget(Entity targetSelectors) {

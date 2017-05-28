@@ -28,6 +28,7 @@ public class GameScreen implements Screen {
         model = new GameModel();
 
         renderer = new GameRenderer(model);
+
         controller = new GameController(renderer, model);
 
         setWorld("eclipse-chambers", null);

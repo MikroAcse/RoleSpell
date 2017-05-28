@@ -27,7 +27,7 @@ public class InventoryComponent extends Component {
         DroppedItem droppedItem = (DroppedItem) entity;
         Item item = droppedItem.getItem();
 
-        if (inventory.getItems().addItem(item)) {
+        if (item.isPickable() && inventory.getItems().addItem(item)) {
             droppedItem.remove();
             return true;
         }

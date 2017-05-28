@@ -1,6 +1,9 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.Listener;
+import ru.mikroacse.engine.listeners.ListenerSupport;
+import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
@@ -19,7 +22,13 @@ public abstract class Behavior implements Comparable<Behavior> {
     private Timer timer;
     private Priority priority;
 
+    private Listener listeners;
+
+    private Timer.Listener timerListener;
+
     private boolean independent;
+
+    private boolean enabled;
 
     /**
      * @param priority    Behavior priority.
@@ -32,10 +41,21 @@ public abstract class Behavior implements Comparable<Behavior> {
 
         this.activationDistance = 0;
         this.deactivationDistance = Double.POSITIVE_INFINITY;
+
+        listeners = ListenerSupportFactory.create(Listener.class);
+
+        timerListener = new Timer.Listener() {
+            @Override
+            public void action(Timer timer) {
+                listeners.timer(Behavior.this);
+            }
+        };
+
+        enabled = true;
     }
 
     public boolean update(float delta) {
-        if (timer == null) {
+        if (!enabled || timer == null) {
             return false;
         }
 
@@ -48,6 +68,18 @@ public abstract class Behavior implements Comparable<Behavior> {
         double distance = entity.getPosition().distance(target.getPosition());
 
         return distance >= activationDistance && distance <= deactivationDistance;
+    }
+
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+    }
+
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
     public EnumSet<Trigger> getTriggers() {
@@ -67,7 +99,15 @@ public abstract class Behavior implements Comparable<Behavior> {
     }
 
     public void setTimer(Timer timer) {
+        if(this.timer != null) {
+            this.timer.removeListener(timerListener);
+        }
+
         this.timer = timer;
+
+        if(timer != null) {
+            timer.addListener(timerListener);
+        }
     }
 
     public double getActivationDistance() {
@@ -86,20 +126,27 @@ public abstract class Behavior implements Comparable<Behavior> {
         this.deactivationDistance = deactivationDistance;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     @Override
     public int compareTo(Behavior o) {
         return getPriority().compare(o.getPriority());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return false;
-    }
-
     public enum Trigger {
         MOVEMENT, // update when one of the targets has moved
-        INTERVAL; // update on interval event
+        TIMER; // update on timer event
 
         public static final EnumSet<Trigger> ALL = EnumSet.allOf(Trigger.class);
+    }
+
+    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+        void timer(Behavior behavior);
     }
 }

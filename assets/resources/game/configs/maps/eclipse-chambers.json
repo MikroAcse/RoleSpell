@@ -9,8 +9,7 @@
 
 			"inventory": [
 				{
-					"item": "wooden-sword",
-					"index": 0,
+					"item": "hand",
 					"hotbar": 0
 				},
 				{

@@ -143,10 +143,10 @@ public class Interval {
 
     @Override
     public String toString() {
-        return "LimitedDouble{" +
+        return "Interval{" +
                 "min=" + min +
                 ", max=" + max +
-                ", interval=" + value +
+                ", value=" + value +
                 '}';
     }
 
