@@ -26,7 +26,7 @@ public class ItemView extends Image {
     public static Texture getItemTexture(Item item) {
         AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
 
-        return bundle.getTexture("items/weapons/wooden-sword");
+        return bundle.getTexture(item.getConfig().getTexture());
     }
 
     public Item getItem() {

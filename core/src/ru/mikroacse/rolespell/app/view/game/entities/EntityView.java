@@ -6,9 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.media.AssetBundle;
@@ -61,13 +60,13 @@ public class EntityView extends Image implements Pool.Poolable {
     }
 
     public void setEntity(Entity entity) {
-        if(this.entity == entity) {
+        if (this.entity == entity) {
             return;
         }
 
         this.entity = entity;
 
-        if(entity != null) {
+        if (entity != null) {
             Texture texture = getEntityTexture(entity);
 
             setDrawable(new SpriteDrawable(new Sprite(texture)));

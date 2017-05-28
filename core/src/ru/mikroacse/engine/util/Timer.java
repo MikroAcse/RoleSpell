@@ -128,6 +128,17 @@ public class Timer {
         this.randomized = randomized;
     }
 
+    @Override
+    public String toString() {
+        return "Timer{" +
+                "interval=" + interval +
+                ", speed=" + speed +
+                ", time=" + time +
+                ", randomized=" + randomized +
+                ", enabled=" + enabled +
+                '}';
+    }
+
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         void action(Timer timer);
     }

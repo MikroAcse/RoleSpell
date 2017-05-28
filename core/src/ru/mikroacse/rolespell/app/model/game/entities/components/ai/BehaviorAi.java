@@ -10,7 +10,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Be
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior.Trigger;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 
@@ -58,6 +57,7 @@ public abstract class BehaviorAi extends Component {
         targetTypes = EntityType.ALL;
         blacklist = false;
 
+        // TODO: react on world change
         World world = entity.getWorld();
 
         world.addListener(new WorldListener() {
@@ -122,7 +122,7 @@ public abstract class BehaviorAi extends Component {
         for (int i = targets.size - 1; i >= 0; i--) {
             Entity target = targets.get(i);
 
-            if(targetTypes.contains(target.getType()) == blacklist) {
+            if (targetTypes.contains(target.getType()) == blacklist) {
                 targets.removeValue(target, true);
                 continue;
             }
@@ -131,7 +131,7 @@ public abstract class BehaviorAi extends Component {
 
             double distance = position.distance(targetPosition);
 
-            if(distance < activationDistance || distance > deactivationDistance) {
+            if (distance < activationDistance || distance > deactivationDistance) {
                 targets.removeValue(target, true);
             }
         }

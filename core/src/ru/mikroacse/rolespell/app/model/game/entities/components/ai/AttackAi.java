@@ -6,8 +6,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.AttackBehavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.SeekBehavior;
 
-import java.util.EnumSet;
-
 /**
  * Created by MikroAcse on 02-May-17.
  */

@@ -34,7 +34,7 @@ public abstract class Property implements Interval.Listener {
     }
 
     public boolean update(float delta) {
-        if(paused) {
+        if (paused) {
             return false;
         }
 
@@ -77,13 +77,13 @@ public abstract class Property implements Interval.Listener {
     }
 
     public void setInterval(Interval interval) {
-        if(this.interval != null) {
+        if (this.interval != null) {
             detachInterval(this.interval);
         }
 
         this.interval = interval;
 
-        if(interval != null) {
+        if (interval != null) {
             attachInterval(interval);
         }
     }

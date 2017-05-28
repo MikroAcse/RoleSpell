@@ -1,19 +1,24 @@
-package ru.mikroacse.rolespell.app.model.game.world;
+package ru.mikroacse.rolespell.parsers;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.config.Configuration;
-import ru.mikroacse.rolespell.app.model.game.entities.*;
-import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Monster;
+import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Npc;
-import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Ogremagi;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Monster;
+import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Ogremagi;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
+import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.world.Map;
+import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
  * Created by MikroAcse on 11-May-17.
@@ -21,7 +26,7 @@ import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
 public class MapParser {
     // TODO: make not static?
 
-    public static Array<Entity> parseEntities(World world, Map map) {
+    public static Array<Entity> getEntities(World world, Map map) {
         Array<Entity> entities = new Array<>();
 
         for (MapObject mapObject : map.getLayer(Map.Layer.SPAWNERS).getObjects()) {
@@ -39,7 +44,7 @@ public class MapParser {
         return entities;
     }
 
-    public static Array<Portal> parsePortals(World world, Map map) {
+    public static Array<Portal> getPortals(World world, Map map) {
         Array<Portal> portals = new Array<>();
 
         for (MapObject mapObject : map.getLayer(Map.Layer.PORTALS).getObjects()) {
@@ -60,7 +65,7 @@ public class MapParser {
     private static Portal parsePortal(RectangleMapObject portalMapObject, World world, Map map) {
         MapProperties properties = portalMapObject.getProperties();
 
-        if(!properties.containsKey("id")) {
+        if (!properties.containsKey("id")) {
             return null;
         }
 
@@ -71,7 +76,7 @@ public class MapParser {
 
         String destination = portalConfig.getString("destination");
         String portalId = portalConfig.getString("portal-id");
-        String name = spawn? null : portalConfig.getString("name");
+        String name = spawn ? null : portalConfig.getString("name");
 
         int x = (int) portalMapObject.getRectangle().x / map.getTileWidth();
         int y = (int) portalMapObject.getRectangle().y / map.getTileHeight();
@@ -82,7 +87,7 @@ public class MapParser {
     private static Entity parseEntity(RectangleMapObject entityMapObject, World world, Map map) {
         MapProperties properties = entityMapObject.getProperties();
 
-        if(!properties.containsKey("id")) {
+        if (!properties.containsKey("id")) {
             return null;
         }
 
@@ -113,24 +118,22 @@ public class MapParser {
                 entity = new Player(world, x, y);
                 break;
             case DROPPED_ITEM:
-                Item item = parseItem(config.extractNode("item"));
+                Item item = ItemParser.parse(config.getNode("item"), ItemRepository.getInstance());
 
                 entity = new DroppedItem<Item>(world, item, x, y);
                 break;
         }
 
-        if(entity != null) {
+        if (entity != null) {
+            if(config.has("inventory") && entity.hasComponent(InventoryComponent.class)) {
+                Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();
+
+                InventoryParser.parse(config.getNode("inventory"), inventory);
+            }
+
             entity.setConfig(config);
         }
 
         return entity;
-    }
-
-    private static Item parseItem(Configuration itemConfig) {
-        String name = itemConfig.getString("name");
-
-        // TODO: item parsing
-
-        return new WoodenSword();
     }
 }

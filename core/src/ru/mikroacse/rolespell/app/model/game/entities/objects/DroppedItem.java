@@ -33,6 +33,11 @@ public class DroppedItem<T extends Item> extends Entity {
     }
 
     @Override
+    public String getName() {
+        return item.getName();
+    }
+
+    @Override
     public void setPosition(int x, int y) {
         movement.setPosition(x, y);
     }

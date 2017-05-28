@@ -103,7 +103,7 @@ public class WorldRenderer extends Group {
         for (Entity entity : world.getEntities()) {
             EntityView entityView = entityViews.get(entity);
 
-            if(entityView == null) {
+            if (entityView == null) {
                 continue;
             }
 
@@ -136,11 +136,11 @@ public class WorldRenderer extends Group {
         for (Entity entity : world.getEntities()) {
             EntityView entityView = entityViews.get(entity);
 
-            if(entityView == null) {
+            if (entityView == null) {
                 continue;
             }
 
-            if(entity.getType() == EntityType.DROPPED_ITEM) {
+            if (entity.getType() == EntityType.DROPPED_ITEM) {
                 entityView.toBack();
             }
 
@@ -150,7 +150,7 @@ public class WorldRenderer extends Group {
 
             EntityName entityName = entityNames.get(entity);
 
-            if(entityName != null) {
+            if (entityName != null) {
                 // TODO: magic numbers
                 entityName.setX((int) (mapPosition.x + entityView.getWidth() / 2 - entityName.getRealWidth() / 2));
                 entityName.setY((int) (mapPosition.y + entityView.getHeight() + 10));
@@ -166,12 +166,12 @@ public class WorldRenderer extends Group {
         // remove unused views
         Iterator<Map.Entry<Entity, EntityView>> viewsIterator = entityViews.entrySet().iterator();
 
-        while(viewsIterator.hasNext()) {
+        while (viewsIterator.hasNext()) {
             Map.Entry<Entity, EntityView> entry = viewsIterator.next();
 
             Entity entity = entry.getKey();
 
-            if(!world.hasEntity(entity)) {
+            if (!world.hasEntity(entity)) {
                 EntityView entityView = entityViews.get(entity);
                 entityViewPool.free(entityView);
 
@@ -186,7 +186,7 @@ public class WorldRenderer extends Group {
             Map.Entry<Entity, EntityName> entry = namesIterator.next();
             Entity entity = entry.getKey();
 
-            if(!world.hasEntity(entity)) {
+            if (!world.hasEntity(entity)) {
                 EntityName entityName = entityNames.get(entity);
                 entityNamePool.free(entityName);
 
@@ -196,7 +196,7 @@ public class WorldRenderer extends Group {
 
         // add new views and names
         for (Entity entity : world.getEntities()) {
-            if(entity.getType() == EntityType.PORTAL && ((Portal) entity).isSpawn()) {
+            if (entity.getType() == EntityType.PORTAL && ((Portal) entity).isSpawn()) {
                 continue;
             }
 
@@ -278,7 +278,7 @@ public class WorldRenderer extends Group {
     public void setZoom(float zoom) {
         this.zoom = zoom;
 
-        if(mapRenderer != null) {
+        if (mapRenderer != null) {
             mapRenderer.setZoom(zoom);
         }
         setScale(zoom);
@@ -301,13 +301,13 @@ public class WorldRenderer extends Group {
     }
 
     public void setWorld(World world) {
-        if(this.world != null) {
+        if (this.world != null) {
             detachWorld(this.world);
         }
 
         this.world = world;
 
-        if(world != null) {
+        if (world != null) {
             attachWorld(world);
         }
     }

@@ -43,7 +43,7 @@ public class GameScreen implements Screen {
 
         model.setWorld(world);
 
-        if(portalId != null) {
+        if (portalId != null) {
             for (Entity entity : world.getEntities()) {
                 if (entity.getType() == EntityType.PORTAL) {
                     Portal portal = (Portal) entity;

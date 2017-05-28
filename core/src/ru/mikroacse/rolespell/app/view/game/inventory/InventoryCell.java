@@ -31,7 +31,7 @@ public class InventoryCell extends Image {
     }
 
     public void setCellType(CellType cellType) {
-        if(this.cellType == cellType) {
+        if (this.cellType == cellType) {
             return;
         }
 

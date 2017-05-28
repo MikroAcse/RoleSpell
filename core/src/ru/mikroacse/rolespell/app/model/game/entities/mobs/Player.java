@@ -1,20 +1,15 @@
 package ru.mikroacse.rolespell.app.model.game.entities.mobs;
 
-import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.engine.util.Timer;
-import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.PickupAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.TeleportAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.*;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
-import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
@@ -36,9 +31,6 @@ public class Player extends Mob {
         // TODO: magic numbers
         inventory = new InventoryComponent(this, new Inventory(12, 3));
         addComponent(inventory);
-
-        WoodenSword woodenSword = new WoodenSword();
-        inventory.getInventory().getItems().addItem(woodenSword);
 
         getStatus().addProperty(new HealthProperty(getStatus(),
                 new Interval(0, 100, 50),
@@ -74,5 +66,9 @@ public class Player extends Mob {
         addComponent(pickupAi);
 
         addComponent(new TeleportAi(this));
+    }
+
+    public InventoryComponent getInventory() {
+        return inventory;
     }
 }

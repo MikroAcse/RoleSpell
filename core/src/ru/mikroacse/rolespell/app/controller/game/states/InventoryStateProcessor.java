@@ -6,14 +6,12 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.app.model.game.items.weapons.WoodenSword;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
@@ -67,15 +65,10 @@ public class InventoryStateProcessor extends StateProcessor {
             renderer.setCursor(GameCursor.Cursor.POINTER);
         }
 
-        if(inventoryCell != -1) {
+        if (inventoryCell != -1) {
             inventoryView.highlight(inventoryCell, true);
         } else {
             inventoryView.resetCells();
-        }
-
-        // TODO: remove (test, adds an item to the inventory)
-        if (input.getButton(Input.Keys.F).justPressed) {
-            inventory.getItems().addItem(new WoodenSword());
         }
 
         // drag started
@@ -88,7 +81,7 @@ public class InventoryStateProcessor extends StateProcessor {
             updateDrag();
 
             Item dragItem = renderer.getDragItem().getItem();
-            if(hotbarCell != -1 && inventory.getItems().hasItem(dragItem)) {
+            if (hotbarCell != -1 && inventory.getItems().hasItem(dragItem)) {
                 hotbarView.highlight(hotbarCell, true);
             }
         }
@@ -133,7 +126,7 @@ public class InventoryStateProcessor extends StateProcessor {
 
             renderer.setDragItem(null);
 
-            if(nonInventory) {
+            if (nonInventory) {
                 getController().setState(GameRenderer.State.GAME);
             }
         }
@@ -210,7 +203,7 @@ public class InventoryStateProcessor extends StateProcessor {
 
         ItemView dragItemView = renderer.getDragItem();
 
-        if(dragItemView != null) {
+        if (dragItemView != null) {
             drop(dragItemView.getItem());
         }
 

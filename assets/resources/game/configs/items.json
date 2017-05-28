@@ -1,0 +1,103 @@
+{
+	// heirs must be below their parents!
+
+	"abstract-item": {
+		"throwable": false,
+		"pickable": false
+	},
+
+	// ---------------------------------------- WEAPONS
+
+	"abstract-weapon": {
+		"parent": "abstract-item",
+		"type": "WEAPON",
+
+		"throwable": true,
+		"pickable": true,
+
+		"parameters": {
+			"attack-timer": { "min": 1.0, "max": 3.0, "randomized": true },
+			"limit": 0,
+			"attack-distance": 1,
+			"damage": 0
+		}
+	},
+
+	// --------------- SWORDS
+
+	"abstract-sword": {
+		"parent": "abstract-weapon",
+
+		"parameters": {
+			"weapon-type": "WEAPON_SWORD"
+		}
+	},
+
+	"wooden-sword": {
+		"parent": "abstract-sword",
+		"name": "items.weapons.wooden_sword",
+		"texture": "items/weapons/wooden-sword",
+
+		"parameters": {
+			"damage": { "min": 1.0, "max": 10.0 },
+			"attack-distance": 1
+		}
+	},
+
+	"ultimate-sword": {
+		"parent": "abstract-sword",
+		"name": "items.weapons.ultimate_sword",
+		"texture": "items/weapons/ultimate-sword",
+
+		"parameters": {
+			"damage": 25,
+			"attack-distance": 2
+		}
+	},
+
+	// --------------- STAVES
+
+	"abstract-staff": {
+		"parent": "abstract-weapon",
+
+		"parameters": {
+			"weapon-type": "STAFF"
+		}
+	},
+
+	"beginner-staff": {
+		"parent": "abstract-staff",
+		"name": "items.weapons.beginner_staff",
+		"texture": "items/weapons/beginner-staff",
+
+		"parameters": {
+			"damage": 5,
+			"attack-distance": 5
+		}
+	},
+
+	"epic-staff": {
+		"parent": "abstract-staff",
+		"name": "items.weapons.epic_staff",
+		"texture": "items/weapons/epic-staff",
+
+		"parameters": {
+			"damage": 10,
+			"attack-distance": 10
+		}
+	},
+
+	// --------------- CUSTOM
+
+	"light-orb": {
+		"parent": "abstract-weapon",
+		"name": "items.weapons.light_orb",
+		"texture": "items/weapons/light-orb",
+
+		"parameters": {
+			"weapon-type": "ORB",
+			"damage": 20,
+			"limit": 1
+		}
+	}
+}

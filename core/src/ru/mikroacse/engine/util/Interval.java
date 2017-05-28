@@ -1,6 +1,5 @@
 package ru.mikroacse.engine.util;
 
-import ru.mikroacse.engine.listeners.Listener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
@@ -137,7 +136,7 @@ public class Interval {
 
         trim();
 
-        if(prev != this.value) {
+        if (prev != this.value) {
             listeners.valueChanged(this, prev, this.value);
         }
     }

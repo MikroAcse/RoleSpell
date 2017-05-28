@@ -22,6 +22,7 @@ import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.heuristic.ManhattanDistance;
 import ru.mikroacse.rolespell.app.model.game.world.cells.CellWeigher;
 import ru.mikroacse.rolespell.app.model.game.world.cells.PassableCellWeigher;
+import ru.mikroacse.rolespell.parsers.MapParser;
 
 /**
  * Created by MikroAcse on 23.03.2017.
@@ -81,12 +82,12 @@ public class World {
     private void initialize() {
         entities = new Array<>();
 
-        entities.addAll(MapParser.parseEntities(this, map));
-        entities.addAll(MapParser.parsePortals(this, map));
+        entities.addAll(MapParser.getEntities(this, map));
+        entities.addAll(MapParser.getPortals(this, map));
 
         for (Entity entity : entities) {
-            if(entity.getType() == EntityType.PLAYER) {
-                if(player != null) {
+            if (entity.getType() == EntityType.PLAYER) {
+                if (player != null) {
                     System.out.println("World: player entity already exists!");
                 }
 
@@ -131,7 +132,7 @@ public class World {
         CellWeigher cellWeigher = new PassableCellWeigher(true) {
             @Override
             public double weigh(World world, int x, int y) {
-                if(from.equals(x, y)) { // don't check 'from' point
+                if (from.equals(x, y)) { // don't check 'from' point
                     return 0;
                 }
                 return super.weigh(world, x, y);
@@ -261,29 +262,29 @@ public class World {
     }
 
     private void attachEntity(Entity entity) {
-        if(entity.hasComponent(MobController.class)) {
+        if (entity.hasComponent(MobController.class)) {
             entity.getComponent(MobController.class).addListener(mobListener);
         }
 
-        if(entity.hasComponent(MovementComponent.class)) {
+        if (entity.hasComponent(MovementComponent.class)) {
             entity.getComponent(MovementComponent.class).addListener(movementListener);
         }
 
-        if(entity.hasComponent(StatusComponent.class)) {
+        if (entity.hasComponent(StatusComponent.class)) {
             entity.getComponent(StatusComponent.class).addListener(statusListener);
         }
     }
 
     private void detachEntity(Entity entity) {
-        if(entity.hasComponent(MobController.class)) {
+        if (entity.hasComponent(MobController.class)) {
             entity.getComponent(MobController.class).removeListener(mobListener);
         }
 
-        if(entity.hasComponent(MovementComponent.class)) {
+        if (entity.hasComponent(MovementComponent.class)) {
             entity.getComponent(MovementComponent.class).removeListener(movementListener);
         }
 
-        if(entity.hasComponent(StatusComponent.class)) {
+        if (entity.hasComponent(StatusComponent.class)) {
             entity.getComponent(StatusComponent.class).removeListener(statusListener);
         }
     }
@@ -297,7 +298,7 @@ public class World {
     }
 
     public boolean removeEntity(Entity entity) {
-        if(entities.removeValue(entity, true)) {
+        if (entities.removeValue(entity, true)) {
             detachEntity(entity);
 
             listeners.entityRemoved(this, entity);
@@ -324,10 +325,12 @@ public class World {
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         // MobController.Listener
         void mobDied(World world, MobController controller);
+
         void mobResurrected(World world, MobController controller);
 
         // MovementComponent.Listener
         void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
+
         void originChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
 
         // StatusComponent.Listener
@@ -335,6 +338,7 @@ public class World {
 
         // Original events
         void entityAdded(World world, Entity entity);
+
         void entityRemoved(World world, Entity entity);
     }
 }

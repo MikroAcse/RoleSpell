@@ -5,7 +5,6 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 
 /**

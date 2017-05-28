@@ -1,15 +1,19 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
+import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
+import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.media.AssetManager;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -23,6 +27,14 @@ public class GameModel {
 
     public GameModel() {
         listeners = ListenerSupportFactory.create(Listener.class);
+
+        ItemRepository itemRepository = ItemRepository.getInstance();
+
+        JsonValue items = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME).getConfig("items");
+
+        for (JsonValue value : items.iterator()) {
+            itemRepository.addItemConfig(value.name, value);
+        }
     }
 
     public void update(float delta) {

@@ -12,8 +12,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.mikroacse.engine.media.AssetBundleManager;
-import ru.mikroacse.engine.util.JsonLoader;
 import ru.mikroacse.engine.util.FileUtil;
+import ru.mikroacse.engine.util.JsonLoader;
 
 /**
  * Created by MikroAcse on 08.07.2016.
@@ -44,49 +44,49 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
         // TODO: beautify
 
         JsonValue textures = files.get("textures");
-        if(textures != null)
+        if (textures != null)
             loadAssets(assetBundle,
                     textures.asStringArray(),
                     getBundleTexturePath(bundle), Texture.class);
 
         JsonValue sounds = files.get("sounds");
-        if(sounds != null)
+        if (sounds != null)
             loadAssets(assetBundle,
                     sounds.asStringArray(),
                     getBundleSoundPath(bundle), Sound.class);
 
         JsonValue music = files.get("music");
-        if(music != null)
+        if (music != null)
             loadAssets(assetBundle,
                     music.asStringArray(),
                     getBundleMusicPath(bundle), Music.class);
 
         JsonValue fonts = files.get("fonts");
-        if(fonts != null)
+        if (fonts != null)
             loadAssets(assetBundle,
                     fonts.asStringArray(),
                     getBundleFontPath(bundle), BitmapFont.class);
 
         JsonValue maps = files.get("maps");
-        if(maps != null)
+        if (maps != null)
             loadAssets(assetBundle,
                     maps.asStringArray(),
                     getBundleMapPath(bundle), TiledMap.class);
 
         JsonValue atlases = files.get("atlases");
-        if(atlases != null)
+        if (atlases != null)
             loadAssets(assetBundle,
                     atlases.asStringArray(),
                     getBundleAtlasPath(bundle), TextureAtlas.class);
 
         JsonValue shaders = files.get("shaders");
-        if(shaders != null)
+        if (shaders != null)
             loadAssets(assetBundle,
                     shaders.asStringArray(),
                     getBundleShaderPath(bundle), ShaderProgram.class);
 
         JsonValue configs = files.get("configs");
-        if(configs != null)
+        if (configs != null)
             loadAssets(assetBundle,
                     configs.asStringArray(),
                     getBundleConfigPath(bundle), JsonValue.class);

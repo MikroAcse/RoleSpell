@@ -100,7 +100,7 @@ public class ItemListView extends Group implements MeasurableActor {
     }
 
     public void highlight(int cellIndex, boolean resetOthers) {
-        if(resetOthers) {
+        if (resetOthers) {
             resetCells(cellIndex);
         }
 
@@ -108,7 +108,7 @@ public class ItemListView extends Group implements MeasurableActor {
     }
 
     public void select(int cellIndex, boolean resetOthers) {
-        if(resetOthers) {
+        if (resetOthers) {
             resetCells(cellIndex);
         }
 
@@ -123,7 +123,7 @@ public class ItemListView extends Group implements MeasurableActor {
 
     private void resetCells(int excludedIndex) {
         for (int i = 0; i < cells.size; i++) {
-            if(i != excludedIndex) {
+            if (i != excludedIndex) {
                 cells.get(i).setCellType(InventoryCell.CellType.DEFAULT);
             }
         }
@@ -136,7 +136,7 @@ public class ItemListView extends Group implements MeasurableActor {
 
         itemViews = new ItemView[size];
 
-        if(size < cells.size) {
+        if (size < cells.size) {
             cells.truncate(size);
         }
 

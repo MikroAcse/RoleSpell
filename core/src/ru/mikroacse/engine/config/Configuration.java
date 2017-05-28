@@ -9,7 +9,11 @@ import ru.mikroacse.engine.util.JsonLoader;
  * Created by MikroAcse on 08.07.2016.
  */
 public class Configuration {
-    protected JsonValue json;
+    private JsonValue json;
+
+    public Configuration() {
+        json = new JsonValue(JsonValue.ValueType.object);
+    }
 
     public Configuration(JsonValue json) {
         this.json = json;
@@ -35,6 +39,10 @@ public class Configuration {
         return getNode(key).asString();
     }
 
+    public void setString(String key, String value) {
+        getNode(key).set(value);
+    }
+
     public int getInt(String key, int defaultValue) {
         JsonValue node = getNode(key);
         if (node == null) {
@@ -45,6 +53,10 @@ public class Configuration {
 
     public int getInt(String key) {
         return getNode(key).asInt();
+    }
+
+    public void setInt(String key, int value) {
+        getNode(key).set(value, String.valueOf(value));
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
@@ -59,6 +71,10 @@ public class Configuration {
         return getNode(key).asBoolean();
     }
 
+    public void setBoolean(String key, boolean value) {
+        getNode(key).set(value);
+    }
+
     public float getFloat(String key, float defaultValue) {
         JsonValue node = getNode(key);
         if (node == null) {
@@ -69,6 +85,10 @@ public class Configuration {
 
     public float getFloat(String key) {
         return getNode(key).asFloat();
+    }
+
+    public void setFloat(String key, float value) {
+        getNode(key).set(value, String.valueOf(value));
     }
 
     public double getDouble(String key, double defaultValue) {
@@ -83,6 +103,10 @@ public class Configuration {
         return getNode(key).asDouble();
     }
 
+    public void setDouble(String key, double value) {
+        getNode(key).set(value, String.valueOf(value));
+    }
+
     public int getColor(String key, int defaultValue) {
         String value = getString(key);
         if (value == null) {
@@ -95,8 +119,6 @@ public class Configuration {
     public int getColor(String key) {
         return getColor(key, 0);
     }
-
-
 
     /**
      * Parses node path (i.e. node1.subnode2.somevalue) and returns the node.
@@ -116,6 +138,10 @@ public class Configuration {
         return node;
     }
 
+    public boolean has(String key) {
+        return getNode(key) != null;
+    }
+
     /**
      * Parses node path (i.e. node1.subnode2.somevalue) and returns the node as new Configuration instance.
      */
@@ -123,14 +149,14 @@ public class Configuration {
     public Configuration extractNode(String nodePath) {
         JsonValue node = getNode(nodePath);
 
-        if(node != null) {
+        if (node != null) {
             return new Configuration(node);
         }
 
         return null;
     }
 
-    public JsonValue getJson() {
+    public JsonValue json() {
         return json;
     }
 }

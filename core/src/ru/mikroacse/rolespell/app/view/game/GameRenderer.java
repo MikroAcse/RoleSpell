@@ -84,7 +84,7 @@ public class GameRenderer extends Stage {
 
     // TODO: beautify
     public void refreshWorld() {
-        if(gameModel.getWorld() == null) {
+        if (gameModel.getWorld() == null) {
             statusView.setVisible(false);
             inventoryView.setVisible(false);
             hotbarView.setVisible(false);
@@ -100,7 +100,7 @@ public class GameRenderer extends Stage {
         Entity controllable = gameModel.getControllable();
 
         // TODO: update on observable change
-        if(controllable.hasComponent(InventoryComponent.class)) {
+        if (controllable.hasComponent(InventoryComponent.class)) {
             Inventory inventory = controllable.getComponent(InventoryComponent.class).getInventory();
 
             inventoryView.setItemList(inventory.getItems());
@@ -108,7 +108,7 @@ public class GameRenderer extends Stage {
             hotbarView.setItemList(inventory.getHotbar());
         }
 
-        if(controllable.hasComponent(StatusComponent.class)) {
+        if (controllable.hasComponent(StatusComponent.class)) {
             statusView.setStatus(controllable.getComponent(StatusComponent.class));
 
         }
@@ -170,7 +170,7 @@ public class GameRenderer extends Stage {
     }
 
     public boolean setState(State state) {
-        if(this.state == state) {
+        if (this.state == state) {
             return false;
         }
 
@@ -178,10 +178,10 @@ public class GameRenderer extends Stage {
 
         worldRenderer.setSelectorVisible(false);
         statusView.setVisible(false);
-        if(inventoryView != null) {
+        if (inventoryView != null) {
             inventoryView.setVisible(false);
         }
-        if(hotbarView != null) {
+        if (hotbarView != null) {
             hotbarView.setVisible(false);
         }
         setDragItem(null);
@@ -194,7 +194,7 @@ public class GameRenderer extends Stage {
         if (state == State.GAME) {
             worldRenderer.setSelectorVisible(true);
             statusView.setVisible(true);
-            if(hotbarView != null) {
+            if (hotbarView != null) {
                 hotbarView.setVisible(true);
             }
         }

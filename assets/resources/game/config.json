@@ -12,6 +12,7 @@
 			"eclipse-chambers/map.tmx"
 		],
 		"configs": [
+			"items.json",
 			"maps/*"
 		]
 	}

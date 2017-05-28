@@ -68,7 +68,7 @@ public class PathFinder {
             // position cell = open cell with the lowest f cost
             current = open.get(0);
             for (int i = 0; i < open.size; i++) {
-                if(cells[open.get(i).getNodeIndex()].getFCost() < cells[current.getNodeIndex()].getFCost()) {
+                if (cells[open.get(i).getNodeIndex()].getFCost() < cells[current.getNodeIndex()].getFCost()) {
                     current = open.get(i);
                 }
             }

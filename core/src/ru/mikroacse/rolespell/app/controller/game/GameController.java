@@ -61,8 +61,8 @@ public class GameController {
             setState(state);
         }
 
-        if(questsButton.justPressed) {
-            if(state == State.QUESTS) {
+        if (questsButton.justPressed) {
+            if (state == State.QUESTS) {
                 state = State.GAME;
             } else {
                 state = State.QUESTS;
@@ -80,11 +80,11 @@ public class GameController {
     public void setState(State newState) {
         State currentState = renderer.getState();
 
-        if(newState == currentState) {
+        if (newState == currentState) {
             return;
         }
 
-        if(currentState != null) {
+        if (currentState != null) {
             stateProcessors.get(currentState).pause();
         }
 

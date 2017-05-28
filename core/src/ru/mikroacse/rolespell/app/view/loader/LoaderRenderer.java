@@ -2,10 +2,7 @@ package ru.mikroacse.rolespell.app.view.loader;
 
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Elastic;
-import aurelienribon.tweenengine.equations.Expo;
-import aurelienribon.tweenengine.equations.Linear;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -37,9 +34,7 @@ public class LoaderRenderer extends Stage {
                 AnimationUtil.create(
                         AssetManager.Bundle.LOADER,
                         "loader",
-                        false
-                )
-        );
+                        false));
 
         // 20 frames per second TODO: magic number
         animation.setFrameDuration(1 / 20f);
@@ -110,17 +105,17 @@ public class LoaderRenderer extends Stage {
     public void hide() {
         RoleSpell.getTweenManager().killTarget(animation);
 
-        Tween.to(animation, ActorAccessor.POSITION,0.5f)
+        Tween.to(animation, ActorAccessor.POSITION, 0.5f)
                 .ease(Elastic.IN)
                 .target(getWidth() / 2, getHeight() / 2)
                 .start(RoleSpell.getTweenManager());
 
-        Tween.to(animation, ActorAccessor.ALPHA,0.5f)
+        Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
                 .ease(Elastic.IN)
                 .target(0f)
                 .start(RoleSpell.getTweenManager());
 
-        Tween.to(animation, ActorAccessor.SCALE,0.5f)
+        Tween.to(animation, ActorAccessor.SCALE, 0.5f)
                 .ease(Elastic.IN)
                 .target(0f)
                 .setCallback((type, source) -> {

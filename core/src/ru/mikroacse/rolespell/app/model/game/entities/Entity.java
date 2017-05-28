@@ -63,9 +63,9 @@ public abstract class Entity {
         }
     }
 
-    public boolean addComponent(Component component)  {
-        if(component.isSingle()) {
-            if(hasComponent(component.getClass())) {
+    public boolean addComponent(Component component) {
+        if (component.isSingle()) {
+            if (hasComponent(component.getClass())) {
                 System.err.println("Trying to add more than one instance of a single component to an entity.");
                 return false;
             }
@@ -125,7 +125,7 @@ public abstract class Entity {
 
     public boolean hasParameters(EnumSet<Parameter> parameters) {
         for (Parameter parameter : parameters) {
-            if(!parameters.contains(parameter)) {
+            if (!parameters.contains(parameter)) {
                 return false;
             }
         }
@@ -185,7 +185,7 @@ public abstract class Entity {
     }
 
     public String getId() {
-        return config == null? null : config.getString("id", null);
+        return config == null ? null : config.getString("id", null);
     }
 
     @Override

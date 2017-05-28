@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.view.game.world;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -40,15 +39,15 @@ public class PathRenderer extends Group {
     }
 
     public void setPath(Array<IntVector2> path) {
-        if(path == null || path.size == 0) {
+        if (path == null || path.size == 0) {
             clear();
             return;
         }
 
         int size = path.size - 1;
 
-        while(size != pathPoints.size) {
-            if(size > pathPoints.size) {
+        while (size != pathPoints.size) {
+            if (size > pathPoints.size) {
                 pathPoints.add(pathPointPool.obtain());
             } else {
                 pathPointPool.free(pathPoints.pop());
@@ -78,7 +77,7 @@ public class PathRenderer extends Group {
     public void clear() {
         clearChildren();
 
-        if(pathPoints.size > 0) {
+        if (pathPoints.size > 0) {
             pathPointPool.freeAll(pathPoints);
 
             pathPoints.clear();

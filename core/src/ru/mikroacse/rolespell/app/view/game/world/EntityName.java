@@ -31,7 +31,7 @@ public class EntityName extends Group implements MeasurableActor, Pool.Poolable 
         // TODO: ↓
         NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(RoleSpell.getAssetManager()
                 .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("ui/entity-name-background"), 9,9,9,9));
+                .getTexture("ui/entity-name-background"), 9, 9, 9, 9));
 
         background = new Button(npd);
         background.setTouchable(Touchable.disabled);
@@ -62,7 +62,7 @@ public class EntityName extends Group implements MeasurableActor, Pool.Poolable 
     public void setEntity(Entity entity) {
         this.entity = entity;
 
-        if(entity == null) {
+        if (entity == null) {
             text.setText("");
             return;
         }

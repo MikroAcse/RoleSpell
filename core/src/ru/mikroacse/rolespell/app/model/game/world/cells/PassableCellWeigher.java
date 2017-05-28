@@ -19,7 +19,7 @@ public class PassableCellWeigher extends CellWeigher {
     public double weigh(World world, int x, int y) {
         Map map = world.getMap();
 
-        if(!map.isPassable(x, y)) {
+        if (!map.isPassable(x, y)) {
             return -1;
         }
 
@@ -27,7 +27,7 @@ public class PassableCellWeigher extends CellWeigher {
             Array<Entity> entities = world.getEntitiesAt(x, y);
 
             for (Entity entity : entities) {
-                if(entity.hasParameter(Entity.Parameter.SOLID)) {
+                if (entity.hasParameter(Entity.Parameter.SOLID)) {
                     // TODO: 'weigh' entity?
                     return -1;
                 }

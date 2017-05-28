@@ -5,15 +5,13 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
-import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
 import ru.mikroacse.rolespell.app.view.game.ui.GameCursor.Cursor;
 
 /**
@@ -34,7 +32,7 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
-        if(model.getWorld() == null) {
+        if (model.getWorld() == null) {
             return;
         }
 
@@ -56,7 +54,7 @@ public class GameStateProcessor extends StateProcessor {
             if (entity.getType() == EntityType.DROPPED_ITEM) {
                 cursor = Cursor.TAKE;
             } else if (entity.hasParameter(Entity.Parameter.VULNERABLE)) {
-                if(entity.getType() != EntityType.PLAYER) {
+                if (entity.getType() != EntityType.PLAYER) {
                     cursor = Cursor.ATTACK;
                 }
             }
@@ -97,7 +95,7 @@ public class GameStateProcessor extends StateProcessor {
                 }
             }
 
-            if(route) {
+            if (route) {
                 model.tryRouteTo(cell.x, cell.y);
             }
         }
@@ -115,7 +113,7 @@ public class GameStateProcessor extends StateProcessor {
 
         int key = Input.Keys.NUM_1;
         for (int i = 0; i < hotbar.getSize(); i++) {
-            if(input.getButton(key).justPressed) {
+            if (input.getButton(key).justPressed) {
                 hotbarSelected = i;
                 updateHotbar();
                 break;
@@ -129,7 +127,7 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         ItemListView hotbarView = renderer.getHotbarView();
 
-        if(hotbarView.getItemList() != null) {
+        if (hotbarView.getItemList() != null) {
             hotbarView.select(hotbarSelected, true);
         }
     }

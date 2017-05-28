@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.controllers;
 
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 
 /**

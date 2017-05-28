@@ -3,8 +3,8 @@ package ru.mikroacse.rolespell.app.view.game.status;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.PropertyType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
+import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.PropertyType;
 import ru.mikroacse.rolespell.media.AssetManager;
 
 /**

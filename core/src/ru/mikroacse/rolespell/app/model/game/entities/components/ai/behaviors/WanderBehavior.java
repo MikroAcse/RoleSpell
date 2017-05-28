@@ -2,11 +2,9 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.engine.util.ListUtil;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 

@@ -5,11 +5,8 @@ import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.TeleportBehavior;
-import ru.mikroacse.rolespell.app.model.game.world.Map;
-import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.screens.GameScreen;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
-import ru.mikroacse.rolespell.media.AssetManager;
 
 import java.util.EnumSet;
 
@@ -33,7 +30,7 @@ public class TeleportAi extends BehaviorAi {
     public boolean process(EnumSet<Behavior.Trigger> triggers, Timer timer) {
         boolean result = super.process(triggers, timer);
 
-        if(result) {
+        if (result) {
             // TODO: beautify
             System.out.println("teleporting to " + teleportBehavior.getPortal().getDestination());
 

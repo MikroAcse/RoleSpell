@@ -1,15 +1,11 @@
 package ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters;
 
-import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.engine.util.Timer;
-import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.BehaviorAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.CollisionAvoidingAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.DamageProperty;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Mob;

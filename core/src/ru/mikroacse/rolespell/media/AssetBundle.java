@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.JsonValue;
-import ru.mikroacse.engine.config.Configuration;
 
 /**
  * Created by MikroAcse on 29-Apr-17.
@@ -42,7 +41,7 @@ public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
     public <T> void loadAsset(String key, String path, Class<T> assetClass, AssetLoaderParameters<T> parameter) {
         String assetKey = key + assetClass.getSimpleName();
 
-        if(parameter == null) {
+        if (parameter == null) {
             if (assetClass == BitmapFont.class) {
                 super.loadAsset(assetKey, path, BitmapFont.class, fontParameter);
                 return;

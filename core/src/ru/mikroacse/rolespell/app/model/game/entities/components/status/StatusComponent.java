@@ -36,7 +36,7 @@ public class StatusComponent extends Component {
 
     @Override
     public boolean update(float delta) {
-        if(paused) {
+        if (paused) {
             return false;
         }
 
@@ -86,7 +86,7 @@ public class StatusComponent extends Component {
 
         boolean result = properties.removeValue(property, true);
 
-        if(result) {
+        if (result) {
             listeners.propertyRemoved(this, property);
             return true;
         }
@@ -144,7 +144,9 @@ public class StatusComponent extends Component {
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         void propertyUpdated(StatusComponent status, Property property, double previousValue, double currentValue);
+
         void propertyAdded(StatusComponent status, Property property);
+
         void propertyRemoved(StatusComponent status, Property property);
     }
 }
