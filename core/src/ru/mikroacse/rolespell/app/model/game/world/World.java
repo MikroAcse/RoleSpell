@@ -6,16 +6,22 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
+import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobListener;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusListener;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
+import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
+import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.GraphBuilder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.PathFinder;
 import ru.mikroacse.rolespell.app.model.game.pathfinding.graph.Graph;
@@ -49,6 +55,24 @@ public class World {
             @Override
             public void died(MobController controller) {
                 listeners.mobDied(World.this, controller);
+
+                Entity entity = controller.getEntity();
+
+                removeEntity(entity);
+
+                if(entity.hasComponent(InventoryComponent.class)) {
+                    IntVector2 position = entity.getPosition();
+
+                    Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();
+
+                    ItemList items = inventory.getItems();
+
+                    for (Item item : items.asArray()) {
+                        dropItem(item, position.x, position.y);
+                    }
+
+                    System.out.println(entity.getName() + ": wow, I've just died and dropped my precious shit");
+                }
             }
 
             @Override
@@ -96,6 +120,13 @@ public class World {
 
             attachEntity(entity);
         }
+    }
+
+    public void dropItem(Item item, int x, int y) {
+        DroppedItem<Item> droppedItem = new DroppedItem<>(this, item);
+        droppedItem.setPosition(x, y);
+
+        addEntity(droppedItem);
     }
 
     public void addListener(Listener listener) {
@@ -262,6 +293,8 @@ public class World {
     }
 
     private void attachEntity(Entity entity) {
+        entity.setWorld(this);
+
         if (entity.hasComponent(MobController.class)) {
             entity.getComponent(MobController.class).addListener(mobListener);
         }
@@ -276,6 +309,8 @@ public class World {
     }
 
     private void detachEntity(Entity entity) {
+        entity.setWorld(null);
+
         if (entity.hasComponent(MobController.class)) {
             entity.getComponent(MobController.class).removeListener(mobListener);
         }

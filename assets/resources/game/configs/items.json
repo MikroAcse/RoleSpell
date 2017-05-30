@@ -16,7 +16,7 @@
 		"pickable": true,
 
 		"parameters": {
-			"attack-timer": { "min": 1.0, "max": 3.0, "randomized": true },
+			"attack-timer": { "min": 1.0, "max": 3.0 },
 			"limit": 0,
 			"attack-distance": 1,
 			"damage": 0
@@ -87,7 +87,7 @@
 		"texture": "items/weapons/beginner-staff",
 
 		"parameters": {
-			"damage": 5,
+			"damage": {"min":5, "max":10},
 			"attack-distance": 5
 		}
 	},
@@ -112,6 +112,7 @@
 
 		"parameters": {
 			"weapon-type": "ORB",
+			"attack-distance": 20,
 			"damage": 20,
 			"limit": 1
 		}

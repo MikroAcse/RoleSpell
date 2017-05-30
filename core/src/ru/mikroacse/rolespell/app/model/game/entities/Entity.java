@@ -142,6 +142,10 @@ public abstract class Entity {
         return type;
     }
 
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
     public World getWorld() {
         return world;
     }

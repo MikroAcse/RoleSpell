@@ -11,9 +11,8 @@ public class TimerParser {
     public static Timer parse(JsonValue config) {
         Interval interval = IntervalParser.parse(config);
 
-        boolean randomized = config.getBoolean("randomized", false);
         float speed = config.getFloat("speed", 1f);
 
-        return new Timer(interval, randomized, speed);
+        return new Timer(interval, speed);
     }
 }

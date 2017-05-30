@@ -28,10 +28,6 @@ public class Player extends Mob {
 
         getParameters().add(Parameter.VULNERABLE);
 
-        // TODO: magic numbers
-        inventory = new InventoryComponent(this, new Inventory(12, 3));
-        addComponent(inventory);
-
         getStatus().addProperty(new HealthProperty(getStatus(),
                 new Interval(0, 100, 50),
                 3));
@@ -51,8 +47,7 @@ public class Player extends Mob {
         getStatus().addProperty(new DamageProperty(
                 getStatus(),
                 new Interval(10.0, 50.0),
-                2,
-                true));
+                2));
 
         attackAi = new AttackAi(this, new Timer(1.0));
         addComponent(attackAi);
@@ -69,9 +64,5 @@ public class Player extends Mob {
 
         // TODO: post init?
         getController().setEntity(this);
-    }
-
-    public InventoryComponent getInventory() {
-        return inventory;
     }
 }

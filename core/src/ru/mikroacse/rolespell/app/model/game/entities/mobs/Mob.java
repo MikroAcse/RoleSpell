@@ -4,9 +4,11 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
+import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
+import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
@@ -15,6 +17,7 @@ import java.util.EnumSet;
  * Created by Vitaly Rudenko on 19-May-17.
  */
 public abstract class Mob extends Entity {
+    private InventoryComponent inventory;
     private PathMovementComponent movement;
     private StatusComponent status;
     private MobController mobController;
@@ -34,6 +37,10 @@ public abstract class Mob extends Entity {
 
         mobController = new MobController(this);
         addComponent(mobController);
+
+        // TODO: magic numbers
+        inventory = new InventoryComponent(this, new Inventory(12, 3));
+        addComponent(inventory);
     }
 
     @Override
@@ -58,6 +65,10 @@ public abstract class Mob extends Entity {
 
     public PathMovementComponent getMovement() {
         return movement;
+    }
+
+    public InventoryComponent getInventory() {
+        return inventory;
     }
 
     public StatusComponent getStatus() {

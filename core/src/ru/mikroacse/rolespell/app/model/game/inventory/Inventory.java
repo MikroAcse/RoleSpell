@@ -47,6 +47,11 @@ public class Inventory {
         hotbar.addListener(hotbarListener);
     }
 
+    public void clear() {
+        items.clear();
+        hotbar.clear();
+    }
+
     public void addListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).addListener(listener);
     }

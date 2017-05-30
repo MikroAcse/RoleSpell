@@ -4,6 +4,7 @@ import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
@@ -119,11 +120,16 @@ public class MobController extends Component {
     }
 
     public void die() {
+        if(getEntity().getType() == EntityType.PLAYER) {
+            System.out.println("Player nearly died");
+            return;
+        }
+
         StatusComponent status = getStatus();
 
         if (status.hasProperty(HealthProperty.class)) {
             HealthProperty health = status.getProperty(HealthProperty.class);
-            //health.pause();
+            health.pause();
         }
 
         listeners.died(this);

@@ -13,11 +13,13 @@ public class IntervalParser {
         if (config.isNumber()) {
             interval = new Interval(config.asDouble());
         } else {
-            interval = new Interval(config.getDouble("min"), config.getDouble("max"));
+            double min = config.getDouble("min");
+            double max = config.getDouble("max");
+            double value = config.getDouble("value", min);
 
-            if (config.has("value")) {
-                interval.setValue(config.getDouble("value"));
-            }
+            boolean randomized = config.getBoolean("randomized", !config.has("value"));
+
+            interval = new Interval(min, max, value, randomized);
         }
 
         return interval;

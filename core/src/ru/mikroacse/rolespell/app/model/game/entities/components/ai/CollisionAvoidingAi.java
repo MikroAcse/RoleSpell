@@ -63,6 +63,11 @@ public class CollisionAvoidingAi extends Component {
     public boolean action() {
         Entity entity = getEntity();
         World world = entity.getWorld();
+
+        if(world == null) {
+            return false;
+        }
+
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
 
         if (movement == null) {

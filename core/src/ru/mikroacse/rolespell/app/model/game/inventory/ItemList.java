@@ -151,6 +151,12 @@ public class ItemList {
         listeners.sizeChanged(this, size);
     }
 
+    public void clear() {
+        while(items.length > 0) {
+            removeItem(items[0]);
+        }
+    }
+
     public void addListener(Listener listener) {
         ((ListenerSupport<Listener>) listeners).addListener(listener);
     }

@@ -3,6 +3,8 @@ package ru.mikroacse.engine.util;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
+import java.util.Random;
+
 /**
  * Created by MikroAcse on 29.03.2017.
  */
@@ -13,21 +15,28 @@ public class Interval {
 
     private Listener listeners;
 
-    public Interval(double min, double max, double value) {
+    private boolean randomized;
+
+    public Interval(double min, double max, double value, boolean randomized) {
         this.min = min;
         this.max = max;
+        this.randomized = randomized;
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
         setValue(value);
     }
 
+    public Interval(double min, double max, double value) {
+        this(min, max, value, false);
+    }
+
     public Interval(double min, double max) {
-        this(min, max, min);
+        this(min, max, min, true);
     }
 
     public Interval(double value) {
-        this(Double.MIN_VALUE, Double.MAX_VALUE, value);
+        this(Double.MIN_VALUE, Double.MAX_VALUE, value, false);
     }
 
     public Interval() {
@@ -37,6 +46,8 @@ public class Interval {
     public void randomize() {
         if (min != max) {
             setValue(min + Math.random() * (max - min));
+        } else {
+            setValue(min);
         }
     }
 
@@ -86,7 +97,7 @@ public class Interval {
         }
 
         if (min > max) {
-            double temp = min;
+            double temp = max;
             max = min;
             min = temp;
         }
@@ -125,8 +136,16 @@ public class Interval {
         setValue(value);
     }
 
-    public double getValue() {
+    public double getValue(boolean randomized) {
+        if(this.randomized && randomized) {
+            randomize();
+        }
+
         return value;
+    }
+
+    public double getValue() {
+        return getValue(true);
     }
 
     public void setValue(double value) {
@@ -139,6 +158,14 @@ public class Interval {
         if (prev != this.value) {
             listeners.valueChanged(this, prev, this.value);
         }
+    }
+
+    public boolean isRandomized() {
+        return randomized;
+    }
+
+    public void setRandomized(boolean randomized) {
+        this.randomized = randomized;
     }
 
     @Override

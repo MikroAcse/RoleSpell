@@ -133,7 +133,6 @@ public class InventoryStateProcessor extends StateProcessor {
     }
 
     private void drop(Item item) {
-        GameModel model = getController().getModel();
         InputAdapter input = getController().getInput();
 
         GameRenderer renderer = getController().getRenderer();
@@ -156,10 +155,7 @@ public class InventoryStateProcessor extends StateProcessor {
         // TODO: magic number (maximum drop distance, why is this != max pickup distance?)
         cell.shorten(controllable.getPosition(), 2);
 
-        DroppedItem<Item> droppedItem = new DroppedItem<>(world, item);
-        droppedItem.setPosition(cell);
-
-        world.addEntity(droppedItem);
+        world.dropItem(item, cell.x, cell.y);
 
         Inventory inventory = controllable.getComponent(InventoryComponent.class).getInventory();
 

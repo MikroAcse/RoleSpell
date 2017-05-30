@@ -12,35 +12,25 @@ public class Timer {
     private float speed;
     private double time;
 
-    private boolean randomized;
     private boolean enabled;
 
     private Listener listeners;
 
-    public Timer(Interval interval, boolean randomized, float speed) {
+    public Timer(Interval interval, float speed) {
         this.interval = interval;
         this.speed = speed;
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
         enabled = true;
-        this.randomized = randomized;
-    }
-
-    public Timer(Interval interval, boolean randomized) {
-        this(interval, randomized, 1f);
     }
 
     public Timer(Interval interval) {
-        this(interval, false);
-    }
-
-    public Timer(double interval, boolean randomized) {
-        this(new Interval(interval), randomized);
+        this(interval, 1f);
     }
 
     public Timer(double interval) {
-        this(interval, false);
+        this(new Interval(interval));
     }
 
     public boolean update(float delta) {
@@ -59,10 +49,6 @@ public class Timer {
             listeners.action(this);
 
             time -= intervalValue;
-        }
-
-        if (actionPerformed && randomized) {
-            interval.randomize();
         }
 
         return actionPerformed;
@@ -120,21 +106,12 @@ public class Timer {
         this.enabled = enabled;
     }
 
-    public boolean isRandomized() {
-        return randomized;
-    }
-
-    public void setRandomized(boolean randomized) {
-        this.randomized = randomized;
-    }
-
     @Override
     public String toString() {
         return "Timer{" +
                 "interval=" + interval +
                 ", speed=" + speed +
                 ", time=" + time +
-                ", randomized=" + randomized +
                 ", enabled=" + enabled +
                 '}';
     }

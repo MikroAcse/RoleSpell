@@ -30,8 +30,7 @@ public class Npc extends Mob {
         getStatus().addProperty(new DamageProperty(
                 getStatus(),
                 new Interval(3.0, 10.0),
-                1,
-                true));
+                1));
 
         // TODO: magic numbers everywhere
 

@@ -52,6 +52,9 @@
 				{
 					"item": "ultimate-sword",
 					"chance": 0.5
+				},
+				{
+					"item": "wooden-sword"
 				}
 			]
 		},

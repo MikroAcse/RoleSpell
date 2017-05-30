@@ -110,6 +110,10 @@ public abstract class BehaviorAi extends Component {
         Entity entity = getEntity();
         World world = entity.getWorld();
 
+        if(world == null) {
+            return false;
+        }
+
         IntVector2 position = entity.getPosition();
 
         Array<Entity> targets = new Array<>();
@@ -120,6 +124,14 @@ public abstract class BehaviorAi extends Component {
         }
 
         if (targetSelectors.contains(TargetSelector.CUSTOM)) {
+            for (int i = this.targets.size - 1; i >= 0; i--) {
+                Entity target = this.targets.get(i);
+
+                if(target.getWorld() != entity.getWorld()) {
+                    removeTarget(target);
+                }
+            }
+
             targets.addAll(this.targets);
         }
 

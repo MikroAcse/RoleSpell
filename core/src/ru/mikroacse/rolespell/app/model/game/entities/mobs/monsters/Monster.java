@@ -33,15 +33,14 @@ public class Monster extends Mob {
         getStatus().addProperty(new DamageProperty(
                 getStatus(),
                 new Interval(20.0, 30.0),
-                3,
-                true));
+                3));
 
         // TODO: magic numbers everywhere
 
         collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
 
-        attackAi = new AttackAi(this, new Timer(new Interval(1.0, 1.0), true));
+        attackAi = new AttackAi(this, new Timer(new Interval(1.0, 1.0)));
         addComponent(attackAi);
 
         attackAi.setTargetTypes(EnumSet.of(EntityType.PLAYER));
