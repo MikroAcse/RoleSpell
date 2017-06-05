@@ -166,8 +166,6 @@ Items config:
     "pickable": false
   },
 
-  // ---------------------------------------- WEAPONS
-
   "abstract-weapon": {
     "parent": "abstract-item",
     "type": "WEAPON",
@@ -199,8 +197,6 @@ Items config:
     }
   },
 
-  // --------------- SWORDS
-
   "abstract-sword": {
     "parent": "abstract-weapon",
 
@@ -231,8 +227,6 @@ Items config:
     }
   },
 
-  // --------------- STAVES
-
   "abstract-staff": {
     "parent": "abstract-weapon",
 
@@ -262,8 +256,6 @@ Items config:
       "attack-distance": 10
     }
   },
-
-  // --------------- CUSTOM
 
   "light-orb": {
     "parent": "abstract-weapon",
