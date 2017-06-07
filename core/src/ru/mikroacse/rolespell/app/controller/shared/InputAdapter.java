@@ -1,4 +1,4 @@
-package ru.mikroacse.rolespell.app.controller.game;
+package ru.mikroacse.rolespell.app.controller.shared;
 
 import com.badlogic.gdx.Gdx;
 
@@ -11,38 +11,44 @@ import java.util.Map;
 public class InputAdapter extends com.badlogic.gdx.InputAdapter {
     public static final int CLICK_TIMEOUT = 250;
 
+    private static final InputAdapter instance = new InputAdapter();
+
     private Map<Integer, Button> buttons;
 
-    public InputAdapter() {
+    private InputAdapter() {
         buttons = new HashMap<>();
+    }
+
+    public static InputAdapter getInstance() {
+        return instance;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         pressButton(button);
 
-        return true;
+        return super.touchDown(screenX, screenY, pointer, button);
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         releaseButton(button);
 
-        return true;
+        return super.touchUp(screenX, screenY, pointer, button);
     }
 
     @Override
     public boolean keyDown(int keycode) {
         pressButton(keycode);
 
-        return true;
+        return super.keyDown(keycode);
     }
 
     @Override
     public boolean keyUp(int keycode) {
         releaseButton(keycode);
 
-        return true;
+        return super.keyUp(keycode);
     }
 
     public void update() {

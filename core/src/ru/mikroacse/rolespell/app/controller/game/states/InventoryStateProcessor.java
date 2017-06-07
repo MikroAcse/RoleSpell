@@ -4,11 +4,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
-import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
+import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
@@ -16,7 +15,7 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
-import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
+import ru.mikroacse.rolespell.app.view.shared.ui.Cursor;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -28,7 +27,7 @@ public class InventoryStateProcessor extends StateProcessor {
 
     @Override
     public void process() {
-        InputAdapter input = getController().getInput();
+        InputAdapter input = InputAdapter.getInstance();
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
@@ -58,11 +57,11 @@ public class InventoryStateProcessor extends StateProcessor {
         }
 
         if (renderer.getDragItem() != null) {
-            renderer.setCursor(GameCursor.Cursor.DRAG);
+            renderer.setCursor(Cursor.Type.DRAG);
         } else if (itemView != null) {
-            renderer.setCursor(GameCursor.Cursor.TAKE);
+            renderer.setCursor(Cursor.Type.TAKE);
         } else {
-            renderer.setCursor(GameCursor.Cursor.POINTER);
+            renderer.setCursor(Cursor.Type.POINTER);
         }
 
         if (inventoryCell != -1) {
@@ -133,7 +132,7 @@ public class InventoryStateProcessor extends StateProcessor {
     }
 
     private void drop(Item item) {
-        InputAdapter input = getController().getInput();
+        InputAdapter input = InputAdapter.getInstance();
 
         GameRenderer renderer = getController().getRenderer();
 
@@ -164,7 +163,7 @@ public class InventoryStateProcessor extends StateProcessor {
     }
 
     private void updateDrag() {
-        InputAdapter input = getController().getInput();
+        InputAdapter input = InputAdapter.getInstance();
         GameRenderer renderer = getController().getRenderer();
 
         int mouseX = input.getMouseX();
@@ -195,7 +194,7 @@ public class InventoryStateProcessor extends StateProcessor {
         super.pause();
         GameRenderer renderer = getController().getRenderer();
 
-        renderer.setCursor(GameCursor.Cursor.POINTER);
+        renderer.setCursor(Cursor.Type.POINTER);
 
         ItemView dragItemView = renderer.getDragItem();
 

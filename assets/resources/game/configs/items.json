@@ -67,7 +67,7 @@
 
 		"parameters": {
 			"damage": 25,
-			"attack-distance": 2
+			"attack-distance": 1
 		}
 	},
 
@@ -87,7 +87,7 @@
 		"texture": "items/weapons/beginner-staff",
 
 		"parameters": {
-			"damage": {"min":5, "max":10},
+			"damage": { "min":5, "max":10 },
 			"attack-distance": 5
 		}
 	},

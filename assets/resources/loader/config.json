@@ -1,7 +1,8 @@
 {
 	"files": {
-		"atlases": [
-			"loader.pack"
-		]
+    "textures": [
+      "background.png",
+      "loader-circle.png"
+    ]
 	}
 }

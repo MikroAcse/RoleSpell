@@ -358,17 +358,17 @@ public class World {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        // MobController.Listener
+        // MobController.ActionListener
         void mobDied(World world, MobController controller);
 
         void mobResurrected(World world, MobController controller);
 
-        // MovementComponent.Listener
+        // MovementComponent.ActionListener
         void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
 
         void originChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current);
 
-        // StatusComponent.Listener
+        // StatusComponent.ActionListener
         void propertyUpdated(World world, StatusComponent status, Property property, double previousValue, double currentValue);
 
         // Original events

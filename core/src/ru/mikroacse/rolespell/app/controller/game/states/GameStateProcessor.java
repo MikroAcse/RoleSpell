@@ -3,7 +3,7 @@ package ru.mikroacse.rolespell.app.controller.game.states;
 import com.badlogic.gdx.Input;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
-import ru.mikroacse.rolespell.app.controller.game.InputAdapter;
+import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
@@ -14,7 +14,8 @@ import ru.mikroacse.rolespell.app.model.game.inventory.ItemList;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
-import ru.mikroacse.rolespell.app.view.game.ui.GameCursor.Cursor;
+import ru.mikroacse.rolespell.app.view.shared.ui.Cursor;
+import ru.mikroacse.rolespell.app.view.shared.ui.Cursor.Type;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -26,7 +27,7 @@ public class GameStateProcessor extends StateProcessor {
 
     @Override
     public void process() {
-        InputAdapter input = getController().getInput();
+        InputAdapter input = InputAdapter.getInstance();
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
@@ -46,19 +47,19 @@ public class GameStateProcessor extends StateProcessor {
 
         Entity entity = model.getWorld().getEntityAt(cell);
 
-        Cursor cursor = Cursor.POINTER;
+        Cursor.Type type = Type.POINTER;
 
         if (entity != null) {
             if (entity.getType() == EntityType.DROPPED_ITEM) {
-                cursor = Cursor.TAKE;
+                type = Cursor.Type.TAKE;
             } else if (entity.hasParameter(Entity.Parameter.VULNERABLE)) {
                 if (entity.getType() != EntityType.PLAYER) {
-                    cursor = Cursor.ATTACK;
+                    type = Cursor.Type.ATTACK;
                 }
             }
         }
 
-        renderer.setCursor(cursor);
+        renderer.setCursor(type);
 
         if (mouseRight.justPressed) {
             model.tryRouteTo(cell.x, cell.y);
@@ -102,7 +103,7 @@ public class GameStateProcessor extends StateProcessor {
     }
 
     private void processHotbar() {
-        InputAdapter input = getController().getInput();
+        InputAdapter input = InputAdapter.getInstance();
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
@@ -136,6 +137,6 @@ public class GameStateProcessor extends StateProcessor {
         super.pause();
 
         GameRenderer renderer = getController().getRenderer();
-        renderer.setCursor(Cursor.POINTER);
+        renderer.setCursor(Cursor.Type.POINTER);
     }
 }

@@ -174,6 +174,7 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
         GLOBAL("global"),
         LOADER("loader"),
         MENU("menu"),
+        SETTINGS("settings"),
         GAME("game");
 
         private String name;

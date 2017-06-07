@@ -208,7 +208,7 @@ public class MobController extends Component {
     }
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        // MovementComponent.Listener
+        // MovementComponent.ActionListener
         void positionChanged(MobController controller, int prevX, int prevY, IntVector2 current);
 
         void originChanged(MobController controller, int prevX, int prevY, IntVector2 current);

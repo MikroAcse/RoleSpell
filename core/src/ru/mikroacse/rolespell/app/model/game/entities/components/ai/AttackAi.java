@@ -47,11 +47,7 @@ public class AttackAi extends BehaviorAi {
         seekBehavior.setActivationDistance(attackDistance);
         seekBehavior.setDeactivationDistance(attackDistance + 20);
 
-        if(attackDistance > 1) {
-            fleeBehavior.setDeactivationDistance(attackDistance);
-            fleeBehavior.setEnabled(true);
-        } else {
-            fleeBehavior.setEnabled(false);
-        }
+        fleeBehavior.setDeactivationDistance(attackDistance);
+        fleeBehavior.setEnabled(attackDistance > 1);
     }
 }

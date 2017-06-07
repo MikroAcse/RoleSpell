@@ -5,6 +5,10 @@
 			"cg-32.fnt",
 			"cg-36.fnt",
 			"cg-72.fnt"
-		]
+		],
+
+    "textures": [
+      "ui/*"
+    ]
 	}
 }

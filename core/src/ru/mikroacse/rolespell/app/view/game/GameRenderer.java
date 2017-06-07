@@ -10,17 +10,18 @@ import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
+import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.app.view.game.status.StatusView;
-import ru.mikroacse.rolespell.app.view.game.ui.GameCursor;
+import ru.mikroacse.rolespell.app.view.shared.ui.Cursor;
 import ru.mikroacse.rolespell.app.view.game.world.MapRenderer;
 import ru.mikroacse.rolespell.app.view.game.world.WorldRenderer;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
-public class GameRenderer extends Stage {
+public class GameRenderer extends Renderer {
     private GameModel gameModel;
 
     private State state;
@@ -33,14 +34,14 @@ public class GameRenderer extends Stage {
     private ItemListView hotbarView;
     private ItemView dragItem;
 
-    private GameCursor cursor;
+    private Cursor cursor;
 
     public GameRenderer(GameModel gameModel) {
-        super(new ScreenViewport());
+        super();
 
         this.gameModel = gameModel;
 
-        cursor = new GameCursor();
+        cursor = new Cursor();
 
         worldRenderer = new WorldRenderer();
         worldRenderer.setZoom(2f);
@@ -110,7 +111,6 @@ public class GameRenderer extends Stage {
 
         if (controllable.hasComponent(StatusComponent.class)) {
             statusView.setStatus(controllable.getComponent(StatusComponent.class));
-
         }
 
         worldRenderer.setObservable(gameModel.getObservable());
@@ -128,7 +128,6 @@ public class GameRenderer extends Stage {
         statusView.setPosition(5f, 5f);
     }
 
-
     public void resize(int width, int height) {
         getViewport().update(width, height, true);
         worldRenderer.resizeViewport(width, height);
@@ -140,8 +139,8 @@ public class GameRenderer extends Stage {
         cursor.setVisible(visible);
     }
 
-    public void setCursor(GameCursor.Cursor cursor) {
-        this.cursor.setCursor(cursor);
+    public void setCursor(Cursor.Type type) {
+        this.cursor.setType(type);
     }
 
     public void setCursorPosition(int x, int y) {

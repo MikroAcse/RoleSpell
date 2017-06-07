@@ -1,25 +1,9 @@
 {
 	"files": {
 		"textures": [
-			
-		],
-		"sounds": [
-
-		],
-		"music": [
-
-		],
-		"atlases": [
-			
-		],
-		"fonts": [
-
-		],
-		"shaders": [
-			
-		],
-		"maps": [
-			
+			"background.png",
+			"button-background.png",
+			"logo.png"
 		]
 	}
 }

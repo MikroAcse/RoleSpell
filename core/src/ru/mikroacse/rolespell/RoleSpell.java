@@ -4,6 +4,8 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.mikroacse.engine.tween.ActorAccessor;
@@ -42,6 +44,9 @@ public class RoleSpell extends Game {
 
     @Override
     public void create() {
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         Tween.registerAccessor(Actor.class, new ActorAccessor());
         Tween.setCombinedAttributesLimit(4);
 
@@ -56,30 +61,44 @@ public class RoleSpell extends Game {
 
         screenManager = new ScreenManager(this);
 
-        // hide mouse TODO: beautify
+        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
+        assetManager.finishLoading();
+
+        screenManager.setScreen(ScreenManager.BundledScreen.MENU);
+    }
+
+    public static void showMouse() {
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+    }
+
+    public static void hideMouse() {
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pm.setColor(new Color(0, 0, 0, 0));
+        pm.setColor(new Color(1, 1, 1, 0));
         pm.fill();
 
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 
         pm.dispose();
+    }
 
-        assetManager.loadBundle(AssetManager.Bundle.LOADER, true);
-
-        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
-        assetManager.loadBundle(AssetManager.Bundle.MENU);
-        assetManager.loadBundle(AssetManager.Bundle.GAME);
-        assetManager.finishLoading();
-
-        screenManager.setWaitScene(ScreenManager.BundledScreen.GAME);
-        screenManager.setScreen(ScreenManager.BundledScreen.LOADER);
+    public static void exit() {
+        Gdx.app.exit();
     }
 
     @Override
     public void render() {
         super.render();
+
         tweenManager.update(Gdx.graphics.getDeltaTime());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        if(assetManager != null) {
+            assetManager.updateScale(width, height);
+        }
+
+        super.resize(width, height);
     }
 
     @Override

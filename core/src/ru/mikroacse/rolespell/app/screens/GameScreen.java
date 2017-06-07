@@ -1,9 +1,10 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
+import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
@@ -15,16 +16,20 @@ import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.media.AssetManager;
 
+import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+
 /**
  * Created by MikroAcse on 22.03.2017.
  */
-public class GameScreen implements Screen {
+public class GameScreen extends Screen {
     private GameRenderer renderer;
     private GameController controller;
 
     private GameModel model;
 
     public GameScreen() {
+        super(false);
+
         model = new GameModel();
 
         renderer = new GameRenderer(model);
@@ -34,9 +39,16 @@ public class GameScreen implements Screen {
         setWorld("eclipse-chambers", null);
     }
 
+    @Override
+    public void restore() {
+        RoleSpell.hideMouse();
+
+        Gdx.input.setInputProcessor(InputAdapter.getInstance());
+    }
+
     // TODO: ???
     public void setWorld(String id, String portalId) {
-        TiledMap map = RoleSpell.getAssetManager()
+        TiledMap map = getAssetManager()
                 .getBundle(AssetManager.Bundle.GAME)
                 .getMap(id + "/map");
 
@@ -68,42 +80,18 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public void render(float delta) {
         controller.update(delta);
 
+        renderer.act(delta);
         renderer.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        RoleSpell.getAssetManager().updateScale(width, height);
+        getAssetManager().updateScale(width, height);
 
         renderer.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     public GameModel getModel() {

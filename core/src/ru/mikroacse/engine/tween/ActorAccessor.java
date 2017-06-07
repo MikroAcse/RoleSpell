@@ -19,7 +19,8 @@ public class ActorAccessor implements TweenAccessor<Actor> {
     public static final int HEIGHT = 9;
     public static final int SIZE = 10;
     public static final int SCALE = 11;
-    public static final int VISIBILITY = 12;
+    public static final int SCALE_BOTH = 12;
+    public static final int VISIBILITY = 13;
 
     @Override
     public int getValues(Actor target, int tweenType, float[] returnValues) {
@@ -66,6 +67,9 @@ public class ActorAccessor implements TweenAccessor<Actor> {
                 returnValues[0] = target.getScaleX();
                 returnValues[1] = target.getScaleY();
                 return 2;
+            case SCALE_BOTH:
+                returnValues[0] = target.getScaleX();
+                return 1;
             case VISIBILITY:
                 returnValues[0] = target.isVisible() ? 1f : 0f;
                 return 1;
@@ -124,6 +128,10 @@ public class ActorAccessor implements TweenAccessor<Actor> {
             case SCALE:
                 target.setScaleX(newValues[0]);
                 target.setScaleY(newValues[1]);
+                break;
+            case SCALE_BOTH:
+                target.setScaleX(newValues[0]);
+                target.setScaleY(newValues[0]);
                 break;
             case VISIBILITY:
                 if (newValues[0] == 0f) {

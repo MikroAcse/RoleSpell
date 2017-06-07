@@ -1,60 +1,52 @@
 package ru.mikroacse.rolespell.app.view.loader;
 
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Elastic;
+import aurelienribon.tweenengine.equations.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import ru.mikroacse.engine.actors.AnimationActor;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.media.AssetManager;
-import ru.mikroacse.rolespell.util.AnimationUtil;
+import ru.mikroacse.rolespell.app.view.Renderer;
+import ru.mikroacse.rolespell.media.AssetBundle;
+import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+import static ru.mikroacse.rolespell.RoleSpell.getTweenManager;
 
 /**
  * Created by MikroAcse on 14.07.2016.
  */
-public class LoaderRenderer extends Stage {
-    private AnimationActor animation;
-
-    private Listener listeners;
-
-    private boolean busy;
+public class LoaderRenderer extends Renderer {
+    private Image background;
+    private Image loaderCircle;
 
     public LoaderRenderer() {
-        super(new ScreenViewport());
+        super();
 
-        listeners = ListenerSupportFactory.create(Listener.class);
+        AssetBundle bundle = getAssetManager().getBundle(Bundle.LOADER);
 
-        animation = new AnimationActor(
-                AnimationUtil.create(
-                        AssetManager.Bundle.LOADER,
-                        "loader",
-                        false));
+        Texture backgroundTexture = bundle.getTexture("background");
+        Texture loaderCircleTexture = bundle.getTexture("loader-circle");
 
-        // 20 frames per second TODO: magic number
-        animation.setFrameDuration(1 / 20f);
-        animation.setRepeatable(true);
+        backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        loaderCircleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        addActor(animation);
+        background = new Image(backgroundTexture);
+        loaderCircle = new Image(loaderCircleTexture);
 
-        busy = false;
-    }
+        loaderCircle.setOrigin(Align.center);
 
-    public void addListener(Listener listener) {
-        ((ListenerSupport<Listener>) listeners).addListener(listener);
-    }
-
-    public void removeListener(Listener listener) {
-        ((ListenerSupport<Listener>) listeners).removeListener(listener);
-    }
-
-    public void clearListeners() {
-        ((ListenerSupport<Listener>) listeners).clearListeners();
+        addActor(background);
+        addActor(loaderCircle);
     }
 
     @Override
@@ -65,79 +57,84 @@ public class LoaderRenderer extends Stage {
         super.draw();
     }
 
-    public void update() {
-        animation.setScale(Math.round(getAnimationScale()));
+    @Override
+    public void act(float delta) {
+        super.act(delta);
 
-        animation.setX((int) (getWidth() - animation.getRealWidth()) / 2);
-        animation.setY((int) (getHeight() - animation.getRealHeight()) / 2);
+        loaderCircle.rotateBy(-270 * delta);
+
+        while(loaderCircle.getRotation() < -360) {
+            loaderCircle.rotateBy(360);
+        }
     }
 
+    public void update() {
+        loaderCircle.setX((int) (getWidth() / 2 - loaderCircle.getWidth() / 2));
+        loaderCircle.setY((int) (getHeight() / 2 - loaderCircle.getHeight() / 2));
+
+        loaderCircle.getColor().a = 0.5f;
+
+        float scaleX = getWidth() / background.getWidth();
+        float scaleY = getHeight() / background.getHeight();
+        background.setScale(Math.max(scaleX, scaleY));
+
+        background.setX((int) (getWidth() / 2 - background.getWidth() * background.getScaleX() / 2));
+        background.setY((int) (getHeight() / 2 - background.getHeight() * background.getScaleY() / 2));
+    }
+
+    @Override
     public void show() {
-        RoleSpell.getTweenManager().killTarget(animation);
+        super.show();
+
+        if(isBusy()) {
+            return;
+        }
 
         update();
 
-        animation.getColor().a = 1f;
+        Tween.to(background, ActorAccessor.ALPHA, 0.5f)
+                .target(1f)
+                .start(getTweenManager());
 
-        Tween.from(animation, ActorAccessor.POSITION, 1.0f)
-                .ease(Elastic.OUT)
-                .target(getWidth() / 2, getHeight() / 2)
-                .start(RoleSpell.getTweenManager());
-
-        Tween.from(animation, ActorAccessor.ALPHA, 0.5f)
-                .ease(Elastic.OUT)
-                .target(0f)
-                .start(RoleSpell.getTweenManager());
-
-        Tween.from(animation, ActorAccessor.SCALE, 1.0f)
-                .ease(Elastic.OUT)
-                .target(0f)
+        Tween.to(loaderCircle, ActorAccessor.ALPHA, 0.5f)
+                .target(loaderCircle.getColor().a)
+                .delay(0.25f)
                 .setCallback((type, source) -> {
                     if (type == TweenCallback.COMPLETE) {
-                        busy = false;
+                        setBusy(false);
+                        listeners.onShown();
                     }
                 })
-                .start(RoleSpell.getTweenManager());
+                .start(getTweenManager());
 
-        busy = true;
+        background.getColor().a = 0f;
+        loaderCircle.getColor().a = 0f;
+
+        setBusy(true);
     }
 
+    @Override
     public void hide() {
-        RoleSpell.getTweenManager().killTarget(animation);
+        super.hide();
 
-        Tween.to(animation, ActorAccessor.POSITION, 0.5f)
-                .ease(Elastic.IN)
-                .target(getWidth() / 2, getHeight() / 2)
-                .start(RoleSpell.getTweenManager());
+        if(isBusy()) {
+            return;
+        }
 
-        Tween.to(animation, ActorAccessor.ALPHA, 0.5f)
-                .ease(Elastic.IN)
+        Tween.to(background, ActorAccessor.ALPHA, 0.25f)
                 .target(0f)
-                .start(RoleSpell.getTweenManager());
+                .start(getTweenManager());
 
-        Tween.to(animation, ActorAccessor.SCALE, 0.5f)
-                .ease(Elastic.IN)
+        Tween.to(loaderCircle, ActorAccessor.ALPHA, 0.25f)
                 .target(0f)
                 .setCallback((type, source) -> {
                     if (type == TweenCallback.COMPLETE) {
-                        busy = false;
+                        setBusy(false);
                         listeners.onHidden();
                     }
                 })
-                .start(RoleSpell.getTweenManager());
+                .start(getTweenManager());
 
-        busy = true;
-    }
-
-    private float getAnimationScale() {
-        return 8f * RoleSpell.getAssetManager().getScale();
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void onHidden();
+        setBusy(true);
     }
 }

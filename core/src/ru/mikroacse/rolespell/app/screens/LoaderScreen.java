@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import com.badlogic.gdx.Screen;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.loader.LoaderController;
 import ru.mikroacse.rolespell.app.view.loader.LoaderRenderer;
@@ -8,23 +7,31 @@ import ru.mikroacse.rolespell.app.view.loader.LoaderRenderer;
 /**
  * Created by MikroAcse on 14.07.2016.
  */
-public class LoaderScreen implements Screen {
+public class LoaderScreen extends Screen {
     private LoaderRenderer renderer;
     private LoaderController controller;
 
     public LoaderScreen() {
+        super(false);
+
         renderer = new LoaderRenderer();
         controller = new LoaderController(renderer);
     }
 
     @Override
-    public void show() {
+    public void restore() {
         renderer.show();
+
+        RoleSpell.showMouse();
     }
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+
         controller.update(delta);
+
+        renderer.act(delta);
         renderer.draw();
     }
 
@@ -34,25 +41,5 @@ public class LoaderScreen implements Screen {
 
         renderer.getViewport().update(width, height, true);
         renderer.update();
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }

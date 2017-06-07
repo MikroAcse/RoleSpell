@@ -84,11 +84,9 @@ public class CollisionAvoidingAi extends Component {
         IntVector2 position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
 
         Array<IntVector2> passableCells = world.getPassableCells(
-                position.x,
-                position.y,
+                position.x, position.y,
                 true,
-                minRadius,
-                maxRadius,
+                minRadius, maxRadius,
                 false);
 
         IntVector2 destination = null;

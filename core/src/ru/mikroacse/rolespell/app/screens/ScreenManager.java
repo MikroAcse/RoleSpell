@@ -1,12 +1,11 @@
 package ru.mikroacse.rolespell.app.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -16,7 +15,7 @@ public class ScreenManager {
     private Game game;
     private Map<BundledScreen, Screen> screens;
     private BundledScreen currentScreen;
-    private BundledScreen waitScene;
+    private BundledScreen waitScreen;
 
     public ScreenManager(Game game) {
         this.game = game;
@@ -30,22 +29,31 @@ public class ScreenManager {
                 return new GameScreen();
             case LOADER:
                 return new LoaderScreen();
+            case MENU:
+                return new MenuScreen();
+            case SETTINGS:
+                return new SettingsScreen();
         }
         return null;
     }
 
     public void dispose() {
-        Iterator<BundledScreen> it = screens.keySet().iterator();
+        BundledScreen[] screens = new BundledScreen[this.screens.size()];
 
-        while (it.hasNext()) {
-            BundledScreen bundledScreen = it.next();
+        this.screens.keySet().toArray(screens);
 
-            disposeScreen(bundledScreen);
+        for (BundledScreen screen : screens) {
+            disposeScreen(screen);
         }
     }
 
     public void disposeScreen(BundledScreen bundledScreen) {
         Screen screen = screens.get(bundledScreen);
+
+        if(!screen.isDisposable()) {
+            return;
+        }
+
         screen.dispose();
 
         RoleSpell.getAssetManager()
@@ -58,13 +66,15 @@ public class ScreenManager {
         AssetManager assetManager = RoleSpell.getAssetManager();
 
         if (!assetManager.isLoaded(bundledScreen.getBundle())) {
-            setWaitScene(bundledScreen);
+            setWaitScreen(bundledScreen);
 
-            game.setScreen(getScreen(BundledScreen.LOADER));
-            getScreen(BundledScreen.LOADER).show();
+            if (!assetManager.isLoaded(Bundle.LOADER)) {
+                assetManager.loadBundle(Bundle.LOADER, true);
+            }
+
+            setScreen(BundledScreen.LOADER);
 
             assetManager.loadBundle(bundledScreen.getBundle());
-            disposeScreen(currentScreen);
             return;
         }
 
@@ -76,31 +86,41 @@ public class ScreenManager {
     }
 
     private void setCurrentScreen(BundledScreen bundledScreen) {
+        if(currentScreen != null) {
+            getScreen(currentScreen).suspend();
+        }
+
         Screen screen = screens.get(bundledScreen);
         game.setScreen(screen);
-        screen.show();
 
         if (currentScreen != null) {
             disposeScreen(currentScreen);
         }
+
         currentScreen = bundledScreen;
+
+        screen.restore();
 
         System.out.println(" === Current screen set to " + bundledScreen + " === ");
     }
 
     public void setWaited() {
-        if (waitScene == null) {
+        if (waitScreen == null) {
             return;
         }
-        setScreen(waitScene);
+
+        BundledScreen waitScreen = this.waitScreen;
+        this.waitScreen = null;
+
+        setScreen(waitScreen);
     }
 
-    public BundledScreen getWaitScene() {
-        return waitScene;
+    public BundledScreen getWaitScreen() {
+        return waitScreen;
     }
 
-    public void setWaitScene(BundledScreen bundledScreen) {
-        waitScene = bundledScreen;
+    public void setWaitScreen(BundledScreen bundledScreen) {
+        waitScreen = bundledScreen;
     }
 
     public Screen getScreen(BundledScreen bundledScreen) {
@@ -108,17 +128,18 @@ public class ScreenManager {
     }
 
     public enum BundledScreen {
-        GAME(AssetManager.Bundle.GAME),
-        MENU(AssetManager.Bundle.MENU),
-        LOADER(AssetManager.Bundle.LOADER);
+        GAME(Bundle.GAME),
+        MENU(Bundle.MENU),
+        SETTINGS(Bundle.SETTINGS),
+        LOADER(Bundle.LOADER);
 
-        private AssetManager.Bundle bundle;
+        private Bundle bundle;
 
-        BundledScreen(AssetManager.Bundle bundle) {
+        BundledScreen(Bundle bundle) {
             this.bundle = bundle;
         }
 
-        public AssetManager.Bundle getBundle() {
+        public Bundle getBundle() {
             return bundle;
         }
     }

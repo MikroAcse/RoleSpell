@@ -1,13 +1,15 @@
-# RoleSpell Pre-Alpha [![Stories in Ready](https://badge.waffle.io/MikroAcse/RoleSpell.svg?label=ready&title=Ready)](http://waffle.io/MikroAcse/RoleSpell)
-
+# RoleSpell Pre-Alpha [![Stories in Ready](https://badge.waffle.io/MikroAcse/RoleSpell.svg?label=ready&title=Ready)](http://waffle.io/MikroAcse/RoleSpell) [![Stories in Progress](https://badge.waffle.io/MikroAcse/RoleSpell.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/MikroAcse/RoleSpell)
 RoleSpell is simple 2D RPG game made in Java with LibGDX.
 
 ![](https://raw.githubusercontent.com/MikroAcse/RoleSpell/master/screenshots/screencap.gif)
+
+![](https://raw.githubusercontent.com/MikroAcse/RoleSpell/master/screenshots/menu.png)
 
 ## Implemented features
   - TMX map loading/parsing;
   - Asset and config loading/parsing via custom AssetManager;
   - Item and entity config parsers;
+  - Language bundles;
   - Entity behaviors, such as: Attack, Pickup, Flee, Seek, Wander and Teleport behaviors;
     They are controlled by custom BehaviorAi component;
   - Inventory, movement and status components;
