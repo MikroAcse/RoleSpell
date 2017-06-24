@@ -121,7 +121,7 @@ meta:
     passable: true
 ```
 
-Items config:
+Items config (resources/game/configs/items.yaml):
 ```yaml
 # Heirs must be under their parents!
 
