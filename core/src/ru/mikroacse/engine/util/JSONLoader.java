@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.JsonValue;
 /**
  * Created by MikroAcse on 08.07.2016.
  */
+@Deprecated
 public class JsonLoader {
     /**
      * Loads json file and returns parsed JsonValue.

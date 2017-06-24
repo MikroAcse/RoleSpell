@@ -23,18 +23,16 @@ import ru.mikroacse.rolespell.app.view.settings.ui.LabeledSlider;
 import ru.mikroacse.rolespell.app.view.settings.ui.SettingsButton;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-import static ru.mikroacse.rolespell.RoleSpell.getLang;
-import static ru.mikroacse.rolespell.RoleSpell.getTweenManager;
+import static ru.mikroacse.rolespell.RoleSpell.*;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
  */
 public class SettingsRenderer extends Renderer {
-    private Image background;
-
     private Array<Actor> controls;
 
+    private Image background;
+    private SettingsButton backButton;
     private Group controlsContainer;
 
     private ActionListener actionListeners;
@@ -49,24 +47,9 @@ public class SettingsRenderer extends Renderer {
 
         background = new Image(backgroundTexture);
 
-        // TODO: ↓
-        LabeledSlider musicSlider = new LabeledSlider();
-        musicSlider.setValue(0.5f);
-        musicSlider.setLabel("Music");
-
-        musicSlider.setPosition(20f, 20f);
-        musicSlider.setWidth(300f);
-        musicSlider.setHeight(40f);
-
-        LabeledSlider soundsSlider = new LabeledSlider();
-        soundsSlider.setValue(0.5f);
-        soundsSlider.setLabel("Sounds");
-
-        soundsSlider.setPosition(20f, 20f);
-        soundsSlider.setWidth(300f);
-        soundsSlider.setHeight(40f);
-
-        SettingsButton backButton = createButton("go_to_menu", SettingsAction.GO_TO_MENU);
+        LabeledSlider musicSlider = createSlider("music_slider.label", SettingsAction.MUSIC);
+        LabeledSlider soundsSlider = createSlider("sounds_slider.label", SettingsAction.SOUNDS);
+        backButton = createButton("go_to_menu", SettingsAction.GO_TO_MENU);
 
         // TODO: universal listener
         backButton.addListener(new ClickListener() {
@@ -77,17 +60,16 @@ public class SettingsRenderer extends Renderer {
         });
 
         controls = new Array<>();
-        controls.addAll(musicSlider, soundsSlider, backButton);
+        controls.addAll(musicSlider, soundsSlider);
         controls.reverse();
 
         controlsContainer = new Group();
-
         controlsContainer.addActor(soundsSlider);
         controlsContainer.addActor(musicSlider);
-        controlsContainer.addActor(backButton);
 
         addActor(background);
         addActor(controlsContainer);
+        addActor(backButton);
     }
 
     @Override
@@ -113,7 +95,7 @@ public class SettingsRenderer extends Renderer {
         for (int i = 0; i < controls.size; i++) {
             Actor actor = controls.get(i);
 
-            if(actor instanceof MeasurableActor) {
+            if (actor instanceof MeasurableActor) {
                 float width = ((MeasurableActor) actor).getRealWidth();
                 float height = ((MeasurableActor) actor).getRealHeight();
 
@@ -127,13 +109,17 @@ public class SettingsRenderer extends Renderer {
 
         controlsContainer.setX((int) (getWidth() / 2 + GroupUtil.getWidth(controlsContainer) / 2));
         controlsContainer.setY((int) (getHeight() / 2 - y / 2));
+
+        backButton.setX((int) (getWidth() / 2 - backButton.getRealWidth() / 2));
+        // TODO: magic number (offset between controls and back button)
+        backButton.setY((int) (controlsContainer.getY() - backButton.getRealHeight() - 20));
     }
 
     @Override
     public void show() {
         super.show();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
@@ -143,20 +129,26 @@ public class SettingsRenderer extends Renderer {
                 .target(1f)
                 .start(getTweenManager());
 
-        Tween.to(controlsContainer, ActorAccessor.Y, 0.5f)
-                .delay(0.25f)
+        Tween.to(controlsContainer, ActorAccessor.Y, 1f)
                 .target(controlsContainer.getY())
+                .ease(Quint.OUT)
+                .start(getTweenManager());
+
+        Tween.to(backButton, ActorAccessor.Y, 1f)
+                .target(backButton.getY())
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onShown();
                     }
                 })
+                .delay(0.15f)
                 .ease(Quint.OUT)
                 .start(getTweenManager());
 
         background.getColor().a = 0f;
         controlsContainer.setY(-GroupUtil.getHeight(controlsContainer));
+        backButton.setY(-backButton.getRealHeight());
 
         setBusy(true);
     }
@@ -170,11 +162,17 @@ public class SettingsRenderer extends Renderer {
                 .ease(Quint.IN)
                 .start(getTweenManager());
 
+        Tween.to(backButton, ActorAccessor.Y, 0.4f)
+                .target(getHeight())
+                .ease(Quint.IN)
+                .delay(0.1f)
+                .start(getTweenManager());
+
         Tween.to(background, ActorAccessor.ALPHA, 0.4f)
                 .target(0f)
-                .delay(0.2f)
+                .delay(0.3f)
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onHidden();
                     }
@@ -198,6 +196,17 @@ public class SettingsRenderer extends Renderer {
 
     private SettingsButton createButton(String labelKey, SettingsAction action) {
         return new SettingsButton(getLang().get(Bundle.SETTINGS, labelKey), action);
+    }
+
+    private LabeledSlider createSlider(String labelKey, SettingsAction action) {
+        // TODO: magic numbers
+        LabeledSlider slider = new LabeledSlider();
+        slider.setLabel(getLang().get(Bundle.SETTINGS, labelKey));
+
+        slider.setWidth(300f);
+        slider.setHeight(40f);
+
+        return slider;
     }
 
     public interface ActionListener extends ru.mikroacse.engine.listeners.Listener {

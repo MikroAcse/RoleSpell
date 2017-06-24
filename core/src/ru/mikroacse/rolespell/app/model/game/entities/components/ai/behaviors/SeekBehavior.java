@@ -6,7 +6,6 @@ import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
  * Move towards a target (land near target)

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.JsonValue;
 /**
  * Created by Vitaly Rudenko on 17-May-17.
  */
+@Deprecated
 public class JsonLoader extends AsynchronousAssetLoader<JsonValue, JsonLoader.JsonParameter> {
     private JsonReader jsonReader;
     private JsonValue jsonValue;

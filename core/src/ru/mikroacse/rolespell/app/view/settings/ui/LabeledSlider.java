@@ -49,14 +49,14 @@ public class LabeledSlider extends Group implements MeasurableActor {
         // TODO: ↓
         NinePatchDrawable npdBg = new NinePatchDrawable(new NinePatch(getAssetManager()
                 .getBundle(Bundle.SETTINGS)
-                .getTexture("slider-background"), 10,10,10,10));
+                .getTexture("slider-background"), 10, 10, 10, 10));
 
         background = new Button(npdBg);
 
         // TODO: ↓
         NinePatchDrawable npdFg = new NinePatchDrawable(new NinePatch(getAssetManager()
                 .getBundle(Bundle.SETTINGS)
-                .getTexture("slider-foreground"), 10,10,10,10));
+                .getTexture("slider-foreground"), 10, 10, 10, 10));
 
         foreground = new Button(npdFg);
 
@@ -71,6 +71,7 @@ public class LabeledSlider extends Group implements MeasurableActor {
         addActor(valueText);
         addActor(label);
 
+        value = -1f;
         setValue(0f);
     }
 
@@ -92,9 +93,9 @@ public class LabeledSlider extends Group implements MeasurableActor {
         float rightPart = background.getWidth() - leftPart;
 
         // TODO: color/magic numbers
-        if(leftPart < textSize + 20) {
+        if (leftPart < textSize + 20) {
             valueText.setX((int) (x + foreground.getWidth() + 10));
-            valueText.setColor(new Color(0x768FA9FF));
+            valueText.setColor(new Color(0x495D98FF));
         } else {
             valueText.setX((int) (x + foreground.getWidth() - textSize - 10));
             valueText.setColor(Color.WHITE);
@@ -123,7 +124,7 @@ public class LabeledSlider extends Group implements MeasurableActor {
     public void setValue(float value) {
         value = MathUtils.clamp(value, 0, 1);
 
-        if(this.value == value) {
+        if (this.value == value) {
             return;
         }
 

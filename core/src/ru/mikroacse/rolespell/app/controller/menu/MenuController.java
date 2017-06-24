@@ -25,7 +25,7 @@ public class MenuController {
         rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
-                if(action == null) {
+                if (action == null) {
                     System.err.println("null action at menu");
                     return;
                 }
@@ -48,7 +48,8 @@ public class MenuController {
 
         actionListener = new MenuRenderer.ActionListener() {
             @Override
-            public void onAction(MenuAction action) {;
+            public void onAction(MenuAction action) {
+                ;
                 MenuController.this.action = action;
 
                 renderer.hide();

@@ -59,6 +59,10 @@ public class EntityView extends Image implements Pool.Poolable {
         setEntity(null);
     }
 
+    public Entity getEntity() {
+        return entity;
+    }
+
     public void setEntity(Entity entity) {
         if (this.entity == entity) {
             return;
@@ -75,9 +79,5 @@ public class EntityView extends Image implements Pool.Poolable {
         } else {
             setDrawable(null);
         }
-    }
-
-    public Entity getEntity() {
-        return entity;
     }
 }

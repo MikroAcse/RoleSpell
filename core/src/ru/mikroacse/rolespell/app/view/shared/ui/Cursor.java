@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;

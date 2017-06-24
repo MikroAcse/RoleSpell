@@ -3,15 +3,11 @@ package ru.mikroacse.rolespell.app.view.menu.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.menu.MenuAction;
-import ru.mikroacse.rolespell.media.AssetManager;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
@@ -33,7 +29,7 @@ public class MenuButton extends Group implements MeasurableActor {
         // TODO: ↓
         NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(getAssetManager()
                 .getBundle(Bundle.MENU)
-                .getTexture("button-background"), 29,29,29,29));
+                .getTexture("button-background"), 29, 29, 29, 29));
 
         background = new Button(npd);
 

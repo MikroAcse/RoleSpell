@@ -9,7 +9,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.ai.PickupAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.TeleportAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.*;
-import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;

@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.listeners.Listener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.Priority;
@@ -99,13 +98,13 @@ public abstract class Behavior implements Comparable<Behavior> {
     }
 
     public void setTimer(Timer timer) {
-        if(this.timer != null) {
+        if (this.timer != null) {
             this.timer.removeListener(timerListener);
         }
 
         this.timer = timer;
 
-        if(timer != null) {
+        if (timer != null) {
             timer.addListener(timerListener);
         }
     }
@@ -126,12 +125,12 @@ public abstract class Behavior implements Comparable<Behavior> {
         this.deactivationDistance = deactivationDistance;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

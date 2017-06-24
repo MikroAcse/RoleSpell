@@ -3,8 +3,6 @@ package ru.mikroacse.rolespell.app.view.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
@@ -13,10 +11,11 @@ import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.app.view.game.inventory.ItemListView;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
+import ru.mikroacse.rolespell.app.view.game.quests.QuestsView;
 import ru.mikroacse.rolespell.app.view.game.status.StatusView;
-import ru.mikroacse.rolespell.app.view.shared.ui.Cursor;
 import ru.mikroacse.rolespell.app.view.game.world.MapRenderer;
 import ru.mikroacse.rolespell.app.view.game.world.WorldRenderer;
+import ru.mikroacse.rolespell.app.view.shared.ui.Cursor;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -34,6 +33,8 @@ public class GameRenderer extends Renderer {
     private ItemListView hotbarView;
     private ItemView dragItem;
 
+    private QuestsView questsView;
+
     private Cursor cursor;
 
     public GameRenderer(GameModel gameModel) {
@@ -50,6 +51,9 @@ public class GameRenderer extends Renderer {
         hotbarView = new ItemListView(3);
         statusView = new StatusView();
 
+        questsView = new QuestsView();
+
+        addActor(questsView);
         addActor(inventoryView);
         addActor(hotbarView);
         addActor(statusView);
@@ -121,11 +125,20 @@ public class GameRenderer extends Renderer {
     }
 
     public void update() {
-        inventoryView.setPosition(5f, 5f);
+        if (inventoryView != null) {
+            inventoryView.setPosition(5f, 5f);
+        }
 
-        hotbarView.setPosition(getWidth() - hotbarView.getRealWidth() - 5f, 5f);
+        if (hotbarView != null) {
+            hotbarView.setPosition(getWidth() - hotbarView.getRealWidth() - 5f, 5f);
+        }
 
-        statusView.setPosition(5f, 5f);
+        if (statusView != null) {
+            statusView.setPosition(5f, 5f);
+        }
+
+        questsView.setSize(getWidth(), getHeight());
+        questsView.update();
     }
 
     public void resize(int width, int height) {
@@ -164,6 +177,10 @@ public class GameRenderer extends Renderer {
         return hotbarView;
     }
 
+    public QuestsView getQuestsView() {
+        return questsView;
+    }
+
     public State getState() {
         return state;
     }
@@ -183,23 +200,25 @@ public class GameRenderer extends Renderer {
         if (hotbarView != null) {
             hotbarView.setVisible(false);
         }
+        questsView.setVisible(false);
+
         setDragItem(null);
 
-        if (state == State.INVENTORY) {
-            inventoryView.setVisible(true);
-            hotbarView.setVisible(true);
-        }
-
-        if (state == State.GAME) {
-            worldRenderer.setSelectorVisible(true);
-            statusView.setVisible(true);
-            if (hotbarView != null) {
+        switch (state) {
+            case GAME:
+                worldRenderer.setSelectorVisible(true);
+                statusView.setVisible(true);
+                if (hotbarView != null) {
+                    hotbarView.setVisible(true);
+                }
+                break;
+            case INVENTORY:
+                inventoryView.setVisible(true);
                 hotbarView.setVisible(true);
-            }
-        }
-
-        if (state == State.QUESTS) {
-
+                break;
+            case QUESTS:
+                questsView.setVisible(true);
+                break;
         }
 
         return true;

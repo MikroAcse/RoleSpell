@@ -1,0 +1,45 @@
+# = SPAWNERS
+
+spawners:
+  player:
+    type: ONCE
+    entity-type: PLAYER
+    shared: true
+    inventory:
+    - item: hand
+      hotbar: 0
+    - item: light-orb
+    - item: beginner-staff
+      index: 5
+      hotbar: 2
+    - item:
+        parent: ultimate-sword
+        name: ULTRA SWORD!11
+      index: 10
+      hotbar: 1
+      chance: 0.5
+
+  monster-spawner:
+    type: SPAWNER
+    entity-type: MONSTER
+    interval: 2
+    radius: 1
+    checker:
+      type: MONSTER_SPAWNER
+      radius: '5'
+
+# = META
+
+meta:
+  EMPTY:
+    weight: 1
+    passable: true
+  SOLID:
+    weight: 0
+    passable: false
+  WATER:
+    weight: 0
+    passable: false
+  PATH:
+    weight: 0.9
+    passable: true

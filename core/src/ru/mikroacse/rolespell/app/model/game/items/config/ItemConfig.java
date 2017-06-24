@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.items.config;
 
-import com.badlogic.gdx.utils.JsonValue;
-import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.items.ItemType;
 
 /**
@@ -17,13 +16,19 @@ public class ItemConfig {
     boolean throwable;
     boolean pickable;
 
-    Configuration parameters;
+    ConfigurationNode parameters;
 
     ItemConfig() {
 
     }
 
-    public JsonValue getParameter(String key) {
+    /**
+     * Looks through item config and its parents for configuration node,
+     * which contains needed key.
+     *
+     * @return Configuration node, which contains needed key.
+     */
+    public ConfigurationNode find(String key) {
         ItemConfig config = this;
 
         while (config.getParameters() != null && !config.getParameters().has(key)) {
@@ -34,7 +39,11 @@ public class ItemConfig {
             }
         }
 
-        return config.getParameters().getNode(key);
+        return config.getParameters();
+    }
+
+    public Object get(String key) {
+        return find(key).get(key);
     }
 
     public String getName() {
@@ -57,7 +66,7 @@ public class ItemConfig {
         return pickable;
     }
 
-    public Configuration getParameters() {
+    public ConfigurationNode getParameters() {
         return parameters;
     }
 
@@ -65,17 +74,17 @@ public class ItemConfig {
         return parent;
     }
 
-    public ItemConfig clone() {
-        ItemConfig itemConfig = new ItemConfig();
+    public ItemConfig copy() {
+        ItemConfig result = new ItemConfig();
 
-        itemConfig.name = name;
-        itemConfig.type = type;
-        itemConfig.texture = texture;
-        itemConfig.throwable = throwable;
-        itemConfig.pickable = pickable;
-        itemConfig.parent = parent;
-        itemConfig.parameters = parameters;
+        result.name = name;
+        result.type = type;
+        result.texture = texture;
+        result.throwable = throwable;
+        result.pickable = pickable;
+        result.parent = parent;
+        result.parameters = parameters;
 
-        return itemConfig;
+        return result;
     }
 }

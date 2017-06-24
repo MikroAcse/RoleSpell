@@ -119,7 +119,7 @@ public class InventoryStateProcessor extends StateProcessor {
                 hotbarItems.setItem(hotbarCell, dragItem);
             }
             // moved outside inventory (dropped)
-            else if(dragItem.isThrowable()) {
+            else if (dragItem.isThrowable()) {
                 drop(dragItem);
             }
 

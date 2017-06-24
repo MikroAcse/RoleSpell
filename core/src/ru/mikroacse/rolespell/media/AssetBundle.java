@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.utils.JsonValue;
+import ru.mikroacse.engine.config.ConfigurationNode;
 
 /**
  * Created by MikroAcse on 29-Apr-17.
@@ -68,8 +68,8 @@ public class AssetBundle extends ru.mikroacse.engine.media.AssetBundle<String> {
         return super.getAsset(assetKey, assetClass);
     }
 
-    public JsonValue getConfig(String name) {
-        return getAsset(name, JsonValue.class);
+    public ConfigurationNode getConfig(String name) {
+        return getAsset(name, ConfigurationNode.class);
     }
 
     public Sound getSound(String name) {

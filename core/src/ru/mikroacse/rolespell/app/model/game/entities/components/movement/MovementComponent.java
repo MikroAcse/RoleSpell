@@ -79,6 +79,10 @@ public class MovementComponent extends TimerComponent {
         return position;
     }
 
+    public void setPosition(IntVector2 position) {
+        setPosition(position.x, position.y);
+    }
+
     public void setPosition(int x, int y) {
         int prevX = position.x;
         int prevY = position.y;
@@ -88,12 +92,12 @@ public class MovementComponent extends TimerComponent {
         listeners.positionChanged(this, prevX, prevY, position);
     }
 
-    public void setPosition(IntVector2 position) {
-        setPosition(position.x, position.y);
-    }
-
     public IntVector2 getOrigin() {
         return origin;
+    }
+
+    public void setOrigin(IntVector2 origin) {
+        setOrigin(origin.x, origin.y);
     }
 
     public void setOrigin(int x, int y) {
@@ -103,10 +107,6 @@ public class MovementComponent extends TimerComponent {
         origin.set(x, y);
 
         listeners.originChanged(this, prevX, prevY, origin);
-    }
-
-    public void setOrigin(IntVector2 origin) {
-        setOrigin(origin.x, origin.y);
     }
 
     public void setBoth(IntVector2 position) {

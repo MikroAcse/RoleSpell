@@ -10,10 +10,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
+import ru.mikroacse.engine.config.ConfigurationNode;
+import ru.mikroacse.engine.config.providers.YamlProvider;
 import ru.mikroacse.engine.media.AssetBundleManager;
 import ru.mikroacse.engine.util.FileUtil;
-import ru.mikroacse.engine.util.JsonLoader;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.List;
 
 /**
  * Created by MikroAcse on 08.07.2016.
@@ -30,8 +34,17 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
     public void loadBundle(Bundle bundle, boolean sync) {
         Gdx.app.log("LOADING", "loading bundle: " + bundle);
 
-        JsonValue config = JsonLoader.load(getBundleMainConfigPath(bundle));
-        JsonValue files = config.get("files");
+        ConfigurationNode config = null;
+        try {
+            FileReader configReader = new FileReader(getBundleMainConfigPath(bundle));
+
+            config = new ConfigurationNode(new YamlProvider(configReader));
+        } catch (FileNotFoundException e) {
+            System.out.println("No bundle configuration found! (" + bundle.getName() + ")");
+            return;
+        }
+
+        ConfigurationNode files = config.getNode("files");
 
         AssetBundle assetBundle = getBundle(bundle);
 
@@ -43,60 +56,44 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
 
         // TODO: beautify
 
-        JsonValue textures = files.get("textures");
+        List<String> textures = files.getListOrNull("textures");
         if (textures != null)
-            loadAssets(assetBundle,
-                    textures.asStringArray(),
-                    getBundleTexturePath(bundle), Texture.class);
+            loadAssets(assetBundle, textures, getBundleTexturePath(bundle), Texture.class);
 
-        JsonValue sounds = files.get("sounds");
+        List<String> sounds = files.getListOrNull("sounds");
         if (sounds != null)
-            loadAssets(assetBundle,
-                    sounds.asStringArray(),
-                    getBundleSoundPath(bundle), Sound.class);
+            loadAssets(assetBundle, sounds, getBundleSoundPath(bundle), Sound.class);
 
-        JsonValue music = files.get("music");
+        List<String> music = files.getListOrNull("music");
         if (music != null)
-            loadAssets(assetBundle,
-                    music.asStringArray(),
-                    getBundleMusicPath(bundle), Music.class);
+            loadAssets(assetBundle, music, getBundleMusicPath(bundle), Music.class);
 
-        JsonValue fonts = files.get("fonts");
+        List<String> fonts = files.getListOrNull("fonts");
         if (fonts != null)
-            loadAssets(assetBundle,
-                    fonts.asStringArray(),
-                    getBundleFontPath(bundle), BitmapFont.class);
+            loadAssets(assetBundle, fonts, getBundleFontPath(bundle), BitmapFont.class);
 
-        JsonValue maps = files.get("maps");
+        List<String> maps = files.getListOrNull("maps");
         if (maps != null)
-            loadAssets(assetBundle,
-                    maps.asStringArray(),
-                    getBundleMapPath(bundle), TiledMap.class);
+            loadAssets(assetBundle, maps, getBundleMapPath(bundle), TiledMap.class);
 
-        JsonValue atlases = files.get("atlases");
+        List<String> atlases = files.getListOrNull("atlases");
         if (atlases != null)
-            loadAssets(assetBundle,
-                    atlases.asStringArray(),
-                    getBundleAtlasPath(bundle), TextureAtlas.class);
+            loadAssets(assetBundle, atlases, getBundleAtlasPath(bundle), TextureAtlas.class);
 
-        JsonValue shaders = files.get("shaders");
+        List<String> shaders = files.getListOrNull("shaders");
         if (shaders != null)
-            loadAssets(assetBundle,
-                    shaders.asStringArray(),
-                    getBundleShaderPath(bundle), ShaderProgram.class);
+            loadAssets(assetBundle, shaders, getBundleShaderPath(bundle), ShaderProgram.class);
 
-        JsonValue configs = files.get("configs");
+        List<String> configs = files.getListOrNull("configs");
         if (configs != null)
-            loadAssets(assetBundle,
-                    configs.asStringArray(),
-                    getBundleConfigPath(bundle), JsonValue.class);
+            loadAssets(assetBundle, configs, getBundleConfigPath(bundle), ConfigurationNode.class);
 
         if (sync) {
             assetBundle.finishLoading();
         }
     }
 
-    private void loadAssets(AssetBundle bundle, String[] assets, String path, Class assetClass) {
+    private void loadAssets(AssetBundle bundle, List<String> assets, String path, Class assetClass) {
         for (String asset : assets) {
             String assetPath = path + asset;
 
@@ -167,7 +164,11 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
     }
 
     private String getBundleMainConfigPath(Bundle bundle) {
-        return getAssetBundlePath(bundle) + "config.json";
+        return getAssetBundlePath(bundle) + "config.yaml";
+    }
+
+    private String getAppConfigPath() {
+        return ASSETS_DIRECTORY + "config.yaml";
     }
 
     public enum Bundle {

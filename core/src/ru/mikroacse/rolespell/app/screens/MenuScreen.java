@@ -7,8 +7,6 @@ import ru.mikroacse.rolespell.app.controller.menu.MenuController;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.view.menu.MenuRenderer;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
  */

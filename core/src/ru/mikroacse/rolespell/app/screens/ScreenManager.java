@@ -50,7 +50,7 @@ public class ScreenManager {
     public void disposeScreen(BundledScreen bundledScreen) {
         Screen screen = screens.get(bundledScreen);
 
-        if(!screen.isDisposable()) {
+        if (!screen.isDisposable()) {
             return;
         }
 
@@ -86,7 +86,7 @@ public class ScreenManager {
     }
 
     private void setCurrentScreen(BundledScreen bundledScreen) {
-        if(currentScreen != null) {
+        if (currentScreen != null) {
             getScreen(currentScreen).suspend();
         }
 

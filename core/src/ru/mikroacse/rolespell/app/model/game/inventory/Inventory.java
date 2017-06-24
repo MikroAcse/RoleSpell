@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.model.game.inventory;
 
-import ru.mikroacse.engine.listeners.Listener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
@@ -37,7 +36,7 @@ public class Inventory {
         hotbarListener = new ItemListListener() {
             @Override
             public void itemSet(ItemList itemList, int index, Item item) {
-                if(index == selected) {
+                if (index == selected) {
                     listeners.selected(Inventory.this, index, item);
                 }
             }
@@ -81,7 +80,7 @@ public class Inventory {
     }
 
     public void setSelected(int selected) {
-        if(this.selected == selected) {
+        if (this.selected == selected) {
             return;
         }
 

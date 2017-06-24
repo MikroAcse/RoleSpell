@@ -3,7 +3,7 @@ package ru.mikroacse.rolespell.app.model.game.world;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.AssetManager;
@@ -15,15 +15,15 @@ public class Map {
     private String id;
 
     private TiledMap map;
-    private Configuration config;
+    private ConfigurationNode config;
 
     public Map(TiledMap map, String id) {
         this.map = map;
         this.id = id;
 
-        config = new Configuration(RoleSpell.getAssetManager()
+        config = RoleSpell.getAssetManager()
                 .getBundle(AssetManager.Bundle.GAME)
-                .getConfig("maps/" + id));
+                .getConfig("maps/" + id);
     }
 
     public IntVector2 getCellPosition(float x, float y) {
@@ -112,7 +112,7 @@ public class Map {
         return map;
     }
 
-    public Configuration getConfig() {
+    public ConfigurationNode getConfig() {
         return config;
     }
 

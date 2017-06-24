@@ -42,31 +42,6 @@ public class RoleSpell extends Game {
         return lang;
     }
 
-    @Override
-    public void create() {
-        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        Tween.registerAccessor(Actor.class, new ActorAccessor());
-        Tween.setCombinedAttributesLimit(4);
-
-        tweenManager = new TweenManager();
-
-        config = new Config();
-
-        lang = new Lang();
-
-        // TODO: magic numbers (initial screen size)
-        assetManager = new AssetManager(1280, 720);
-
-        screenManager = new ScreenManager(this);
-
-        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
-        assetManager.finishLoading();
-
-        screenManager.setScreen(ScreenManager.BundledScreen.MENU);
-    }
-
     public static void showMouse() {
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
     }
@@ -86,7 +61,34 @@ public class RoleSpell extends Game {
     }
 
     @Override
+    public void create() {
+        Tween.registerAccessor(Actor.class, new ActorAccessor());
+        Tween.setCombinedAttributesLimit(4);
+
+        tweenManager = new TweenManager();
+
+        config = new Config();
+
+        lang = new Lang();
+
+        // TODO: magic numbers (initial screen size)
+        assetManager = new AssetManager(1280, 720);
+
+        screenManager = new ScreenManager(this);
+
+        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
+        assetManager.finishLoading();
+
+        assetManager.loadBundle(AssetManager.Bundle.SETTINGS);
+
+        screenManager.setScreen(ScreenManager.BundledScreen.GAME);
+    }
+
+    @Override
     public void render() {
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         super.render();
 
         tweenManager.update(Gdx.graphics.getDeltaTime());
@@ -94,7 +96,7 @@ public class RoleSpell extends Game {
 
     @Override
     public void resize(int width, int height) {
-        if(assetManager != null) {
+        if (assetManager != null) {
             assetManager.updateScale(width, height);
         }
 

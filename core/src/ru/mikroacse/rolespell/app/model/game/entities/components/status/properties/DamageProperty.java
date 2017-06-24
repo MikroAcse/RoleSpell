@@ -18,14 +18,14 @@ public class DamageProperty extends Property {
     }
 
     public boolean bump(Entity entity) {
-        if(isPaused()) {
+        if (isPaused()) {
             return false;
         }
 
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthProperty health = status.getProperty(HealthProperty.class);
 
-        if(entity.getType() == EntityType.OGREMAGI) {
+        if (entity.getType() == EntityType.OGREMAGI) {
             System.out.println(getValue());
         }
         health.damage(getValue());
@@ -37,11 +37,11 @@ public class DamageProperty extends Property {
         return false;
     }
 
-    public void setAttackDistance(double attackDistance) {
-        this.attackDistance = attackDistance;
-    }
-
     public double getAttackDistance() {
         return attackDistance;
+    }
+
+    public void setAttackDistance(double attackDistance) {
+        this.attackDistance = attackDistance;
     }
 }

@@ -110,7 +110,7 @@ public abstract class BehaviorAi extends Component {
         Entity entity = getEntity();
         World world = entity.getWorld();
 
-        if(world == null) {
+        if (world == null) {
             return false;
         }
 
@@ -127,7 +127,7 @@ public abstract class BehaviorAi extends Component {
             for (int i = this.targets.size - 1; i >= 0; i--) {
                 Entity target = this.targets.get(i);
 
-                if(target.getWorld() != entity.getWorld()) {
+                if (target.getWorld() != entity.getWorld()) {
                     removeTarget(target);
                 }
             }
@@ -178,7 +178,7 @@ public abstract class BehaviorAi extends Component {
         boolean actionPerformed = false;
         boolean soloistPerformed = false;
         for (Behavior behavior : behaviors) {
-            if(!behavior.isEnabled()) {
+            if (!behavior.isEnabled()) {
                 continue;
             }
 

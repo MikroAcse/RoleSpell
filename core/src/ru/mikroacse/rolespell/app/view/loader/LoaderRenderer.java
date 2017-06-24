@@ -1,20 +1,13 @@
 package ru.mikroacse.rolespell.app.view.loader;
 
-import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import ru.mikroacse.engine.listeners.ListenerSupport;
-import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.tween.ActorAccessor;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
@@ -63,7 +56,7 @@ public class LoaderRenderer extends Renderer {
 
         loaderCircle.rotateBy(-270 * delta);
 
-        while(loaderCircle.getRotation() < -360) {
+        while (loaderCircle.getRotation() < -360) {
             loaderCircle.rotateBy(360);
         }
     }
@@ -86,7 +79,7 @@ public class LoaderRenderer extends Renderer {
     public void show() {
         super.show();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
@@ -117,7 +110,7 @@ public class LoaderRenderer extends Renderer {
     public void hide() {
         super.hide();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 

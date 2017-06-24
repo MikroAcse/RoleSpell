@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
@@ -22,9 +21,7 @@ import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.app.view.menu.ui.MenuButton;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-import static ru.mikroacse.rolespell.RoleSpell.getLang;
-import static ru.mikroacse.rolespell.RoleSpell.getTweenManager;
+import static ru.mikroacse.rolespell.RoleSpell.*;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -93,7 +90,7 @@ public class MenuRenderer extends Renderer {
         int y = 0;
 
         for (MenuButton button : buttons) {
-            if(y > 0) {
+            if (y > 0) {
                 // TODO: magic number (button offset)
                 y += 15;
             }
@@ -122,7 +119,7 @@ public class MenuRenderer extends Renderer {
     public void show() {
         super.show();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
@@ -140,7 +137,7 @@ public class MenuRenderer extends Renderer {
         Tween.to(buttonGroup, ActorAccessor.Y, 1f)
                 .target(buttonGroup.getY())
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onShown();
                     }
@@ -162,7 +159,7 @@ public class MenuRenderer extends Renderer {
     public void hide() {
         super.hide();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
@@ -181,7 +178,7 @@ public class MenuRenderer extends Renderer {
                 .target(0f)
                 .delay(0.2f)
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onHidden();
                     }

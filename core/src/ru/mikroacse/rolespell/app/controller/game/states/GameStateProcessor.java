@@ -31,10 +31,6 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
-        if (model.getWorld() == null) {
-            return;
-        }
-
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
 
@@ -73,6 +69,8 @@ public class GameStateProcessor extends StateProcessor {
             if (entity != null) {
                 if (entity.getParameters().contains(Entity.Parameter.VULNERABLE)) {
                     model.tryAttack(cell.x, cell.y);
+
+                    route = false;
                 } else if (entity.getType() == EntityType.DROPPED_ITEM) {
                     DroppedItem droppedItem = (DroppedItem) entity;
 

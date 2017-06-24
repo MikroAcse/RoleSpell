@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
-import ru.mikroacse.rolespell.app.model.menu.MenuAction;
 import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
 import ru.mikroacse.rolespell.media.AssetManager.Bundle;
 
@@ -30,15 +29,15 @@ public class SettingsButton extends Group implements MeasurableActor {
         // TODO: ↓
         NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(getAssetManager()
                 .getBundle(Bundle.SETTINGS)
-                .getTexture("button-background"), 29,29,29,29));
+                .getTexture("button-background"), 29, 29, 29, 29));
 
         background = new Button(npd);
 
         text = new TextActor(getAssetManager()
                 .getBundle(Bundle.GLOBAL).getFont("cg-24"), label);
 
-        // TODO: magic number (menu button text color)
-        text.setColor(new Color(0x583370FF));
+        // TODO: magic number (settings button text color)
+        text.setColor(new Color(0x495D98FF));
 
         addActor(background);
         addActor(text);
