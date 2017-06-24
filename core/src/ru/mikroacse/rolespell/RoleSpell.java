@@ -11,15 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.engine.tween.TweenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
-import ru.mikroacse.rolespell.config.Config;
+import ru.mikroacse.rolespell.config.AppConfig;
 import ru.mikroacse.rolespell.config.Lang;
 import ru.mikroacse.rolespell.media.AssetManager;
+
+import java.io.FileNotFoundException;
 
 public class RoleSpell extends Game {
     private static TweenManager tweenManager;
     private static AssetManager assetManager;
     private static ScreenManager screenManager;
-    private static Config config;
+    private static AppConfig appConfig;
     private static Lang lang;
 
     public static TweenManager getTweenManager() {
@@ -34,8 +36,8 @@ public class RoleSpell extends Game {
         return screenManager;
     }
 
-    public static Config getConfig() {
-        return config;
+    public static AppConfig getAppConfig() {
+        return appConfig;
     }
 
     public static Lang getLang() {
@@ -67,7 +69,11 @@ public class RoleSpell extends Game {
 
         tweenManager = new TweenManager();
 
-        config = new Config();
+        try {
+            appConfig = new AppConfig();
+        } catch (FileNotFoundException e) {
+            System.out.println("App config not found!");
+        }
 
         lang = new Lang();
 

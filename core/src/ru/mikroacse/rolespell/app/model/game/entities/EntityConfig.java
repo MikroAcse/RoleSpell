@@ -1,6 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
-import ru.mikroacse.engine.config.JsonConfiguration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 
 /**
  * Created by MikroAcse on 24.06.2017.
@@ -8,17 +8,17 @@ import ru.mikroacse.engine.config.JsonConfiguration;
 public class EntityConfig {
     public static final String PICKUP_DISTANCE = "pickup_distance";
 
-    private JsonConfiguration config;
+    private ConfigurationNode config;
 
-    public EntityConfig(JsonConfiguration config) {
+    public EntityConfig(ConfigurationNode config) {
         this.config = config;
     }
 
-    public JsonConfiguration get() {
+    public ConfigurationNode get() {
         return config;
     }
 
-    public void set(JsonConfiguration config) {
+    public void set(ConfigurationNode config) {
         this.config = config;
     }
 }
