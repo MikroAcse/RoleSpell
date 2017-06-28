@@ -152,7 +152,7 @@ public class ItemList {
     }
 
     public void clear() {
-        while(items.length > 0) {
+        while (items.length > 0) {
             removeItem(items[0]);
         }
     }

@@ -1,6 +1,9 @@
 package ru.mikroacse.rolespell.app.view.game.status;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.util.GroupUtil;
@@ -11,19 +14,29 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.status.properti
  * Created by MikroAcse on 01-May-17.
  */
 public class StatusView extends Group implements MeasurableActor {
-    private static final int PARAMETER_WIDTH = 100;
-    private static final int PARAMETER_HEIGHT = 16;
-    private static final int PARAMETER_OFFSET = 5;
+    private static final int PROPERTY_WIDTH = 100;
+    private static final int PROPERTY_HEIGHT = 24;
+    private static final int PROPERTY_OFFSET = 5;
+
+    private Image background;
 
     private StatusComponent status;
-    private Array<ParameterView> parameterViews;
+    private Array<PropertyView> propertyViews;
 
     private StatusComponent.Listener statusListener;
 
     public StatusView() {
         super();
 
-        parameterViews = new Array<>(0);
+        Pixmap pm = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
+        pm.setColor(0x00000077);
+        pm.fill();
+
+        background = new Image(new Texture(pm));
+
+        pm.dispose();
+
+        propertyViews = new Array<>(0);
 
         statusListener = new StatusComponent.Listener() {
             @Override
@@ -44,19 +57,21 @@ public class StatusView extends Group implements MeasurableActor {
     }
 
     public void update() {
-        for (int i = 0; i < parameterViews.size; i++) {
-            ParameterView parameterView = parameterViews.get(i);
+        for (int i = 0; i < propertyViews.size; i++) {
+            PropertyView propertyView = propertyViews.get(i);
 
-            if (parameterView == null) {
+            if (propertyView == null) {
                 continue;
             }
 
-            Property parameter = parameterView.getParameter();
+            Property parameter = propertyView.getProperty();
 
-            parameterView.setWidth(PARAMETER_WIDTH * (float) parameter.getPercentage());
-            parameterView.setHeight(PARAMETER_HEIGHT);
+            propertyView.setMaxWidth(PROPERTY_WIDTH);
+            propertyView.setHeight(PROPERTY_HEIGHT);
 
-            parameterView.setY(i * (PARAMETER_HEIGHT + PARAMETER_OFFSET));
+            propertyView.setY(i * (PROPERTY_HEIGHT + PROPERTY_OFFSET));
+
+            propertyView.update();
         }
     }
 
@@ -64,14 +79,14 @@ public class StatusView extends Group implements MeasurableActor {
         status.addListener(statusListener);
 
         for (Property property : status.getProperties()) {
-            if (!ParameterView.canBeRendered(property)) {
+            if (!PropertyView.canBeRendered(property)) {
                 continue;
             }
 
-            ParameterView parameterView = new ParameterView((Property) property);
-            parameterViews.add(parameterView);
+            PropertyView propertyView = new PropertyView((Property) property);
+            propertyViews.add(propertyView);
 
-            addActor(parameterView);
+            addActor(propertyView);
         }
 
         update();
@@ -82,7 +97,7 @@ public class StatusView extends Group implements MeasurableActor {
 
         clearChildren();
 
-        parameterViews.clear();
+        propertyViews.clear();
     }
 
     public StatusComponent getStatus() {

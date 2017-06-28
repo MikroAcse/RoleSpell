@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
@@ -20,11 +19,9 @@ import ru.mikroacse.engine.util.GroupUtil;
 import ru.mikroacse.rolespell.app.model.menu.MenuAction;
 import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.app.view.menu.ui.MenuButton;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-import static ru.mikroacse.rolespell.RoleSpell.getLang;
-import static ru.mikroacse.rolespell.RoleSpell.getTweenManager;
+import static ru.mikroacse.rolespell.RoleSpell.*;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -44,7 +41,7 @@ public class MenuRenderer extends Renderer {
 
         actionListeners = ListenerSupportFactory.create(ActionListener.class);
 
-        logo = new Image(getAssetManager().getBundle(Bundle.MENU).getTexture("logo"));
+        logo = new Image(bundle(Bundle.MENU).getTexture("logo"));
 
         MenuButton newGameButton = createButton("new_game_button.label", MenuAction.NEW_GAME);
         MenuButton settingsButton = createButton("settings_button.label", MenuAction.SETTINGS);
@@ -71,7 +68,7 @@ public class MenuRenderer extends Renderer {
             });
         }
 
-        Texture backgroundTexture = getAssetManager().getBundle(Bundle.MENU).getTexture("background");
+        Texture backgroundTexture = bundle(Bundle.MENU).getTexture("background");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         background = new Image(backgroundTexture);
@@ -93,7 +90,7 @@ public class MenuRenderer extends Renderer {
         int y = 0;
 
         for (MenuButton button : buttons) {
-            if(y > 0) {
+            if (y > 0) {
                 // TODO: magic number (button offset)
                 y += 15;
             }
@@ -122,7 +119,7 @@ public class MenuRenderer extends Renderer {
     public void show() {
         super.show();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
@@ -130,24 +127,24 @@ public class MenuRenderer extends Renderer {
 
         Tween.to(background, ActorAccessor.ALPHA, 0.5f)
                 .target(1f)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(logo, ActorAccessor.Y, 1f)
                 .target(logo.getY())
                 .ease(Expo.OUT)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(buttonGroup, ActorAccessor.Y, 1f)
                 .target(buttonGroup.getY())
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onShown();
                     }
                 })
                 .delay(0.2f)
                 .ease(Expo.OUT)
-                .start(getTweenManager());
+                .start(tweens());
 
         logo.setY(-logo.getHeight());
 
@@ -162,31 +159,31 @@ public class MenuRenderer extends Renderer {
     public void hide() {
         super.hide();
 
-        if(isBusy()) {
+        if (isBusy()) {
             return;
         }
 
         Tween.to(logo, ActorAccessor.Y, 0.4f)
                 .target(getHeight())
                 .ease(Quint.IN)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(buttonGroup, ActorAccessor.Y, 0.4f)
                 .target(getHeight())
                 .delay(0.1f)
                 .ease(Quint.IN)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(background, ActorAccessor.ALPHA, 0.4f)
                 .target(0f)
                 .delay(0.2f)
                 .setCallback((type, source) -> {
-                    if(type == TweenCallback.COMPLETE) {
+                    if (type == TweenCallback.COMPLETE) {
                         setBusy(false);
                         listeners.onHidden();
                     }
                 })
-                .start(getTweenManager());
+                .start(tweens());
 
         setBusy(true);
     }
@@ -204,7 +201,7 @@ public class MenuRenderer extends Renderer {
     }
 
     private MenuButton createButton(String labelKey, MenuAction action) {
-        return new MenuButton(getLang().get(Bundle.MENU, labelKey), action);
+        return new MenuButton(lang().get(Bundle.MENU, labelKey), action);
     }
 
     public Array<MenuButton> getButtons() {

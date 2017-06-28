@@ -1,9 +1,5 @@
 package ru.mikroacse.rolespell.app.screens;
 
-import ru.mikroacse.rolespell.media.AssetManager;
-
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
  */

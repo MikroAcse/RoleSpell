@@ -1,7 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -13,7 +13,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.Inven
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -30,10 +30,10 @@ public class GameModel {
 
         ItemRepository itemRepository = ItemRepository.getInstance();
 
-        JsonValue items = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME).getConfig("items");
+        ConfigurationNode items = RoleSpell.bundle(Bundle.GAME).getConfig("items");
 
-        for (JsonValue value : items.iterator()) {
-            itemRepository.addItemConfig(value.name, value);
+        for (String key : items.getMap().keySet()) {
+            itemRepository.addItemConfig(key, items.getNode(key));
         }
     }
 

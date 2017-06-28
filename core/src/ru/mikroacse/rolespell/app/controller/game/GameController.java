@@ -1,15 +1,13 @@
 package ru.mikroacse.rolespell.app.controller.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.Controller;
 import ru.mikroacse.rolespell.app.controller.game.states.GameStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.InventoryStateProcessor;
+import ru.mikroacse.rolespell.app.controller.game.states.QuestsStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.StateProcessor;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;
@@ -17,7 +15,7 @@ import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.mikroacse.rolespell.RoleSpell.getScreenManager;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -30,6 +28,7 @@ public class GameController extends Controller {
 
     private GameStateProcessor gameState;
     private InventoryStateProcessor inventoryState;
+    private QuestsStateProcessor questsState;
 
     public GameController(GameRenderer renderer, GameModel model) {
         this.renderer = renderer;
@@ -37,10 +36,12 @@ public class GameController extends Controller {
 
         gameState = new GameStateProcessor(this);
         inventoryState = new InventoryStateProcessor(this);
+        questsState = new QuestsStateProcessor(this);
 
         stateProcessors = new HashMap<>();
         stateProcessors.put(State.GAME, gameState);
         stateProcessors.put(State.INVENTORY, inventoryState);
+        stateProcessors.put(State.QUESTS, questsState);
 
         setState(State.GAME);
     }
@@ -49,8 +50,8 @@ public class GameController extends Controller {
     public void update(float delta) {
         InputAdapter input = InputAdapter.getInstance();
 
-        if(input.getButton(Input.Keys.ESCAPE).justReleased) {
-            getScreenManager().setScreen(BundledScreen.MENU);
+        if (input.getButton(Input.Keys.ESCAPE).justReleased) {
+            screens().setScreen(BundledScreen.MENU);
             input.update();
             return;
         }

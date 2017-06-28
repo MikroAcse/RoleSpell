@@ -15,8 +15,12 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
 
     private Map<Integer, Button> buttons;
 
+    private int scrollDelta;
+
     private InputAdapter() {
         buttons = new HashMap<>();
+
+        update();
     }
 
     public static InputAdapter getInstance() {
@@ -38,17 +42,24 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        pressButton(keycode);
+    public boolean keyDown(int keyCode) {
+        pressButton(keyCode);
 
-        return super.keyDown(keycode);
+        return super.keyDown(keyCode);
     }
 
     @Override
-    public boolean keyUp(int keycode) {
-        releaseButton(keycode);
+    public boolean keyUp(int keyCode) {
+        releaseButton(keyCode);
 
-        return super.keyUp(keycode);
+        return super.keyUp(keyCode);
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        scrollDelta = amount;
+
+        return super.scrolled(amount);
     }
 
     public void update() {
@@ -62,6 +73,8 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
                 button.taps = 0;
             }
         }
+
+        scrollDelta = 0;
     }
 
     public Button getButton(int code) {
@@ -89,6 +102,14 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
         button.justPressed = false;
         button.justReleased = true;
         button.lastTimeReleased = System.currentTimeMillis();
+    }
+
+    public int getScrollDelta() {
+        return scrollDelta;
+    }
+
+    public boolean hasScrolled() {
+        return scrollDelta != 0;
     }
 
     public int getMouseX() {

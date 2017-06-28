@@ -4,7 +4,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
@@ -72,7 +72,7 @@ public class MapParser {
         String id = properties.get("id", String.class);
         boolean spawn = properties.get("spawn", false, Boolean.class);
 
-        Configuration portalConfig = new Configuration(map.getConfig().getNode("portals." + id));
+        ConfigurationNode portalConfig = map.getConfig().getNode("portals." + id);
 
         String destination = portalConfig.getString("destination");
         String portalId = portalConfig.getString("portal-id");
@@ -93,7 +93,9 @@ public class MapParser {
 
         String id = properties.get("id", String.class);
 
-        Configuration config = new Configuration(map.getConfig().getNode("spawners." + id));
+        ConfigurationNode config = map.getConfig().getNode("spawners." + id);
+
+        System.out.println(config.getMap());
 
         EntityType type = EntityType.valueOf(config.getString("entity-type"));
 
@@ -118,17 +120,17 @@ public class MapParser {
                 entity = new Player(world, x, y);
                 break;
             case DROPPED_ITEM:
-                Item item = ItemParser.parse(config.getNode("item"), ItemRepository.getInstance());
+                Item item = ItemParser.parse(config.get("item"), ItemRepository.getInstance());
 
                 entity = new DroppedItem<Item>(world, item, x, y);
                 break;
         }
 
         if (entity != null) {
-            if(config.has("inventory") && entity.hasComponent(InventoryComponent.class)) {
+            if (config.has("inventory") && entity.hasComponent(InventoryComponent.class)) {
                 Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();
 
-                InventoryParser.parse(config.getNode("inventory"), inventory);
+                InventoryParser.parse(config.getNodeList("inventory"), inventory);
             }
 
             entity.setId(id);

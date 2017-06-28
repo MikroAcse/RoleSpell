@@ -10,7 +10,10 @@ import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 07-May-17.
@@ -29,15 +32,17 @@ public class EntityName extends Group implements MeasurableActor, Pool.Poolable 
         super();
 
         // TODO: ↓
-        NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("ui/entity-name-background"), 9, 9, 9, 9));
+        NinePatchDrawable npd = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.GAME).getTexture("ui/entity-name-background"),
+                        9, 9, 9, 9
+                )
+        );
 
         background = new Button(npd);
         background.setTouchable(Touchable.disabled);
 
-        text = new TextActor(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GLOBAL).getFont("cg-24"));
+        text = new TextActor(assets().getGlobalFont("cg-24"));
 
         addActor(background);
         addActor(text);
@@ -67,7 +72,7 @@ public class EntityName extends Group implements MeasurableActor, Pool.Poolable 
             return;
         }
 
-        text.setText(RoleSpell.getLang().get(entity.getName()));
+        text.setText(RoleSpell.lang().get(entity.getName()));
 
         // TODO: magic numbers
         background.setWidth(text.getRealWidth() + 10);

@@ -64,7 +64,7 @@ public class CollisionAvoidingAi extends Component {
         Entity entity = getEntity();
         World world = entity.getWorld();
 
-        if(world == null) {
+        if (world == null) {
             return false;
         }
 

@@ -1,12 +1,13 @@
 package ru.mikroacse.rolespell.app.screens;
 
 import com.badlogic.gdx.Game;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.AssetManager;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static ru.mikroacse.rolespell.RoleSpell.assets;
 
 /**
  * Created by MikroAcse on 09.07.2016.
@@ -50,20 +51,19 @@ public class ScreenManager {
     public void disposeScreen(BundledScreen bundledScreen) {
         Screen screen = screens.get(bundledScreen);
 
-        if(!screen.isDisposable()) {
+        if (!screen.isDisposable()) {
             return;
         }
 
         screen.dispose();
 
-        RoleSpell.getAssetManager()
-                .unloadBundle(bundledScreen.getBundle());
+        assets().unloadBundle(bundledScreen.getBundle());
 
         screens.remove(bundledScreen);
     }
 
     public void setScreen(BundledScreen bundledScreen) {
-        AssetManager assetManager = RoleSpell.getAssetManager();
+        AssetManager assetManager = assets();
 
         if (!assetManager.isLoaded(bundledScreen.getBundle())) {
             setWaitScreen(bundledScreen);
@@ -83,25 +83,6 @@ public class ScreenManager {
         }
 
         setCurrentScreen(bundledScreen);
-    }
-
-    private void setCurrentScreen(BundledScreen bundledScreen) {
-        if(currentScreen != null) {
-            getScreen(currentScreen).suspend();
-        }
-
-        Screen screen = screens.get(bundledScreen);
-        game.setScreen(screen);
-
-        if (currentScreen != null) {
-            disposeScreen(currentScreen);
-        }
-
-        currentScreen = bundledScreen;
-
-        screen.restore();
-
-        System.out.println(" === Current screen set to " + bundledScreen + " === ");
     }
 
     public void setWaited() {
@@ -125,6 +106,29 @@ public class ScreenManager {
 
     public Screen getScreen(BundledScreen bundledScreen) {
         return screens.get(bundledScreen);
+    }
+
+    public BundledScreen getCurrentScreen() {
+        return currentScreen;
+    }
+
+    private void setCurrentScreen(BundledScreen bundledScreen) {
+        if (currentScreen != null) {
+            getScreen(currentScreen).suspend();
+        }
+
+        Screen screen = screens.get(bundledScreen);
+        game.setScreen(screen);
+
+        if (currentScreen != null) {
+            disposeScreen(currentScreen);
+        }
+
+        currentScreen = bundledScreen;
+
+        screen.restore();
+
+        System.out.println(" === Current screen set to " + bundledScreen + " === ");
     }
 
     public enum BundledScreen {

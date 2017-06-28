@@ -2,10 +2,11 @@ package ru.mikroacse.rolespell.app.view.game.items;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 30-Apr-17.
@@ -24,7 +25,7 @@ public class ItemView extends Image {
     }
 
     public static Texture getItemTexture(Item item) {
-        AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
+        AssetBundle bundle = bundle(Bundle.GAME);
 
         return bundle.getTexture(item.getConfig().getTexture());
     }

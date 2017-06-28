@@ -1,7 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.world.World;
@@ -19,7 +19,7 @@ public abstract class Entity {
 
     private String name;
 
-    private Configuration config;
+    private ConfigurationNode config;
 
     private Array<Component> components;
     private EnumSet<Parameter> parameters;
@@ -121,6 +121,10 @@ public abstract class Entity {
         return parameters;
     }
 
+    public void setParameters(EnumSet<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
     public boolean hasParameter(Parameter parameter) {
         return parameters.contains(parameter);
     }
@@ -134,20 +138,16 @@ public abstract class Entity {
         return true;
     }
 
-    public void setParameters(EnumSet<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
     public EntityType getType() {
         return type;
     }
 
-    public void setWorld(World world) {
-        this.world = world;
-    }
-
     public World getWorld() {
         return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 
     public String getName() {
@@ -160,11 +160,11 @@ public abstract class Entity {
 
     public abstract void setPosition(int x, int y);
 
+    public abstract IntVector2 getPosition();
+
     public void setPosition(IntVector2 position) {
         setPosition(position.x, position.y);
     }
-
-    public abstract IntVector2 getPosition();
 
     public int getX() {
         return getPosition().x;
@@ -176,17 +176,17 @@ public abstract class Entity {
 
     public abstract void setOrigin(int x, int y);
 
+    public abstract IntVector2 getOrigin();
+
     public void setOrigin(IntVector2 position) {
         setOrigin(position.x, position.y);
     }
 
-    public abstract IntVector2 getOrigin();
-
-    public Configuration getConfig() {
+    public ConfigurationNode getConfig() {
         return config;
     }
 
-    public void setConfig(Configuration config) {
+    public void setConfig(ConfigurationNode config) {
         this.config = config;
     }
 

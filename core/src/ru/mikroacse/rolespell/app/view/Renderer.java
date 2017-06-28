@@ -8,9 +8,8 @@ import ru.mikroacse.engine.listeners.ListenerSupportFactory;
  * Created by Vitaly Rudenko on 06-Jun-17.
  */
 public abstract class Renderer extends com.badlogic.gdx.scenes.scene2d.Stage {
-    private boolean busy;
-
     protected Listener listeners;
+    private boolean busy;
 
     public Renderer() {
         super(new ScreenViewport());
@@ -58,6 +57,7 @@ public abstract class Renderer extends com.badlogic.gdx.scenes.scene2d.Stage {
 
     public interface Listener extends ru.mikroacse.engine.listeners.Listener {
         void onHidden();
+
         void onShown();
     }
 }

@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.items.config;
 
-import com.badlogic.gdx.utils.JsonValue;
-import ru.mikroacse.engine.config.Configuration;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.items.ItemType;
 
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class ItemRepository {
         return instance;
     }
 
-    public void addItemConfig(String id, JsonValue config) {
+    public void addItemConfig(String id, ConfigurationNode config) {
         itemConfigs.put(id, parseItemConfig(config));
     }
 
@@ -31,7 +30,7 @@ public class ItemRepository {
         return itemConfigs.get(id);
     }
 
-    public ItemConfig parseItemConfig(JsonValue config) {
+    public ItemConfig parseItemConfig(ConfigurationNode config) {
         ItemConfig item;
         ItemConfig parent = null;
 
@@ -40,7 +39,7 @@ public class ItemRepository {
         if (configParent != null) {
             parent = itemConfigs.get(configParent);
 
-            item = parent.clone();
+            item = parent.copy();
             item.parent = parent;
         } else {
             item = new ItemConfig();
@@ -67,7 +66,7 @@ public class ItemRepository {
         }
 
         if (config.has("parameters")) {
-            item.parameters = new Configuration(config.get("parameters"));
+            item.parameters = config.getNode("parameters");
         }
 
         return item;

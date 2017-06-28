@@ -10,9 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by Vitaly Rudenko on 07-Jun-17.
@@ -47,30 +48,35 @@ public class LabeledSlider extends Group implements MeasurableActor {
         });
 
         // TODO: ↓
-        NinePatchDrawable npdBg = new NinePatchDrawable(new NinePatch(getAssetManager()
-                .getBundle(Bundle.SETTINGS)
-                .getTexture("slider-background"), 10,10,10,10));
+        NinePatchDrawable npdBg = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.SETTINGS).getTexture("slider-background"),
+                        10, 10, 10, 10
+                )
+        );
 
         background = new Button(npdBg);
 
         // TODO: ↓
-        NinePatchDrawable npdFg = new NinePatchDrawable(new NinePatch(getAssetManager()
-                .getBundle(Bundle.SETTINGS)
-                .getTexture("slider-foreground"), 10,10,10,10));
+        NinePatchDrawable npdFg = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.SETTINGS).getTexture("slider-foreground"),
+                        10, 10, 10, 10
+                )
+        );
 
         foreground = new Button(npdFg);
 
-        valueText = new TextActor(getAssetManager()
-                .getBundle(Bundle.GLOBAL).getFont("cg-24"));
+        valueText = new TextActor(assets().getGlobalFont("cg-24"));
 
-        label = new TextActor(getAssetManager()
-                .getBundle(Bundle.GLOBAL).getFont("cg-24"));
+        label = new TextActor(assets().getGlobalFont("cg-24"));
 
         addActor(background);
         addActor(foreground);
         addActor(valueText);
         addActor(label);
 
+        value = -1f;
         setValue(0f);
     }
 
@@ -92,9 +98,9 @@ public class LabeledSlider extends Group implements MeasurableActor {
         float rightPart = background.getWidth() - leftPart;
 
         // TODO: color/magic numbers
-        if(leftPart < textSize + 20) {
+        if (leftPart < textSize + 20) {
             valueText.setX((int) (x + foreground.getWidth() + 10));
-            valueText.setColor(new Color(0x768FA9FF));
+            valueText.setColor(new Color(0x495D98FF));
         } else {
             valueText.setX((int) (x + foreground.getWidth() - textSize - 10));
             valueText.setColor(Color.WHITE);
@@ -123,7 +129,7 @@ public class LabeledSlider extends Group implements MeasurableActor {
     public void setValue(float value) {
         value = MathUtils.clamp(value, 0, 1);
 
-        if(this.value == value) {
+        if (this.value == value) {
             return;
         }
 

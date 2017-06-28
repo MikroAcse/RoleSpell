@@ -24,11 +24,11 @@ public class Weapon extends Item {
 
     @Override
     protected void configure(ItemConfig config) {
-        attackTimer = TimerParser.parse(config.getParameter("attack-timer"));
-        damage = IntervalParser.parse(config.getParameter("damage"));
+        attackTimer = TimerParser.parse(config.get("attack-timer"));
+        damage = IntervalParser.parse(config.get("damage"));
 
-        attackDistance = config.getParameter("attack-distance").asDouble();
-        limit = config.getParameter("limit").asInt();
+        attackDistance = (double) config.get("attack-distance");
+        limit = (int) config.get("limit");
     }
 
     public Timer getAttackTimer() {

@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.controller.settings;
 
 import com.badlogic.gdx.Input;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.Controller;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
@@ -9,7 +8,7 @@ import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.settings.SettingsRenderer;
 
-import static ru.mikroacse.rolespell.RoleSpell.getScreenManager;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -29,14 +28,14 @@ public class SettingsController extends Controller {
         rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
-                if(action == null) {
+                if (action == null) {
                     System.err.println("null action at settings");
                     return;
                 }
 
                 switch (action) {
                     case GO_TO_MENU:
-                        getScreenManager().setScreen(BundledScreen.MENU);
+                        screens().setScreen(BundledScreen.MENU);
                         break;
                 }
 
@@ -64,7 +63,7 @@ public class SettingsController extends Controller {
         InputAdapter input = InputAdapter.getInstance();
 
         // logic
-        if(input.getButton(Input.Keys.ESCAPE).justReleased) {
+        if (input.getButton(Input.Keys.ESCAPE).justReleased) {
             action = SettingsAction.GO_TO_MENU;
 
             renderer.hide();

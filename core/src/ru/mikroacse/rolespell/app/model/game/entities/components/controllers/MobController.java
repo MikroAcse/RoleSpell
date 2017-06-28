@@ -83,13 +83,13 @@ public class MobController extends Component {
     }
 
     public void reselectItem() {
-        if(!getEntity().hasComponent(InventoryComponent.class)) {
+        if (!getEntity().hasComponent(InventoryComponent.class)) {
             return;
         }
 
         StatusComponent status = getStatus();
 
-        if(!status.hasProperty(DamageProperty.class)) {
+        if (!status.hasProperty(DamageProperty.class)) {
             return;
         }
 
@@ -99,7 +99,7 @@ public class MobController extends Component {
         AttackAi attackAi = getEntity().getComponent(AttackAi.class);
         DamageProperty damage = status.getProperty(DamageProperty.class);
 
-        if(item != null && item.getType() == ItemType.WEAPON) {
+        if (item != null && item.getType() == ItemType.WEAPON) {
             Weapon weapon = (Weapon) item;
 
             damage.setInterval(weapon.getDamage());
@@ -120,7 +120,7 @@ public class MobController extends Component {
     }
 
     public void die() {
-        if(getEntity().getType() == EntityType.PLAYER) {
+        if (getEntity().getType() == EntityType.PLAYER) {
             System.out.println("Player nearly died");
             return;
         }
@@ -161,7 +161,7 @@ public class MobController extends Component {
         getStatus().addListener(statusListener);
         getMovement().addListener(movementListener);
 
-        if(entity.hasComponent(InventoryComponent.class)) {
+        if (entity.hasComponent(InventoryComponent.class)) {
             getInventory().getInventory().addListener(inventoryListener);
         }
 
@@ -175,7 +175,7 @@ public class MobController extends Component {
         getStatus().removeListener(statusListener);
         getMovement().removeListener(movementListener);
 
-        if(entity.hasComponent(InventoryComponent.class)) {
+        if (entity.hasComponent(InventoryComponent.class)) {
             getInventory().getInventory().removeListener(inventoryListener);
         }
     }
@@ -200,7 +200,9 @@ public class MobController extends Component {
         return getEntity().getComponent(MovementComponent.class);
     }
 
-    public InventoryComponent getInventory() { return getEntity().getComponent(InventoryComponent.class); }
+    public InventoryComponent getInventory() {
+        return getEntity().getComponent(InventoryComponent.class);
+    }
 
     public enum State {
         ALIVE,

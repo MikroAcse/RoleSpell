@@ -3,8 +3,6 @@ package ru.mikroacse.engine.util;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
-import java.util.Random;
-
 /**
  * Created by MikroAcse on 29.03.2017.
  */
@@ -137,7 +135,7 @@ public class Interval {
     }
 
     public double getValue(boolean randomized) {
-        if(this.randomized && randomized) {
+        if (this.randomized && randomized) {
             randomize();
         }
 

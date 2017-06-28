@@ -6,7 +6,7 @@ import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.menu.MenuRenderer;
 
-import static ru.mikroacse.rolespell.RoleSpell.getScreenManager;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -25,17 +25,17 @@ public class MenuController {
         rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
-                if(action == null) {
+                if (action == null) {
                     System.err.println("null action at menu");
                     return;
                 }
 
                 switch (action) {
                     case NEW_GAME:
-                        getScreenManager().setScreen(BundledScreen.GAME);
+                        screens().setScreen(BundledScreen.GAME);
                         break;
                     case SETTINGS:
-                        getScreenManager().setScreen(BundledScreen.SETTINGS);
+                        screens().setScreen(BundledScreen.SETTINGS);
                         break;
                     case EXIT:
                         RoleSpell.exit();
@@ -48,7 +48,8 @@ public class MenuController {
 
         actionListener = new MenuRenderer.ActionListener() {
             @Override
-            public void onAction(MenuAction action) {;
+            public void onAction(MenuAction action) {
+                ;
                 MenuController.this.action = action;
 
                 renderer.hide();

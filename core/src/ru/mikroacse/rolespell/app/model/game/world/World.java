@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
@@ -60,7 +59,7 @@ public class World {
 
                 removeEntity(entity);
 
-                if(entity.hasComponent(InventoryComponent.class)) {
+                if (entity.hasComponent(InventoryComponent.class)) {
                     IntVector2 position = entity.getPosition();
 
                     Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();

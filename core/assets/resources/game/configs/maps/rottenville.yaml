@@ -1,0 +1,67 @@
+name: locations.rottenville.name
+
+# = SPAWNERS
+
+spawners:
+  player:
+    type: ONCE
+    entity-type: PLAYER
+    shared: true
+    inventory:
+    - item: hand
+      hotbar: 0
+    - item: light-orb
+    - item: beginner-staff
+      index: 5
+      hotbar: 2
+    - item:
+        parent: ultimate-sword
+        name: ULTRA SWORD!11
+      index: 10
+      hotbar: 1
+      chance: 0.5
+  nina:
+    type: ONCE
+    entity-type: NPC
+    name: Nina
+  zelda:
+    type: ONCE
+    entity-type: NPC
+    name: Zelda
+  elizabeth:
+    type: ONCE
+    entity-type: NPC
+    name: Elizabeth
+  lela:
+    type: ONCE
+    entity-type: NPC
+    name: Lela
+  dropped-sword:
+    type: ONCE
+    entity-type: DROPPED_ITEM
+    item:
+      name: Wooden Sword
+
+# = PORTALS
+
+portals:
+  eclipse-chambers:
+    destination: eclipse-chambers
+    portal-id: rottenville-eclipse-chambers
+    name: locations.eclipse_chambers.name
+
+# = META
+
+meta:
+  EMPTY:
+    weight: 1.0
+    passable: true
+  SOLID:
+    weight: 0.0
+    passable: false
+  WATER:
+    weight: 0.0
+    passable: false
+  PATH:
+    weight: 0.9
+    passable: true

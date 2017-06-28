@@ -1,0 +1,15 @@
+files:
+  textures:
+  - entities/*
+  - inventory/*
+  - items/*
+  - hud/*
+  - ui/*
+  - quests/*
+  maps:
+  - rottenville/map.tmx
+  - eclipse-chambers/map.tmx
+  configs:
+  - items.yaml
+  - map-shared.yaml
+  - maps/*

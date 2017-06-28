@@ -11,60 +11,43 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.engine.tween.TweenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
-import ru.mikroacse.rolespell.config.Config;
+import ru.mikroacse.rolespell.config.AppConfig;
 import ru.mikroacse.rolespell.config.Lang;
+import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import java.io.FileNotFoundException;
 
 public class RoleSpell extends Game {
     private static TweenManager tweenManager;
     private static AssetManager assetManager;
     private static ScreenManager screenManager;
-    private static Config config;
+    private static AppConfig appConfig;
     private static Lang lang;
 
-    public static TweenManager getTweenManager() {
+    public static TweenManager tweens() {
         return tweenManager;
     }
 
-    public static AssetManager getAssetManager() {
+    public static AssetManager assets() {
         return assetManager;
     }
 
-    public static ScreenManager getScreenManager() {
+    public static AssetBundle bundle(Bundle bundle) {
+        return assetManager.getBundle(bundle);
+    }
+
+    public static ScreenManager screens() {
         return screenManager;
     }
 
-    public static Config getConfig() {
-        return config;
+    public static AppConfig config() {
+        return appConfig;
     }
 
-    public static Lang getLang() {
+    public static Lang lang() {
         return lang;
-    }
-
-    @Override
-    public void create() {
-        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        Tween.registerAccessor(Actor.class, new ActorAccessor());
-        Tween.setCombinedAttributesLimit(4);
-
-        tweenManager = new TweenManager();
-
-        config = new Config();
-
-        lang = new Lang();
-
-        // TODO: magic numbers (initial screen size)
-        assetManager = new AssetManager(1280, 720);
-
-        screenManager = new ScreenManager(this);
-
-        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
-        assetManager.finishLoading();
-
-        screenManager.setScreen(ScreenManager.BundledScreen.MENU);
     }
 
     public static void showMouse() {
@@ -86,7 +69,38 @@ public class RoleSpell extends Game {
     }
 
     @Override
+    public void create() {
+        Tween.registerAccessor(Actor.class, new ActorAccessor());
+        Tween.setCombinedAttributesLimit(4);
+
+        tweenManager = new TweenManager();
+
+        try {
+            appConfig = new AppConfig();
+        } catch (FileNotFoundException e) {
+            System.err.println("App config not found!");
+        }
+
+        lang = new Lang();
+
+        // TODO: magic numbers (initial screen size)
+        assetManager = new AssetManager(1280, 720);
+
+        screenManager = new ScreenManager(this);
+
+        assetManager.loadBundle(Bundle.GLOBAL);
+        assetManager.finishLoading();
+
+        assetManager.loadBundle(Bundle.SETTINGS);
+
+        screenManager.setScreen(ScreenManager.BundledScreen.GAME);
+    }
+
+    @Override
     public void render() {
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         super.render();
 
         tweenManager.update(Gdx.graphics.getDeltaTime());
@@ -94,7 +108,7 @@ public class RoleSpell extends Game {
 
     @Override
     public void resize(int width, int height) {
-        if(assetManager != null) {
+        if (assetManager != null) {
             assetManager.updateScale(width, height);
         }
 
@@ -106,6 +120,6 @@ public class RoleSpell extends Game {
         super.dispose();
 
         screenManager.dispose();
-        assetManager.unloadBundle(AssetManager.Bundle.GLOBAL);
+        assetManager.unloadBundle(Bundle.GLOBAL);
     }
 }
