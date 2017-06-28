@@ -55,7 +55,6 @@ project(":core") {
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
         compile "com.kotcrab.vis:vis-ui:1.3.0"
         compile "org.yaml:snakeyaml:1.9"
-        //compile "com.esotericsoftware.yamlbeans:yamlbeans:1.12"
 
         compile fileTree(dir: '../libs', include: '*.jar')
     }
