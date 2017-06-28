@@ -4,7 +4,7 @@ import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.model.game.items.ItemType;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 
 import java.util.Map;
 
@@ -16,13 +16,13 @@ public class ItemParser {
         ItemConfig itemConfig;
 
         if (value instanceof String) {
-            itemConfig = repository.getItemConfig((String) value);
+            itemConfig = repository.getConfig((String) value);
 
         } else if (value instanceof Map) {
-            itemConfig = repository.parseItemConfig(new ConfigurationNode((Map) value));
+            itemConfig = repository.addConfig(new ConfigurationNode((Map) value));
 
         } else if (value instanceof ConfigurationNode) {
-            itemConfig = repository.parseItemConfig((ConfigurationNode) value);
+            itemConfig = repository.addConfig((ConfigurationNode) value);
 
         } else {
             throw new IllegalArgumentException("Can parse only strings or nodes.");

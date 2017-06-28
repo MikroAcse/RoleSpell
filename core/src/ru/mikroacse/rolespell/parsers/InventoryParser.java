@@ -3,7 +3,7 @@ package ru.mikroacse.rolespell.parsers;
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 
 import java.util.List;
 

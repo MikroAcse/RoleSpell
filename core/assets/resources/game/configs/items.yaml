@@ -13,13 +13,12 @@ abstract-weapon:
   type: WEAPON
   throwable: true
   pickable: true
-  parameters:
-    attack-timer:
-      min: 1.0
-      max: 3.0
-    limit: 0
-    attack-distance: 1.0
-    damage: 0.0
+  attack-timer:
+    min: 1.0
+    max: 3.0
+  limit: 0
+  attack-distance: 1.0
+  damage: 0.0
 
 # == HAND
 
@@ -29,60 +28,54 @@ hand:
   name: items.weapons.hand
   throwable: false
   pickable: false
-  parameters:
-    weapon-type: HAND
-    attack-timer: 1.5
-    damage: 5.0
+  weapon-type: HAND
+  attack-timer: 1.5
+  damage: 5.0
 
 # == SWORDS
 
 abstract-sword:
   parent: abstract-weapon
-  parameters:
-    weapon-type: WEAPON_SWORD
+  weapon-type: WEAPON_SWORD
 
 wooden-sword:
   parent: abstract-sword
   name: items.weapons.wooden_sword
   texture: items/weapons/wooden-sword
-  parameters:
-    damage:
-      min: 5.0
-      max: 15.0
-    attack-distance: 1.0
+  damage:
+    min: 5.0
+    max: 15.0
+  attack-distance: 1.0
 
 ultimate-sword:
   parent: abstract-sword
+
   name: items.weapons.ultimate_sword
   texture: items/weapons/ultimate-sword
-  parameters:
-    damage: 25.0
-    attack-distance: 1.0
+  damage: 25.0
+  attack-distance: 1.0
 
 # == STAVES
 
 abstract-staff:
   parent: abstract-weapon
-  parameters:
-    weapon-type: STAFF
+  weapon-type: STAFF
 
 beginner-staff:
   parent: abstract-staff
   name: items.weapons.beginner_staff
   texture: items/weapons/beginner-staff
-  parameters:
-    damage:
-      min: 5.0
-      max: 10.0
-    attack-distance: 5.0
+  damage:
+    min: 5.0
+    max: 10.0
+  attack-distance: 5.0
 
 epic-staff:
   parent: abstract-staff
   name: items.weapons.epic_staff
   texture: items/weapons/epic-staff
-  parameters:
-    damage: 10.0
-    attack-distance: 10.0
+  damage: 10.0
+  attack-distance: 10.0
 
 # == ORBS
 
@@ -90,8 +83,7 @@ light-orb:
   parent: abstract-weapon
   name: items.weapons.light_orb
   texture: items/weapons/light-orb
-  parameters:
-    weapon-type: ORB
-    attack-distance: 20.0
-    damage: 20.0
-    limit: 1
+  weapon-type: ORB
+  attack-distance: 20.0
+  damage: 20.0
+  limit: 1

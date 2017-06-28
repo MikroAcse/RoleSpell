@@ -120,7 +120,7 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
         return Gdx.graphics.getHeight() - Gdx.input.getY();
     }
 
-    public class Button {
+    public static class Button {
         public int code;
 
         public int taps = 0;

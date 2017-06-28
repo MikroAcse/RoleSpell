@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
@@ -19,7 +20,7 @@ public abstract class Entity {
 
     private String name;
 
-    private ConfigurationNode config;
+    private EntityConfig config;
 
     private Array<Component> components;
     private EnumSet<Parameter> parameters;
@@ -182,11 +183,11 @@ public abstract class Entity {
         setOrigin(position.x, position.y);
     }
 
-    public ConfigurationNode getConfig() {
+    public EntityConfig getConfig() {
         return config;
     }
 
-    public void setConfig(ConfigurationNode config) {
+    public void setConfig(EntityConfig config) {
         this.config = config;
     }
 

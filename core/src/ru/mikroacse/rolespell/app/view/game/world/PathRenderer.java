@@ -83,7 +83,7 @@ public class PathRenderer extends Group {
         }
     }
 
-    private class PathPoint extends Image implements Pool.Poolable {
+    private static class PathPoint extends Image implements Pool.Poolable {
         public PathPoint() {
             super(bundle(Bundle.GAME).getTexture("ui/path"));
         }

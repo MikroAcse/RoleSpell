@@ -25,6 +25,8 @@ import java.util.List;
 public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
     public static final String ASSETS_DIRECTORY = "";
     public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
+    public static final String APP_CONFIG = ASSETS_DIRECTORY + "config.yaml";
+    public static final String LANGUAGE_BUNDLE = ASSETS_DIRECTORY + "languages/bundle";
 
     public AssetManager(int initialWidth, int initialHeight) {
         super(initialWidth, initialHeight);
@@ -44,7 +46,7 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
             return;
         }
 
-        ConfigurationNode files = config.getNode("files");
+        ConfigurationNode files = config.extractNode("files");
 
         AssetBundle assetBundle = getBundle(bundle);
 

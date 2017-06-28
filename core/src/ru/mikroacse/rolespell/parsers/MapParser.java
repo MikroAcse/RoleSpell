@@ -8,6 +8,7 @@ import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Npc;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.Player;
 import ru.mikroacse.rolespell.app.model.game.entities.mobs.monsters.Monster;
@@ -16,7 +17,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
@@ -72,7 +73,7 @@ public class MapParser {
         String id = properties.get("id", String.class);
         boolean spawn = properties.get("spawn", false, Boolean.class);
 
-        ConfigurationNode portalConfig = map.getConfig().getNode("portals." + id);
+        ConfigurationNode portalConfig = map.getConfig().extractNode("portals." + id);
 
         String destination = portalConfig.getString("destination");
         String portalId = portalConfig.getString("portal-id");
@@ -93,13 +94,17 @@ public class MapParser {
 
         String id = properties.get("id", String.class);
 
-        ConfigurationNode config = map.getConfig().getNode("spawners." + id);
+        ConfigurationNode config = map.getConfig().extractNode("spawners." + id);
+
+
+
+        EntityConfig entityConfig = new EntityConfig(map.getConfig().extractNode("spawners." + id), );
 
         System.out.println(config.getMap());
 
-        EntityType type = EntityType.valueOf(config.getString("entity-type"));
+        EntityType type = EntityType.valueOf(config.get("entity-type"));
 
-        String name = config.getString("name", null);
+        String name = config.get("name", null);
 
         int x = (int) entityMapObject.getRectangle().x / map.getTileWidth();
         int y = (int) entityMapObject.getRectangle().y / map.getTileHeight();
@@ -130,7 +135,7 @@ public class MapParser {
             if (config.has("inventory") && entity.hasComponent(InventoryComponent.class)) {
                 Inventory inventory = entity.getComponent(InventoryComponent.class).getInventory();
 
-                InventoryParser.parse(config.getNodeList("inventory"), inventory);
+                InventoryParser.parse(config.extractNodeList("inventory"), inventory);
             }
 
             entity.setId(id);

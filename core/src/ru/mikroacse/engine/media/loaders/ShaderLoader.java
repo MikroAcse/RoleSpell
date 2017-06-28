@@ -48,7 +48,7 @@ public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderL
         return null;
     }
 
-    class ShaderParameter extends AssetLoaderParameters<ShaderProgram> {
+    static class ShaderParameter extends AssetLoaderParameters<ShaderProgram> {
 
     }
 }
