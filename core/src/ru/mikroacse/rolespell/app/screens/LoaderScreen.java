@@ -37,7 +37,7 @@ public class LoaderScreen extends Screen {
 
     @Override
     public void resize(int width, int height) {
-        RoleSpell.getAssetManager().updateScale(width, height);
+        RoleSpell.assets().updateScale(width, height);
 
         renderer.getViewport().update(width, height, true);
         renderer.update();

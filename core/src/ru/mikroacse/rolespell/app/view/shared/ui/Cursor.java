@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 06-May-17.
@@ -23,7 +23,7 @@ public class Cursor extends Image {
     }
 
     private static Texture getTexture(Type type) {
-        AssetBundle bundle = getAssetManager().getBundle(Bundle.GLOBAL);
+        AssetBundle bundle = bundle(Bundle.GLOBAL);
 
         return bundle.getTexture("ui/cursor/" + type.getName());
     }

@@ -8,9 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
 import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -27,14 +28,16 @@ public class SettingsButton extends Group implements MeasurableActor {
         this.action = action;
 
         // TODO: ↓
-        NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(getAssetManager()
-                .getBundle(Bundle.SETTINGS)
-                .getTexture("button-background"), 29, 29, 29, 29));
+        NinePatchDrawable npd = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.SETTINGS).getTexture("button-background"),
+                        29, 29, 29, 29
+                )
+        );
 
         background = new Button(npd);
 
-        text = new TextActor(getAssetManager()
-                .getBundle(Bundle.GLOBAL).getFont("cg-24"), label);
+        text = new TextActor(assets().getGlobalFont("cg-24"), label);
 
         // TODO: magic number (settings button text color)
         text.setColor(new Color(0x495D98FF));

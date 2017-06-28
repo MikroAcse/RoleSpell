@@ -15,7 +15,7 @@ import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.mikroacse.rolespell.RoleSpell.getScreenManager;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -51,7 +51,7 @@ public class GameController extends Controller {
         InputAdapter input = InputAdapter.getInstance();
 
         if (input.getButton(Input.Keys.ESCAPE).justReleased) {
-            getScreenManager().setScreen(BundledScreen.MENU);
+            screens().setScreen(BundledScreen.MENU);
             input.update();
             return;
         }

@@ -21,7 +21,7 @@ import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
 import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.app.view.settings.ui.LabeledSlider;
 import ru.mikroacse.rolespell.app.view.settings.ui.SettingsButton;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.*;
 
@@ -42,7 +42,7 @@ public class SettingsRenderer extends Renderer {
 
         actionListeners = ListenerSupportFactory.create(ActionListener.class);
 
-        Texture backgroundTexture = getAssetManager().getBundle(Bundle.SETTINGS).getTexture("background");
+        Texture backgroundTexture = bundle(Bundle.SETTINGS).getTexture("background");
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         background = new Image(backgroundTexture);
@@ -127,12 +127,12 @@ public class SettingsRenderer extends Renderer {
 
         Tween.to(background, ActorAccessor.ALPHA, 0.5f)
                 .target(1f)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(controlsContainer, ActorAccessor.Y, 1f)
                 .target(controlsContainer.getY())
                 .ease(Quint.OUT)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(backButton, ActorAccessor.Y, 1f)
                 .target(backButton.getY())
@@ -144,7 +144,7 @@ public class SettingsRenderer extends Renderer {
                 })
                 .delay(0.15f)
                 .ease(Quint.OUT)
-                .start(getTweenManager());
+                .start(tweens());
 
         background.getColor().a = 0f;
         controlsContainer.setY(-GroupUtil.getHeight(controlsContainer));
@@ -160,13 +160,13 @@ public class SettingsRenderer extends Renderer {
         Tween.to(controlsContainer, ActorAccessor.Y, 0.4f)
                 .target(getHeight())
                 .ease(Quint.IN)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(backButton, ActorAccessor.Y, 0.4f)
                 .target(getHeight())
                 .ease(Quint.IN)
                 .delay(0.1f)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(background, ActorAccessor.ALPHA, 0.4f)
                 .target(0f)
@@ -177,7 +177,7 @@ public class SettingsRenderer extends Renderer {
                         listeners.onHidden();
                     }
                 })
-                .start(getTweenManager());
+                .start(tweens());
 
         setBusy(true);
     }
@@ -195,13 +195,13 @@ public class SettingsRenderer extends Renderer {
     }
 
     private SettingsButton createButton(String labelKey, SettingsAction action) {
-        return new SettingsButton(getLang().get(Bundle.SETTINGS, labelKey), action);
+        return new SettingsButton(lang().get(Bundle.SETTINGS, labelKey), action);
     }
 
     private LabeledSlider createSlider(String labelKey, SettingsAction action) {
         // TODO: magic numbers
         LabeledSlider slider = new LabeledSlider();
-        slider.setLabel(getLang().get(Bundle.SETTINGS, labelKey));
+        slider.setLabel(lang().get(Bundle.SETTINGS, labelKey));
 
         slider.setWidth(300f);
         slider.setHeight(40f);

@@ -8,7 +8,7 @@ import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.settings.SettingsRenderer;
 
-import static ru.mikroacse.rolespell.RoleSpell.getScreenManager;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.
@@ -35,7 +35,7 @@ public class SettingsController extends Controller {
 
                 switch (action) {
                     case GO_TO_MENU:
-                        getScreenManager().setScreen(BundledScreen.MENU);
+                        screens().setScreen(BundledScreen.MENU);
                         break;
                 }
 

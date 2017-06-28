@@ -1,8 +1,10 @@
 package ru.mikroacse.rolespell.app.controller.loader;
 
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.loader.LoaderRenderer;
+
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.screens;
 
 /**
  * Created by MikroAcse on 29-Apr-17.
@@ -18,7 +20,7 @@ public class LoaderController {
         rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
-                RoleSpell.getScreenManager().setWaited();
+                screens().setWaited();
             }
         };
 
@@ -32,7 +34,7 @@ public class LoaderController {
             return;
         }
 
-        if (RoleSpell.getAssetManager().isLoaded()) {
+        if (assets().isLoaded()) {
             renderer.hide();
         }
     }

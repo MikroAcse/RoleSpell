@@ -5,13 +5,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Pool;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
 import ru.mikroacse.rolespell.app.view.game.items.ItemView;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 10-May-17.
@@ -30,7 +31,7 @@ public class EntityView extends Image implements Pool.Poolable {
     }
 
     public static Texture getEntityTexture(Entity entity) {
-        AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
+        AssetBundle bundle = bundle(Bundle.GAME);
 
         switch (entity.getType()) {
             case NPC:

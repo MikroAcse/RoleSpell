@@ -6,8 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 10-May-17.
@@ -33,9 +34,7 @@ public class PathRenderer extends Group {
 
         pathPoints = new Array<>();
 
-        waypoint = new Image(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("ui/waypoint"));
+        waypoint = new Image(bundle(Bundle.GAME).getTexture("ui/waypoint"));
     }
 
     public void setPath(Array<IntVector2> path) {
@@ -86,9 +85,7 @@ public class PathRenderer extends Group {
 
     private class PathPoint extends Image implements Pool.Poolable {
         public PathPoint() {
-            super(RoleSpell.getAssetManager()
-                    .getBundle(AssetManager.Bundle.GAME)
-                    .getTexture("ui/path"));
+            super(bundle(Bundle.GAME).getTexture("ui/path"));
         }
 
         @Override

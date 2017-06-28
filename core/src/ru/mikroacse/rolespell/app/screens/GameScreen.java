@@ -14,9 +14,10 @@ import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -48,9 +49,7 @@ public class GameScreen extends Screen {
 
     // TODO: ???
     public void setWorld(String id, String portalId) {
-        TiledMap map = getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getMap(id + "/map");
+        TiledMap map = bundle(Bundle.GAME).getMap(id + "/map");
 
         World world = new World(new Map(map, id));
 
@@ -89,7 +88,7 @@ public class GameScreen extends Screen {
 
     @Override
     public void resize(int width, int height) {
-        getAssetManager().updateScale(width, height);
+        assets().updateScale(width, height);
 
         renderer.resize(width, height);
     }

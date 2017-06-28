@@ -7,8 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
-import ru.mikroacse.rolespell.RoleSpell;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by Vitaly Rudenko on 07-Jun-17.
@@ -23,18 +25,19 @@ public class QuestView extends Group implements MeasurableActor {
         super();
 
         // TODO: ↓
-        NinePatchDrawable npd = new NinePatchDrawable(new NinePatch(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("quests/quest-background"), 29, 29, 29, 29));
+        NinePatchDrawable npd = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.GAME).getTexture("quests/quest-background"),
+                        29, 29, 29, 29
+                )
+        );
 
         background = new Button(npd);
         background.setTouchable(Touchable.disabled);
 
-        title = new TextActor(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GLOBAL).getFont("cg-24"));
+        title = new TextActor(assets().getGlobalFont("cg-24"));
 
-        description = new TextActor(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GLOBAL).getFont("cg-24"));
+        description = new TextActor(assets().getGlobalFont("cg-24"));
 
         title.setText(titleText);
         description.setText(descriptionText);

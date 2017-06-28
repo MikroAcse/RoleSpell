@@ -10,10 +10,10 @@ import com.badlogic.gdx.utils.Align;
 import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.rolespell.app.view.Renderer;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager.Bundle;
+import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.getAssetManager;
-import static ru.mikroacse.rolespell.RoleSpell.getTweenManager;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
+import static ru.mikroacse.rolespell.RoleSpell.tweens;
 
 /**
  * Created by MikroAcse on 14.07.2016.
@@ -25,7 +25,7 @@ public class LoaderRenderer extends Renderer {
     public LoaderRenderer() {
         super();
 
-        AssetBundle bundle = getAssetManager().getBundle(Bundle.LOADER);
+        AssetBundle bundle = bundle(Bundle.LOADER);
 
         Texture backgroundTexture = bundle.getTexture("background");
         Texture loaderCircleTexture = bundle.getTexture("loader-circle");
@@ -87,7 +87,7 @@ public class LoaderRenderer extends Renderer {
 
         Tween.to(background, ActorAccessor.ALPHA, 0.5f)
                 .target(1f)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(loaderCircle, ActorAccessor.ALPHA, 0.5f)
                 .target(loaderCircle.getColor().a)
@@ -98,7 +98,7 @@ public class LoaderRenderer extends Renderer {
                         listeners.onShown();
                     }
                 })
-                .start(getTweenManager());
+                .start(tweens());
 
         background.getColor().a = 0f;
         loaderCircle.getColor().a = 0f;
@@ -116,7 +116,7 @@ public class LoaderRenderer extends Renderer {
 
         Tween.to(background, ActorAccessor.ALPHA, 0.25f)
                 .target(0f)
-                .start(getTweenManager());
+                .start(tweens());
 
         Tween.to(loaderCircle, ActorAccessor.ALPHA, 0.25f)
                 .target(0f)
@@ -126,7 +126,7 @@ public class LoaderRenderer extends Renderer {
                         listeners.onHidden();
                     }
                 })
-                .start(getTweenManager());
+                .start(tweens());
 
         setBusy(true);
     }

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by MikroAcse on 08.07.2016.
  */
-public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetBundle> {
+public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
     public static final String ASSETS_DIRECTORY = "";
     public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
 
@@ -122,6 +122,10 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
         }
     }
 
+    public BitmapFont getGlobalFont(String name) {
+        return getBundle(Bundle.GLOBAL).getFont(name);
+    }
+
     private String getAssetBundlePath(Bundle bundle) {
         return String.format(BUNDLE_DIRECTORY, bundle.getName());
     }
@@ -169,23 +173,5 @@ public class AssetManager extends AssetBundleManager<AssetManager.Bundle, AssetB
 
     private String getAppConfigPath() {
         return ASSETS_DIRECTORY + "config.yaml";
-    }
-
-    public enum Bundle {
-        GLOBAL("global"),
-        LOADER("loader"),
-        MENU("menu"),
-        SETTINGS("settings"),
-        GAME("game");
-
-        private String name;
-
-        Bundle(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 }

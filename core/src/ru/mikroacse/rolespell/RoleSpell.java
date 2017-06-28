@@ -13,7 +13,9 @@ import ru.mikroacse.engine.tween.TweenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.config.AppConfig;
 import ru.mikroacse.rolespell.config.Lang;
+import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
 
 import java.io.FileNotFoundException;
 
@@ -24,23 +26,27 @@ public class RoleSpell extends Game {
     private static AppConfig appConfig;
     private static Lang lang;
 
-    public static TweenManager getTweenManager() {
+    public static TweenManager tweens() {
         return tweenManager;
     }
 
-    public static AssetManager getAssetManager() {
+    public static AssetManager assets() {
         return assetManager;
     }
 
-    public static ScreenManager getScreenManager() {
+    public static AssetBundle bundle(Bundle bundle) {
+        return assetManager.getBundle(bundle);
+    }
+
+    public static ScreenManager screens() {
         return screenManager;
     }
 
-    public static AppConfig getAppConfig() {
+    public static AppConfig config() {
         return appConfig;
     }
 
-    public static Lang getLang() {
+    public static Lang lang() {
         return lang;
     }
 
@@ -72,7 +78,7 @@ public class RoleSpell extends Game {
         try {
             appConfig = new AppConfig();
         } catch (FileNotFoundException e) {
-            System.out.println("App config not found!");
+            System.err.println("App config not found!");
         }
 
         lang = new Lang();
@@ -82,10 +88,10 @@ public class RoleSpell extends Game {
 
         screenManager = new ScreenManager(this);
 
-        assetManager.loadBundle(AssetManager.Bundle.GLOBAL);
+        assetManager.loadBundle(Bundle.GLOBAL);
         assetManager.finishLoading();
 
-        assetManager.loadBundle(AssetManager.Bundle.SETTINGS);
+        assetManager.loadBundle(Bundle.SETTINGS);
 
         screenManager.setScreen(ScreenManager.BundledScreen.GAME);
     }
@@ -114,6 +120,6 @@ public class RoleSpell extends Game {
         super.dispose();
 
         screenManager.dispose();
-        assetManager.unloadBundle(AssetManager.Bundle.GLOBAL);
+        assetManager.unloadBundle(Bundle.GLOBAL);
     }
 }

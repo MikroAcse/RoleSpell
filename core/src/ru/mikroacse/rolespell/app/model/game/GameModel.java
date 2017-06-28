@@ -13,7 +13,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.Inven
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -30,7 +30,7 @@ public class GameModel {
 
         ItemRepository itemRepository = ItemRepository.getInstance();
 
-        ConfigurationNode items = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME).getConfig("items");
+        ConfigurationNode items = RoleSpell.bundle(Bundle.GAME).getConfig("items");
 
         for (String key : items.getMap().keySet()) {
             itemRepository.addItemConfig(key, items.getNode(key));

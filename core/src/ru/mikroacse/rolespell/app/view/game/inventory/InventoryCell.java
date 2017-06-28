@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.AssetBundle;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -21,7 +22,7 @@ public class InventoryCell extends Image {
     }
 
     private static Texture getCellTexture(CellType cellType) {
-        AssetBundle bundle = RoleSpell.getAssetManager().getBundle(AssetManager.Bundle.GAME);
+        AssetBundle bundle = bundle(Bundle.GAME);
 
         return bundle.getTexture("inventory/cell-" + cellType.getName());
     }

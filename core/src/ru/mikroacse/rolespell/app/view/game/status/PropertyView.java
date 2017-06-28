@@ -8,10 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import ru.mikroacse.engine.actors.MeasurableActor;
 import ru.mikroacse.engine.actors.TextActor;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.Property;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.PropertyType;
-import ru.mikroacse.rolespell.media.AssetManager;
+import ru.mikroacse.rolespell.media.Bundle;
+
+import static ru.mikroacse.rolespell.RoleSpell.assets;
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 01-May-17.
@@ -29,12 +31,16 @@ public class PropertyView extends Group implements MeasurableActor {
         super();
 
         // TODO: ↓
-        background = new Button(new NinePatchDrawable(new NinePatch(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GAME)
-                .getTexture("hud/statusbar"), 11, 11, 11, 11)));
+        NinePatchDrawable npd = new NinePatchDrawable(
+                new NinePatch(
+                        bundle(Bundle.GAME).getTexture("hud/statusbar"),
+                        11, 11, 11, 11
+                )
+        );
 
-        label = new TextActor(RoleSpell.getAssetManager()
-                .getBundle(AssetManager.Bundle.GLOBAL).getFont("cg-24"));
+        background = new Button(npd);
+
+        label = new TextActor(assets().getGlobalFont("cg-24"));
 
         addActor(background);
         addActor(label);
