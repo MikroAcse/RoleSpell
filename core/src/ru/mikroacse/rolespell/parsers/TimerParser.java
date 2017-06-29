@@ -16,7 +16,7 @@ public class TimerParser {
         float speed = 1f;
 
         if (config instanceof ConfigurationNode) {
-            speed = ((ConfigurationNode) config).getFloat("speed", speed);
+            speed = ((ConfigurationNode) config).get("speed", speed);
 
         } else if (config instanceof Map) {
 

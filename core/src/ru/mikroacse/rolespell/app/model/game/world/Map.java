@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
+import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 import ru.mikroacse.rolespell.media.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.bundle;
@@ -15,14 +16,23 @@ import static ru.mikroacse.rolespell.RoleSpell.bundle;
 public class Map {
     private String id;
 
+    private String name;
+
     private TiledMap map;
-    private ConfigurationNode config;
+    private MapConfig config;
 
-    public Map(TiledMap map, String id) {
+    public Map(TiledMap map) {
         this.map = map;
-        this.id = id;
+    }
 
-        config = bundle(Bundle.GAME).getConfig("maps/" + id);
+    public void setConfig(MapConfig config) {
+        this.config = config;
+
+        this.name = config.getName(name);
+    }
+
+    public ConfigurationNode getConfig() {
+        return config;
     }
 
     public IntVector2 getCellPosition(float x, float y) {
@@ -36,7 +46,7 @@ public class Map {
     }
 
     public double getWeight(Map.Meta meta) {
-        return config.getDouble("meta." + meta.name() + ".weight");
+        return config.getWeight(meta, 0);
     }
 
     public boolean isPassable(int x, int y) {
@@ -44,7 +54,7 @@ public class Map {
     }
 
     public boolean isPassable(Map.Meta meta) {
-        return config.getBoolean("meta." + meta.name() + ".passable");
+        return config.isPassable(meta, false);
     }
 
     public Map.Meta getMeta(int x, int y) {
@@ -111,8 +121,16 @@ public class Map {
         return map;
     }
 
-    public ConfigurationNode getConfig() {
-        return config;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -123,7 +141,7 @@ public class Map {
     }
 
     public enum Layer {
-        SPAWNERS, // object layer with entities/player spawn locations
+        ENTITIES, // object layer with entities/player spawn locations
         PORTALS, // object layer with portals spawn locations
         META, // objects layer for collisions/etc markup
         TOP,

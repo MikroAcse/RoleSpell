@@ -57,7 +57,7 @@ public class ConfigurationNode {
         }
     }
 
-    public boolean has(String key) {
+    public boolean contains(String key) {
         try {
             get(key);
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class ConfigurationNode {
     }
 
     public ConfigurationNode extractNodeOrNull(String key) {
-        if (has(key)) {
+        if (contains(key)) {
             return extractNode(key);
         }
 
@@ -100,5 +100,10 @@ public class ConfigurationNode {
 
     public Map<String, Object> getMap() {
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigurationNode" + map;
     }
 }

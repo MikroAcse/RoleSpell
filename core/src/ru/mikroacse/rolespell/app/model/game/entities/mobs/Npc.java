@@ -17,8 +17,8 @@ public class Npc extends Mob {
     private CollisionAvoidingAi collisionAvoidingAi;
     private AttackAi attackAi;
 
-    public Npc(World world, String name, int x, int y) {
-        super(EntityType.NPC, world, name, x, y, 4f);
+    public Npc(World world, int x, int y) {
+        super(EntityType.NPC, world, x, y, 4f);
 
         setParameters(EnumSet.of(Parameter.SOLID));
 

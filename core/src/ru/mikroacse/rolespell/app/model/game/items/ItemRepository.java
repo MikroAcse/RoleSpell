@@ -13,11 +13,7 @@ import java.util.Map;
 public class ItemRepository extends ConfigurationRepository<String, ItemConfig> {
     private static ItemRepository instance = new ItemRepository();
 
-    private ItemRepository() {
-        super();
-    }
-
-    public static ItemRepository getInstance() {
+    public static ItemRepository instance() {
         return instance;
     }
 }

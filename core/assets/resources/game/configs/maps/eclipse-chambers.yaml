@@ -1,66 +1,46 @@
+parent: map
+
 name: locations.eclipse_chambers.name
 
 # = SPAWNERS
 
-spawners:
-  player:
-    type: ONCE
-    entity-type: PLAYER
-    shared: true
-    inventory:
-    - item: hand
-      hotbar: 0
-    - item: light-orb
-    - item: beginner-staff
-      index: 5
-      hotbar: 2
-    - item:
-        parent: ultimate-sword
-        name: ULTRA SWORD!11
-      index: 10
-      hotbar: 1
-      chance: 0.5
+entities:
   monster-spawner:
-    type: SPAWNER
-    entity-type: MONSTER
+    parent: spawner
     interval: 2
     radius: 1
     checker:
       type: MONSTER_SPAWNER
-      radius: '5'
+      radius: 5.0
+
   ogremagi:
-    type: ONCE
-    entity-type: OGREMAGI
+    parent: entity
+    type: OGREMAGI
     name: Ogremagi
     inventory:
     - item: ultimate-sword
       chance: 0.5
     - item: wooden-sword
+
   dropped-sword:
-    type: ONCE
-    entity-type: DROPPED_ITEM
-    item: ultimate-sword
+    parent: dropped-item
+    item: custom-sword
+
+# = ITEMS
+
+items:
+  custom-sword:
+    parent: ultimate-sword
+    name: Meme Sword
+    damage: 100.0
 
 # = PORTALS
 
 portals:
-  rottenville:
+  rottenville-eclipse-chambers:
+    parent: portal
     destination: rottenville
-    portal-id: rottenville-eclipse-chambers
     name: locations.rottenville.name
-
-# = META
-
-meta:
-  EMPTY:
-    weight: 1.0
-    passable: true
-  SOLID:
-    weight: 0.0
-    passable: false
-  WATER:
-    weight: 0.0
-    passable: false
-  PATH:
-    weight: 0.9
-    passable: true
+    spawn: rottenville-eclipse-chambers-spawn
+  rottenville-eclipse-chambers-spawn:
+    parent: portal-spawn

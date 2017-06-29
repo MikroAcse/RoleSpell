@@ -13,11 +13,7 @@ import java.util.Map;
 public class EntityRepository extends ConfigurationRepository<String, EntityConfig> {
     private static EntityRepository instance = new EntityRepository();
 
-    private EntityRepository() {
-        super();
-    }
-
-    public static EntityRepository getInstance() {
+    public static EntityRepository instance() {
         return instance;
     }
 }

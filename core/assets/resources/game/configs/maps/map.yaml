@@ -1,0 +1,63 @@
+entities:
+  player:
+    type: PLAYER
+    # count: 1
+
+    # entity will be created only once for all maps
+    shared: true
+
+    inventory:
+    - item: hand
+      hotbar: 0
+    - item: light-orb
+    - item: beginner-staff
+      index: 5
+      hotbar: 2
+    - item:
+        parent: ultimate-sword
+        name: ULTRA SWORD!11
+      index: 10
+      hotbar: 1
+      chance: 0.5
+
+  spawner:
+    type: SPAWNER
+    # interval: 2.0
+    # radius: 1.0
+
+  dropped-item:
+    type: DROPPED_ITEM
+    # count: 1
+    # item: item
+
+# Portals are just entities, separation is for convenience' sake
+portals:
+  portal:
+    type: PORTAL
+    # destination: location
+    # name: locations.location.name
+  portal-spawn:
+    type: PORTAL_SPAWN
+
+# items:
+  # item:
+  #   parent: item
+  #   type: TYPE
+  #   throwable: true
+  #   pickable: true
+  #   name: items.category.item.name
+  #   texture: items/category/item
+
+meta:
+  EMPTY:
+    weight: 1.0
+    passable: true
+  SOLID:
+    weight: 0.0
+    passable: false
+  WATER:
+    weight: 0.0
+    passable: false
+  PATH:
+    weight: 0.9
+    passable: true

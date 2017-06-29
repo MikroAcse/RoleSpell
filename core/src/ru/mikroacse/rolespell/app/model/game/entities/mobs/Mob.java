@@ -22,8 +22,8 @@ public abstract class Mob extends Entity {
     private StatusComponent status;
     private MobController mobController;
 
-    public Mob(EntityType type, World world, String name, int x, int y, float speed) {
-        super(type, world, name);
+    public Mob(EntityType type, World world, int x, int y, float speed) {
+        super(type, world);
 
         setParameters(EnumSet.of(Parameter.SOLID));
 

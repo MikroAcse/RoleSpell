@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
@@ -9,40 +8,40 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
 
-/**
- * Created by MikroAcse on 23.03.2017.
- */
 public abstract class Entity {
     private World world;
     private EntityType type;
 
     private String id;
-
     private String name;
 
+    private boolean shared;
     private EntityConfig config;
 
     private Array<Component> components;
     private EnumSet<Parameter> parameters;
 
     public Entity(EntityType type, World world) {
-        this(type, world, null);
-    }
-
-    public Entity(EntityType type, World world, String name) {
         this.type = type;
         this.world = world;
-        this.name = name;
 
         components = new Array<>();
         parameters = Parameter.NONE;
-
-        preInit();
     }
 
-    protected void preInit() {
+    public void setConfig(EntityConfig config) {
+        this.config = config;
 
+        type = config.getType(type);
+        name = config.getName(name);
+
+        shared = config.isShared(false);
     }
+
+    public EntityConfig getConfig() {
+        return config;
+    }
+
 
     /**
      * Updates all entity's components.
@@ -66,16 +65,14 @@ public abstract class Entity {
         }
     }
 
-    public boolean addComponent(Component component) {
+    protected void addComponent(Component component) {
         if (component.isSingle()) {
             if (hasComponent(component.getClass())) {
                 System.err.println("Trying to add more than one instance of a single component to an entity.");
-                return false;
             }
         }
 
         components.add(component);
-        return true;
     }
 
     /**
@@ -107,7 +104,7 @@ public abstract class Entity {
      * @return All entity components of given class.
      */
     public <T extends Component> Array<T> getComponents(Class<T> componentClass) {
-        Array<T> result = new Array<T>();
+        Array<T> result = new Array<>();
 
         for (Component component : components) {
             if (componentClass.isInstance(component)) {
@@ -118,25 +115,16 @@ public abstract class Entity {
         return result;
     }
 
+    protected void setParameters(EnumSet<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
     public EnumSet<Parameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(EnumSet<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
     public boolean hasParameter(Parameter parameter) {
         return parameters.contains(parameter);
-    }
-
-    public boolean hasParameters(EnumSet<Parameter> parameters) {
-        for (Parameter parameter : parameters) {
-            if (!parameters.contains(parameter)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public EntityType getType() {
@@ -183,20 +171,16 @@ public abstract class Entity {
         setOrigin(position.x, position.y);
     }
 
-    public EntityConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(EntityConfig config) {
-        this.config = config;
-    }
-
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isShared() {
+        return shared;
     }
 
     @Override

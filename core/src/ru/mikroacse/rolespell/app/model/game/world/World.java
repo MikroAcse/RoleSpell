@@ -105,10 +105,14 @@ public class World {
     private void initialize() {
         entities = new Array<>();
 
-        entities.addAll(MapParser.getEntities(this, map));
-        entities.addAll(MapParser.getPortals(this, map));
+        entities.addAll(MapParser.getEntities(this, map, Map.Layer.ENTITIES));
+        entities.addAll(MapParser.getEntities(this, map, Map.Layer.PORTALS));
+
+        System.out.println("Entities: " + entities.size);
 
         for (Entity entity : entities) {
+            System.out.println("Created entity: " + entity);
+
             if (entity.getType() == EntityType.PLAYER) {
                 if (player != null) {
                     System.out.println("World: player entity already exists!");
@@ -122,8 +126,7 @@ public class World {
     }
 
     public void dropItem(Item item, int x, int y) {
-        DroppedItem<Item> droppedItem = new DroppedItem<>(this, item);
-        droppedItem.setPosition(x, y);
+        DroppedItem<Item> droppedItem = new DroppedItem<>(this, item, x, y);
 
         addEntity(droppedItem);
     }
@@ -220,8 +223,6 @@ public class World {
                     if (!map.isValidPosition(cellX, cellY)) {
                         continue;
                     }
-
-                    TiledMapTileLayer.Cell cell = map.getCell(layer, cellX, cellY);
 
                     if (checker.weigh(this, cellX, cellY) != Double.POSITIVE_INFINITY) {
                         result.add(new IntVector2(cellX, cellY));
@@ -331,14 +332,12 @@ public class World {
         listeners.entityAdded(this, entity);
     }
 
-    public boolean removeEntity(Entity entity) {
+    public void removeEntity(Entity entity) {
         if (entities.removeValue(entity, true)) {
             detachEntity(entity);
 
             listeners.entityRemoved(this, entity);
-            return true;
         }
-        return false;
     }
 
     public Player getPlayer() {

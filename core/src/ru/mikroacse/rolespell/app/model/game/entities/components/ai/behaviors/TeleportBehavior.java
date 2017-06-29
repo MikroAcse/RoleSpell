@@ -32,12 +32,6 @@ public class TeleportBehavior extends Behavior {
                 continue;
             }
 
-            Portal portal = (Portal) target;
-
-            if (portal.isSpawn()) {
-                continue;
-            }
-
             this.portal = portal;
 
             return true;

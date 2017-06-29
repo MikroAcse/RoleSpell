@@ -8,60 +8,40 @@ import java.util.Map;
 /**
  * Immutable recursive configuration based on UnmodifiableMap.
  */
-public class RecursiveConfigurationNode<P extends RecursiveConfigurationNode<P>> extends ConfigurationNode {
-    private P parent;
-
-    public RecursiveConfigurationNode(Map<String, Object> map, P parent) {
-        super(map);
-
-        this.parent = parent;
-    }
-
-    public RecursiveConfigurationNode(ConfigurationProvider provider, P parent) {
-        super(provider);
-
-        this.parent = parent;
-    }
-
-    public RecursiveConfigurationNode(ConfigurationNode node, P parent) {
-        super(node);
-
-        this.parent = parent;
-    }
-
+public abstract class RecursiveConfigurationNode<P extends RecursiveConfigurationNode<P>> extends ConfigurationNode {
     public RecursiveConfigurationNode(Map<String, Object> map) {
-        this(map, null);
+        super(map);
     }
 
     public RecursiveConfigurationNode(ConfigurationProvider provider) {
-        this(provider, null);
+        super(provider);
     }
 
     public RecursiveConfigurationNode(ConfigurationNode node) {
-        this(node, null);
+        super(node);
     }
 
     public RecursiveConfigurationNode(RecursiveConfigurationNode<P> node) {
-        this(node, node.getParent());
+        super(node);
     }
 
     /**
-     * @return Returns a value or parent.get(key), if it's null.
+     * @return Returns a value or getParent().get(key), if the value is not present.
      */
     @Override
     public <T> T get(String key) {
         try {
             return super.get(key);
         } catch (Exception e) {
-            if (parent != null) {
-                return parent.get(key);
+            if (hasParent()) {
+                return getParent().get(key);
             } else {
                 throw e;
             }
         }
     }
 
-    public P getParent() {
-        return parent;
-    }
+    public abstract boolean hasParent();
+
+    public abstract P getParent();
 }

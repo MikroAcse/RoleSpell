@@ -23,7 +23,7 @@ public class Player extends Mob {
     private InventoryComponent inventory;
 
     public Player(World world, int x, int y) {
-        super(EntityType.PLAYER, world, null, x, y, 8f);
+        super(EntityType.PLAYER, world, x, y, 8f);
 
         getParameters().add(Parameter.VULNERABLE);
 

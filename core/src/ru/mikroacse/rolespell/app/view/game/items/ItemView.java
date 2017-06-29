@@ -25,9 +25,8 @@ public class ItemView extends Image {
     }
 
     public static Texture getItemTexture(Item item) {
-        AssetBundle bundle = bundle(Bundle.GAME);
-
-        return bundle.getTexture(item.getConfig().getTexture());
+        System.out.println("Texture: " + item + " " + item.getConfig());
+        return bundle(Bundle.GAME).getTexture(item.getConfig().getTexture(null));
     }
 
     public Item getItem() {

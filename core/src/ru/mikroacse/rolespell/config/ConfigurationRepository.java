@@ -16,11 +16,15 @@ public class ConfigurationRepository<K, C extends RecursiveConfigurationNode<C>>
         configurations = new HashMap<>();
     }
 
-    public void addConfig(K key, C config) {
+    public boolean contains(K key) {
+        return configurations.containsKey(key);
+    }
+
+    public void add(K key, C config) {
         configurations.put(key, config);
     }
 
-    public C getConfig(K key) {
+    public C get(K key) {
         return configurations.get(key);
     }
 }

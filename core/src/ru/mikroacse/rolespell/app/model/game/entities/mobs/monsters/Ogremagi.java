@@ -20,8 +20,8 @@ public class Ogremagi extends Mob {
     private CollisionAvoidingAi collisionAvoidingAi;
     private AttackAi attackAi;
 
-    public Ogremagi(World world, String name, int x, int y) {
-        super(EntityType.OGREMAGI, world, name, x, y, 1f);
+    public Ogremagi(World world, int x, int y) {
+        super(EntityType.OGREMAGI, world, x, y, 1f);
 
         getParameters().add(Parameter.VULNERABLE);
 

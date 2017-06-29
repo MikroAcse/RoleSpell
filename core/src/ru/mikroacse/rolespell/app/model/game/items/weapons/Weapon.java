@@ -18,12 +18,12 @@ public class Weapon extends Item {
     private double attackDistance;
     private int limit;
 
-    public Weapon(ItemConfig config) {
-        super(config);
+    public Weapon() {
+        super();
     }
 
     @Override
-    protected void configure(ItemConfig config) {
+    public void setConfig(ItemConfig config) {
         attackTimer = TimerParser.parse(config.get("attack-timer"));
         damage = IntervalParser.parse(config.get("damage"));
 

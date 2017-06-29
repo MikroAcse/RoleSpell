@@ -1,15 +1,8 @@
 # Heirs must be under their parents!
 
-# = ABSTRACT ITEM
-
-abstract-item:
-  throwable: false
-  pickable: false
-
 # = WEAPONS
 
-abstract-weapon:
-  parent: abstract-item
+weapon:
   type: WEAPON
   throwable: true
   pickable: true
@@ -23,9 +16,9 @@ abstract-weapon:
 # == HAND
 
 hand:
-  parent: abstract-weapon
+  parent: weapon
   texture: items/weapons/hand
-  name: items.weapons.hand
+  name: items.weapons.hand.name
   throwable: false
   pickable: false
   weapon-type: HAND
@@ -35,12 +28,12 @@ hand:
 # == SWORDS
 
 abstract-sword:
-  parent: abstract-weapon
+  parent: weapon
   weapon-type: WEAPON_SWORD
 
 wooden-sword:
   parent: abstract-sword
-  name: items.weapons.wooden_sword
+  name: items.weapons.wooden_sword.name
   texture: items/weapons/wooden-sword
   damage:
     min: 5.0
@@ -50,7 +43,7 @@ wooden-sword:
 ultimate-sword:
   parent: abstract-sword
 
-  name: items.weapons.ultimate_sword
+  name: items.weapons.ultimate_sword.name
   texture: items/weapons/ultimate-sword
   damage: 25.0
   attack-distance: 1.0
@@ -58,12 +51,12 @@ ultimate-sword:
 # == STAVES
 
 abstract-staff:
-  parent: abstract-weapon
+  parent: weapon
   weapon-type: STAFF
 
 beginner-staff:
   parent: abstract-staff
-  name: items.weapons.beginner_staff
+  name: items.weapons.beginner_staff.name
   texture: items/weapons/beginner-staff
   damage:
     min: 5.0
@@ -72,7 +65,7 @@ beginner-staff:
 
 epic-staff:
   parent: abstract-staff
-  name: items.weapons.epic_staff
+  name: items.weapons.epic_staff.name
   texture: items/weapons/epic-staff
   damage: 10.0
   attack-distance: 10.0
@@ -80,8 +73,8 @@ epic-staff:
 # == ORBS
 
 light-orb:
-  parent: abstract-weapon
-  name: items.weapons.light_orb
+  parent: weapon
+  name: items.weapons.light_orb.name
   texture: items/weapons/light-orb
   weapon-type: ORB
   attack-distance: 20.0

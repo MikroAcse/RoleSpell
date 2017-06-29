@@ -7,12 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.Bundle;
 
+import static ru.mikroacse.rolespell.RoleSpell.bundle;
+
 /**
  * Created by MikroAcse on 14.07.2016.
  */
 public class AnimationUtil {
     public static Animation<TextureRegion> create(Bundle bundle, String name, boolean smoothing) {
-        return create(RoleSpell.bundle(bundle).getAtlas(name), smoothing);
+        return create(bundle(bundle).getAtlas(name), smoothing);
     }
 
     public static Animation<TextureRegion> create(Bundle bundle, String name) {

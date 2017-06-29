@@ -24,11 +24,12 @@ public class IntervalParser {
             throw new IllegalArgumentException("Can only parse numbers or nodes");
         }
 
-        double min = node.getDouble("min");
-        double max = node.getDouble("max");
-        double val = node.getDouble("value", min);
+        double min = node.get("min");
+        double max = node.get("max");
+        double val = node.get("value", min);
 
-        boolean randomized = node.getBoolean("randomized", !node.has("value"));
+        // get value of 'randomized' field or set to true if there is no 'value' field
+        boolean randomized = node.get("randomized", !node.contains("value"));
 
         return new Interval(min, max, val, randomized);
     }

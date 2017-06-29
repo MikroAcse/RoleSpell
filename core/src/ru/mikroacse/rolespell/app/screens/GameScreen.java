@@ -2,19 +2,30 @@ package ru.mikroacse.rolespell.app.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
 import ru.mikroacse.rolespell.app.model.game.world.Map;
+import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
+import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.media.Bundle;
+
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import static ru.mikroacse.rolespell.RoleSpell.assets;
 import static ru.mikroacse.rolespell.RoleSpell.bundle;
@@ -37,6 +48,28 @@ public class GameScreen extends Screen {
 
         controller = new GameController(renderer, model);
 
+        // TODO: Move it somewhere else
+
+        // item defaults
+        ConfigurationNode items = bundle(Bundle.GAME).getConfig("items");
+
+        for (String key : items.getMap().keySet()) {
+            ItemConfig itemConfig = new ItemConfig(items.get(key), items.get(key + ".parent", null));
+
+            ItemRepository.instance().add(key, itemConfig);
+
+            System.out.println("Added def item: " + key + " " + itemConfig);
+        }
+
+        // map defaults
+        ConfigurationNode mapDefaults = bundle(Bundle.GAME).getConfig("maps/map-defaults");
+
+        MapConfig mapConfig = new MapConfig(mapDefaults);
+
+        MapRepository.instance().add("map-defaults", mapConfig);
+
+        parseMapConfig(mapConfig);
+
         setWorld("eclipse-chambers", null);
     }
 
@@ -47,20 +80,77 @@ public class GameScreen extends Screen {
         Gdx.input.setInputProcessor(InputAdapter.getInstance());
     }
 
-    // TODO: ???
-    public void setWorld(String id, String portalId) {
-        TiledMap map = bundle(Bundle.GAME).getMap(id + "/map");
+    // TODO: Bad.
+    public void parseMapConfig(MapConfig mapConfig) {
+        System.out.println(mapConfig.getMap());
 
-        World world = new World(new Map(map, id));
+        ConfigurationNode items = mapConfig.getItems();
+
+        if(items != null) {
+            for (String key : items.getMap().keySet()) {
+                ItemConfig itemConfig = new ItemConfig(items.get(key), items.get(key + ".parent", null));
+
+                ItemRepository.instance().add(key, itemConfig);
+
+                System.out.println("Added item: " + key + " " + itemConfig.getMap());
+            }
+        }
+
+        Set<Entry<String, Object>> entries = new HashSet<>();
+
+        ConfigurationNode entities = mapConfig.getEntities();
+        ConfigurationNode portals = mapConfig.getPortals();
+
+        if(entities != null) {
+            entries.addAll(entities.getMap().entrySet());
+        }
+
+        if(portals != null) {
+            entries.addAll(portals.getMap().entrySet());
+        }
+
+        for (Entry<String, Object> entry : entries) {
+            String key = entry.getKey();
+            java.util.Map<String, Object> value = (java.util.Map) entry.getValue();
+
+            EntityConfig entityConfig = new EntityConfig(value, (String) value.get("parent"));
+
+            EntityRepository.instance().add(key, entityConfig);
+
+            System.out.println("Added: " + key + " -> " + entityConfig + " " + entityConfig.getParent());
+        }
+    }
+
+    // TODO: ???!!!
+    public void setWorld(String id, String portalId) {
+        TiledMap tiledMap = bundle(Bundle.GAME).getMap(id + "/map");
+
+        MapConfig mapConfig;
+
+        if(MapRepository.instance().contains(id)) {
+            mapConfig = MapRepository.instance().get(id);
+        } else {
+            mapConfig = new MapConfig(bundle(Bundle.GAME).getConfig("maps/" + id));
+            MapRepository.instance().add(id, mapConfig);
+        }
+
+        parseMapConfig(mapConfig);
+
+        Map map = new Map(tiledMap);
+
+        map.setId(id);
+        map.setConfig(mapConfig);
+
+        World world = new World(map);
 
         model.setWorld(world);
 
         if (portalId != null) {
             for (Entity entity : world.getEntities()) {
-                if (entity.getType() == EntityType.PORTAL) {
+                if (entity.getType() == EntityType.PORTAL_SPAWN) {
                     Portal portal = (Portal) entity;
 
-                    if (portal.isSpawn() && portal.getId().equals(portalId)) {
+                    if (portal.getId().equals(portalId)) {
                         model.getControllable().setPosition(portal.getPosition());
                         break;
                     }

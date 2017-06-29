@@ -16,12 +16,12 @@ import java.util.EnumSet;
 /**
  * Created by MikroAcse on 11-May-17.
  */
-public class Monster extends Mob {
+public class Devil extends Mob {
     private CollisionAvoidingAi collisionAvoidingAi;
     private AttackAi attackAi;
 
-    public Monster(World world, String name, int x, int y) {
-        super(EntityType.MONSTER, world, name, x, y, 2.5f);
+    public Devil(World world, int x, int y) {
+        super(EntityType.DEVIL, world, x, y, 2.5f);
 
         getParameters().add(Parameter.VULNERABLE);
 

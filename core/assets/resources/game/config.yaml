@@ -11,5 +11,4 @@ files:
   - eclipse-chambers/map.tmx
   configs:
   - items.yaml
-  - map-shared.yaml
   - maps/*

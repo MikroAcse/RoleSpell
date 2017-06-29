@@ -38,8 +38,8 @@ public class EntityView extends Image implements Pool.Poolable {
                 return bundle.getTexture("entities/npc");
             case PLAYER:
                 return bundle.getTexture("entities/player");
-            case MONSTER:
-                return bundle.getTexture("entities/monsters/monster");
+            case DEVIL:
+                return bundle.getTexture("entities/monsters/devil");
             case OGREMAGI:
                 return bundle.getTexture("entities/monsters/ogremagi");
             case PORTAL:

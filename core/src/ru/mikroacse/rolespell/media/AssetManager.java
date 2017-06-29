@@ -23,10 +23,13 @@ import java.util.List;
  * Created by MikroAcse on 08.07.2016.
  */
 public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
-    public static final String ASSETS_DIRECTORY = "";
-    public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
+    private static final String ASSETS_DIRECTORY = "";
+
     public static final String APP_CONFIG = ASSETS_DIRECTORY + "config.yaml";
+
     public static final String LANGUAGE_BUNDLE = ASSETS_DIRECTORY + "languages/bundle";
+
+    private static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
 
     public AssetManager(int initialWidth, int initialHeight) {
         super(initialWidth, initialHeight);
@@ -36,7 +39,8 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
     public void loadBundle(Bundle bundle, boolean sync) {
         Gdx.app.log("LOADING", "loading bundle: " + bundle);
 
-        ConfigurationNode config = null;
+        ConfigurationNode config;
+
         try {
             FileReader configReader = new FileReader(getBundleMainConfigPath(bundle));
 
@@ -58,35 +62,35 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
         // TODO: beautify
 
-        List<String> textures = files.getListOrNull("textures");
+        List<String> textures = files.get("textures", null);
         if (textures != null)
             loadAssets(assetBundle, textures, getBundleTexturePath(bundle), Texture.class);
 
-        List<String> sounds = files.getListOrNull("sounds");
+        List<String> sounds = files.get("sounds", null);
         if (sounds != null)
             loadAssets(assetBundle, sounds, getBundleSoundPath(bundle), Sound.class);
 
-        List<String> music = files.getListOrNull("music");
+        List<String> music = files.get("music", null);
         if (music != null)
             loadAssets(assetBundle, music, getBundleMusicPath(bundle), Music.class);
 
-        List<String> fonts = files.getListOrNull("fonts");
+        List<String> fonts = files.get("fonts", null);
         if (fonts != null)
             loadAssets(assetBundle, fonts, getBundleFontPath(bundle), BitmapFont.class);
 
-        List<String> maps = files.getListOrNull("maps");
+        List<String> maps = files.get("maps", null);
         if (maps != null)
             loadAssets(assetBundle, maps, getBundleMapPath(bundle), TiledMap.class);
 
-        List<String> atlases = files.getListOrNull("atlases");
+        List<String> atlases = files.get("atlases", null);
         if (atlases != null)
             loadAssets(assetBundle, atlases, getBundleAtlasPath(bundle), TextureAtlas.class);
 
-        List<String> shaders = files.getListOrNull("shaders");
+        List<String> shaders = files.get("shaders", null);
         if (shaders != null)
             loadAssets(assetBundle, shaders, getBundleShaderPath(bundle), ShaderProgram.class);
 
-        List<String> configs = files.getListOrNull("configs");
+        List<String> configs = files.get("configs", null);
         if (configs != null)
             loadAssets(assetBundle, configs, getBundleConfigPath(bundle), ConfigurationNode.class);
 
