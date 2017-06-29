@@ -12,8 +12,11 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
+import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.media.Bundle;
+
+import java.util.Map;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -33,7 +36,7 @@ public class GameModel {
         ConfigurationNode items = RoleSpell.bundle(Bundle.GAME).getConfig("items");
 
         for (String key : items.getMap().keySet()) {
-            itemRepository.addItemConfig(key, items.extractNode(key));
+            itemRepository.add(key, new ItemConfig(items.<Map>get(key)));
         }
     }
 

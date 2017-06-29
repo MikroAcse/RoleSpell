@@ -1,10 +1,28 @@
-# = SPAWNERS
+entities:
+  entity:
+    type: ENTITY
+    count: 1
 
-spawners:
+  dropped-item:
+    parent: entity
+    entity-type: DROPPED_ITEM
+
+  spawner:
+    parent: entity
+
+    type: SPAWNER
+    entity-type: MONSTER
+    interval: 2.0
+    radius: 1.0
+
   player:
-    type: ONCE
+    parent: entity
     entity-type: PLAYER
+
+    # entity will be saved to the global repository
+    # and won't be recreated every time
     shared: true
+
     inventory:
     - item: hand
       hotbar: 0
@@ -19,26 +37,15 @@ spawners:
       hotbar: 1
       chance: 0.5
 
-  monster-spawner:
-    type: SPAWNER
-    entity-type: MONSTER
-    interval: 2
-    radius: 1
-    checker:
-      type: MONSTER_SPAWNER
-      radius: '5'
-
-# = META
-
 meta:
   EMPTY:
-    weight: 1
+    weight: 1.0
     passable: true
   SOLID:
-    weight: 0
+    weight: 0.0
     passable: false
   WATER:
-    weight: 0
+    weight: 0.0
     passable: false
   PATH:
     weight: 0.9

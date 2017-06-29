@@ -11,8 +11,20 @@ import java.util.Map;
  * Created by Vitaly Rudenko on 28-May-17.
  */
 public class ItemConfig extends RecursiveConfigurationNode<ItemConfig> {
+    public ItemConfig(Map<String, Object> map, ItemConfig parent) {
+        super(map, parent);
+    }
+
     public ItemConfig(ConfigurationNode node, ItemConfig parent) {
         super(node, parent);
+    }
+
+    public ItemConfig(Map<String, Object> map) {
+        super(map);
+    }
+
+    public ItemConfig(ConfigurationNode node) {
+        super(node);
     }
 
     public String getName() {

@@ -16,13 +16,13 @@ public class ItemParser {
         ItemConfig itemConfig;
 
         if (value instanceof String) {
-            itemConfig = repository.getConfig((String) value);
+            itemConfig = repository.get((String) value);
 
         } else if (value instanceof Map) {
-            itemConfig = repository.addConfig(new ConfigurationNode((Map) value));
+            itemConfig = repository.add(new ConfigurationNode((Map) value));
 
         } else if (value instanceof ConfigurationNode) {
-            itemConfig = repository.addConfig((ConfigurationNode) value);
+            itemConfig = repository.add((ConfigurationNode) value);
 
         } else {
             throw new IllegalArgumentException("Can parse only strings or nodes.");
