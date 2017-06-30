@@ -57,8 +57,6 @@ public class GameScreen extends Screen {
             ItemConfig itemConfig = new ItemConfig(items.get(key), items.get(key + ".parent", null));
 
             ItemRepository.instance().add(key, itemConfig);
-
-            System.out.println("Added def item: " + key + " " + itemConfig);
         }
 
         // map defaults
@@ -82,8 +80,6 @@ public class GameScreen extends Screen {
 
     // TODO: Bad.
     public void parseMapConfig(MapConfig mapConfig) {
-        System.out.println(mapConfig.getMap());
-
         ConfigurationNode items = mapConfig.getItems();
 
         if(items != null) {
@@ -91,8 +87,6 @@ public class GameScreen extends Screen {
                 ItemConfig itemConfig = new ItemConfig(items.get(key), items.get(key + ".parent", null));
 
                 ItemRepository.instance().add(key, itemConfig);
-
-                System.out.println("Added item: " + key + " " + itemConfig.getMap());
             }
         }
 
@@ -116,8 +110,6 @@ public class GameScreen extends Screen {
             EntityConfig entityConfig = new EntityConfig(value, (String) value.get("parent"));
 
             EntityRepository.instance().add(key, entityConfig);
-
-            System.out.println("Added: " + key + " -> " + entityConfig + " " + entityConfig.getParent());
         }
     }
 

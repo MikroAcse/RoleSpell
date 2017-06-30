@@ -41,7 +41,6 @@ public class SettingsScreen extends Screen {
         renderer.hide();
 
         Gdx.input.setInputProcessor(null);
-        System.out.println("paused");
     }
 
     @Override

@@ -10,7 +10,7 @@ import ru.mikroacse.rolespell.media.Bundle;
  */
 public class AppLang extends Language {
     public AppLang() {
-        Gdx.app.log("LOADING", "loading languages");
+        System.out.println("Loading languages bundle");
 
         load(AssetManager.LANGUAGE_BUNDLE);
     }

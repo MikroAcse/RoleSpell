@@ -37,7 +37,7 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
     @Override
     public void loadBundle(Bundle bundle, boolean sync) {
-        Gdx.app.log("LOADING", "loading bundle: " + bundle);
+        System.out.println("Loading resources bundle: " + bundle);
 
         ConfigurationNode config;
 
@@ -46,7 +46,7 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
             config = new ConfigurationNode(new YamlProvider(configReader));
         } catch (FileNotFoundException e) {
-            System.out.println("No bundle configuration found! (" + bundle.getName() + ")");
+            System.err.println("No bundle configuration found! (" + bundle.getName() + ")");
             return;
         }
 

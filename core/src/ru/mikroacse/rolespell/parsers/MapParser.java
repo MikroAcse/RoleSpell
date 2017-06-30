@@ -26,7 +26,6 @@ public class MapParser {
 
             Entity entity = createEntity(object, world, x, y);
 
-            System.out.println("GG " + entity);
             if (entity != null) {
                 entities.add(entity);
             }
@@ -44,10 +43,7 @@ public class MapParser {
             return null;
         }
 
-        System.out.println("Creating " + id);
         Entity entity = EntityParser.create(EntityRepository.instance().get(id), world, x, y);
-
-        System.out.println("BB entity");
 
         if(entity != null) {
             entity.setId(id);

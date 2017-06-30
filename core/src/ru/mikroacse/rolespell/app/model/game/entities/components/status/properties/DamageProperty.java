@@ -25,9 +25,6 @@ public class DamageProperty extends Property {
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthProperty health = status.getProperty(HealthProperty.class);
 
-        if (entity.getType() == EntityType.OGREMAGI) {
-            System.out.println(getValue());
-        }
         health.damage(getValue());
         return true;
     }

@@ -108,14 +108,10 @@ public class World {
         entities.addAll(MapParser.getEntities(this, map, Map.Layer.ENTITIES));
         entities.addAll(MapParser.getEntities(this, map, Map.Layer.PORTALS));
 
-        System.out.println("Entities: " + entities.size);
-
         for (Entity entity : entities) {
-            System.out.println("Created entity: " + entity);
-
             if (entity.getType() == EntityType.PLAYER) {
                 if (player != null) {
-                    System.out.println("World: player entity already exists!");
+                    System.err.println("World: player entity already exists!");
                 }
 
                 player = (Player) entity;

@@ -32,8 +32,6 @@ public class TeleportAi extends BehaviorAi {
 
         if (result) {
             // TODO: beautify
-            System.out.println("teleporting to " + teleportBehavior.getPortal().getDestination());
-
             ((GameScreen) RoleSpell.screens().getScreen(ScreenManager.BundledScreen.GAME))
                     .setWorld(teleportBehavior.getPortal().getDestination(), teleportBehavior.getPortal().getId());
         }

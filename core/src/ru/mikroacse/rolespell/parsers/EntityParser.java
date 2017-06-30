@@ -42,8 +42,6 @@ public class EntityParser {
     }
 
     public static Entity create(EntityConfig config, World world, int x, int y) {
-        System.out.println("AA " + config.getMap());
-
         EntityType type = config.getType(EntityType.ENTITY);
 
         Entity entity = EntityType.create(type, world, x, y);

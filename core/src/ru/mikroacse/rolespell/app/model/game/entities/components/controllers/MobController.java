@@ -109,17 +109,14 @@ public class MobController extends Component {
 
             attackAi.setAttackTimer(weapon.getAttackTimer());
 
-            System.out.println("weapon: " + weapon.getName());
-            System.out.println("timer: " + weapon.getAttackTimer());
-
             damage.resume();
         } else {
-            System.out.println("damage paused");
             damage.pause();
         }
     }
 
     public void die() {
+        // TODO: remove
         if (getEntity().getType() == EntityType.PLAYER) {
             System.out.println("Player nearly died");
             return;

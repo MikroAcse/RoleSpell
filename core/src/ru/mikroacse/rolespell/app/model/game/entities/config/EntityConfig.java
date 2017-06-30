@@ -30,8 +30,6 @@ public class EntityConfig extends RecursiveConfigurationNode<EntityConfig> {
     public EntityType getType(EntityType defaultValue) {
         String type = get("type", null);
 
-        System.out.println("get type: " + type + " " + defaultValue + " " + get("type", null) + " " + getParent() + " " + parent);
-
         return type != null? EntityType.valueOf(type) : defaultValue;
     }
 

@@ -196,7 +196,8 @@ public class WorldRenderer extends Group {
 
         // add new views and names
         for (Entity entity : world.getEntities()) {
-            if (entity.getType() == EntityType.PORTAL) {
+            // TODO: somehow exclude undrawable entity types
+            if (entity.getType() == EntityType.PORTAL_SPAWN) {
                 continue;
             }
 

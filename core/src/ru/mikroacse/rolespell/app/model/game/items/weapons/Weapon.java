@@ -24,6 +24,8 @@ public class Weapon extends Item {
 
     @Override
     public void setConfig(ItemConfig config) {
+        super.setConfig(config);
+
         attackTimer = TimerParser.parse(config.get("attack-timer"));
         damage = IntervalParser.parse(config.get("damage"));
 
