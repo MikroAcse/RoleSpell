@@ -6,9 +6,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
-import ru.mikroacse.rolespell.media.Bundle;
-
-import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 09-May-17.
@@ -25,14 +22,14 @@ public class Map {
         this.map = map;
     }
 
+    public ConfigurationNode getConfig() {
+        return config;
+    }
+
     public void setConfig(MapConfig config) {
         this.config = config;
 
         this.name = config.getName(name);
-    }
-
-    public ConfigurationNode getConfig() {
-        return config;
     }
 
     public IntVector2 getCellPosition(float x, float y) {

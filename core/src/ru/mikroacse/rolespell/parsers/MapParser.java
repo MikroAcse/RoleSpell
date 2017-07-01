@@ -39,13 +39,13 @@ public class MapParser {
 
         String id = properties.get("id", entityMapObject.getName(), String.class);
 
-        if(id == null) {
+        if (id == null) {
             return null;
         }
 
         Entity entity = EntityParser.create(EntityRepository.instance().get(id), world, x, y);
 
-        if(entity != null) {
+        if (entity != null) {
             entity.setId(id);
         }
 

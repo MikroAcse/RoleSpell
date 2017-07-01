@@ -2,7 +2,6 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.status.propert
 
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 
 /**

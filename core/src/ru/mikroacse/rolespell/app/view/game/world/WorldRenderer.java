@@ -13,7 +13,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.Moveme
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 import ru.mikroacse.rolespell.app.view.game.entities.EntityView;

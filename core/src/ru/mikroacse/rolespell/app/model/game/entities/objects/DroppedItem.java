@@ -35,17 +35,17 @@ public class DroppedItem<T extends Item> extends Entity {
     public void setConfig(EntityConfig config) {
         super.setConfig(config);
 
-        if(config.contains("item")) {
+        if (config.contains("item")) {
             item = (T) ItemParser.parse(config.get("item"), ItemRepository.instance());
         }
     }
 
-    public void setItem(T item) {
-        this.item = item;
-    }
-
     public T getItem() {
         return item;
+    }
+
+    public void setItem(T item) {
+        this.item = item;
     }
 
     @Override

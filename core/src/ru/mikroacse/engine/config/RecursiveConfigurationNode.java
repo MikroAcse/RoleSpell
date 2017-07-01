@@ -2,7 +2,6 @@ package ru.mikroacse.engine.config;
 
 import ru.mikroacse.engine.config.providers.ConfigurationProvider;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

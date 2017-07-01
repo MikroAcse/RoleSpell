@@ -34,7 +34,7 @@ public class ItemConfig extends RecursiveConfigurationNode<ItemConfig> {
     public ItemType getType(ItemType defaultValue) {
         String type = get("type", null);
 
-        return type != null? ItemType.valueOf(type) : defaultValue;
+        return type != null ? ItemType.valueOf(type) : defaultValue;
     }
 
     public String getTexture(String defaultValue) {

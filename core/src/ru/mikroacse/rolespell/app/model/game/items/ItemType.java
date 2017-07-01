@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.model.game.items;
 
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
 import ru.mikroacse.rolespell.app.model.game.items.weapons.Weapon;
 
 /**

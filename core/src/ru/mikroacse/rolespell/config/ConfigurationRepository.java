@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.config;
 
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.config.RecursiveConfigurationNode;
 
 import java.util.HashMap;

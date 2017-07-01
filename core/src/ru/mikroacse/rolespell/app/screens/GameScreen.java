@@ -82,7 +82,7 @@ public class GameScreen extends Screen {
     public void parseMapConfig(MapConfig mapConfig) {
         ConfigurationNode items = mapConfig.getItems();
 
-        if(items != null) {
+        if (items != null) {
             for (String key : items.getMap().keySet()) {
                 ItemConfig itemConfig = new ItemConfig(items.get(key), items.get(key + ".parent", null));
 
@@ -95,11 +95,11 @@ public class GameScreen extends Screen {
         ConfigurationNode entities = mapConfig.getEntities();
         ConfigurationNode portals = mapConfig.getPortals();
 
-        if(entities != null) {
+        if (entities != null) {
             entries.addAll(entities.getMap().entrySet());
         }
 
-        if(portals != null) {
+        if (portals != null) {
             entries.addAll(portals.getMap().entrySet());
         }
 
@@ -119,7 +119,7 @@ public class GameScreen extends Screen {
 
         MapConfig mapConfig;
 
-        if(MapRepository.instance().contains(id)) {
+        if (MapRepository.instance().contains(id)) {
             mapConfig = MapRepository.instance().get(id);
         } else {
             mapConfig = new MapConfig(bundle(Bundle.GAME).getConfig("maps/" + id));

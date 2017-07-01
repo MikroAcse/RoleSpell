@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.config;
 
-import com.badlogic.gdx.Gdx;
 import ru.mikroacse.engine.config.Language;
 import ru.mikroacse.rolespell.media.AssetManager;
 import ru.mikroacse.rolespell.media.Bundle;

@@ -1,6 +1,5 @@
 package ru.mikroacse.rolespell.app.model.game.entities.config;
 
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.config.RecursiveConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
@@ -30,7 +29,7 @@ public class EntityConfig extends RecursiveConfigurationNode<EntityConfig> {
     public EntityType getType(EntityType defaultValue) {
         String type = get("type", null);
 
-        return type != null? EntityType.valueOf(type) : defaultValue;
+        return type != null ? EntityType.valueOf(type) : defaultValue;
     }
 
     public boolean isShared(boolean defaultValue) {

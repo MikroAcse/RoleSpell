@@ -6,11 +6,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.DroppedItem;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.inventory.Inventory;
-import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.Map;

@@ -1,26 +1,15 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
-import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
-import ru.mikroacse.rolespell.media.Bundle;
-
-import java.util.Map;
-
-import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
 /**
  * Created by MikroAcse on 22.03.2017.
@@ -62,17 +51,6 @@ public class GameModel {
         return true;
     }
 
-    public boolean tryPickup(Entity entity) {
-        // TODO: magic number (maximum pickup distance)
-        if (controllable.getPosition().distance(entity.getPosition()) > 2) {
-            return false;
-        }
-
-        InventoryComponent inventory = controllable.getComponent(InventoryComponent.class);
-
-        return inventory.pickup(entity);
-    }
-
     public boolean tryRouteTo(int x, int y) {
         PathMovementComponent movement = controllable.getComponent(PathMovementComponent.class);
 
@@ -108,7 +86,8 @@ public class GameModel {
     }
 
     private void detachWorld(World world) {
-
+        observable = null;
+        controllable = null;
     }
 
     public Entity getControllable() {

@@ -18,6 +18,10 @@ public abstract class Item {
 
     }
 
+    public ItemConfig getConfig() {
+        return config;
+    }
+
     public void setConfig(ItemConfig config) {
         this.config = config;
 
@@ -26,10 +30,6 @@ public abstract class Item {
 
         throwable = config.isThrowable(throwable);
         pickable = config.isPickable(pickable);
-    }
-
-    public ItemConfig getConfig() {
-        return config;
     }
 
     public String getName() {

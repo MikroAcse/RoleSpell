@@ -29,6 +29,10 @@ public abstract class Entity {
         parameters = Parameter.NONE;
     }
 
+    public EntityConfig getConfig() {
+        return config;
+    }
+
     public void setConfig(EntityConfig config) {
         this.config = config;
 
@@ -37,11 +41,6 @@ public abstract class Entity {
 
         shared = config.isShared(false);
     }
-
-    public EntityConfig getConfig() {
-        return config;
-    }
-
 
     /**
      * Updates all entity's components.
@@ -115,12 +114,12 @@ public abstract class Entity {
         return result;
     }
 
-    protected void setParameters(EnumSet<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
     public EnumSet<Parameter> getParameters() {
         return parameters;
+    }
+
+    protected void setParameters(EnumSet<Parameter> parameters) {
+        this.parameters = parameters;
     }
 
     public boolean hasParameter(Parameter parameter) {

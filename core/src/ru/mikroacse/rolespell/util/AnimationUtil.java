@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.media.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.bundle;

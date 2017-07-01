@@ -5,7 +5,6 @@ import ru.mikroacse.engine.config.RecursiveConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.world.Map.Meta;
 import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
 
-import java.util.List;
 import java.util.Map;
 
 /**
