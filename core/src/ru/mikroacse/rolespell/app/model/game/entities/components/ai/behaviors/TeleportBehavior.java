@@ -32,7 +32,7 @@ public class TeleportBehavior extends Behavior {
                 continue;
             }
 
-            this.portal = portal;
+            this.portal = (Portal) target;
 
             return true;
         }

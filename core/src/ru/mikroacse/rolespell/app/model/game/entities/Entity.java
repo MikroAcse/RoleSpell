@@ -184,11 +184,12 @@ public abstract class Entity {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" +
+        return "Entity{" +
                 "world=" + world +
                 ", type=" + type +
-                ", id=" + id +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", shared=" + shared +
                 '}';
     }
 

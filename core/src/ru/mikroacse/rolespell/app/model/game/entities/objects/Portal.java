@@ -65,4 +65,12 @@ public class Portal extends Entity {
     public IntVector2 getOrigin() {
         return movement.getOrigin();
     }
+
+    @Override
+    public String toString() {
+        return "Portal{" +
+                "spawn='" + spawn + '\'' +
+                ", destination='" + destination + '\'' +
+                '}';
+    }
 }

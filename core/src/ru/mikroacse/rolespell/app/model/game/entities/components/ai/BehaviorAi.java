@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
@@ -74,12 +75,7 @@ public abstract class BehaviorAi extends Component {
             }
         };
 
-        behaviorListener = new Behavior.Listener() {
-            @Override
-            public void timer(Behavior behavior) {
-                process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
-            }
-        };
+        behaviorListener = behavior -> process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
     }
 
     public BehaviorAi(Entity entity, int deactivationDistance) {
@@ -95,6 +91,7 @@ public abstract class BehaviorAi extends Component {
     public boolean update(float delta) {
         boolean updated = false;
 
+        // TODO: make a snapshot of array
         for (int i = behaviors.size - 1; i >= 0; i--) {
             updated |= behaviors.get(i).update(delta);
         }
@@ -161,7 +158,7 @@ public abstract class BehaviorAi extends Component {
                 return Double.compare(getDistance(o1), getDistance(o2));
             }
 
-            public double getDistance(Entity target) {
+            double getDistance(Entity target) {
                 IntVector2 position = entity.getPosition();
 
                 IntVector2 targetPosition = target.getPosition();
@@ -247,9 +244,9 @@ public abstract class BehaviorAi extends Component {
         attachTarget(target);
     }
 
-    public boolean removeTarget(Entity target) {
+    public void removeTarget(Entity target) {
         detachTarget(target);
-        return targets.removeValue(target, true);
+        targets.removeValue(target, true);
     }
 
     public void clearTargets() {
@@ -263,7 +260,7 @@ public abstract class BehaviorAi extends Component {
         behaviors.add(behavior);
         attachBehavior(behavior);
 
-        // TODO: move to list implementation?
+        // TODO: move to the list implementation?
         behaviors.sort();
         behaviors.sort(Collections.reverseOrder());
     }
@@ -277,10 +274,6 @@ public abstract class BehaviorAi extends Component {
         behaviors.forEach(this::detachBehavior);
 
         behaviors.clear();
-    }
-
-    public Array<Entity> getTargets() {
-        return targets;
     }
 
     public double getActivationDistance() {

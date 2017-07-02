@@ -13,6 +13,7 @@ import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
+import ru.mikroacse.rolespell.app.model.game.entities.objects.PortalSpawn;
 import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
 import ru.mikroacse.rolespell.app.model.game.world.Map;
@@ -122,7 +123,8 @@ public class GameScreen extends Screen {
         if (MapRepository.instance().contains(id)) {
             mapConfig = MapRepository.instance().get(id);
         } else {
-            mapConfig = new MapConfig(bundle(Bundle.GAME).getConfig("maps/" + id));
+            ConfigurationNode node = bundle(Bundle.GAME).getConfig("maps/" + id);
+            mapConfig = new MapConfig(node, node.get("parent", null));
             MapRepository.instance().add(id, mapConfig);
         }
 
@@ -140,10 +142,10 @@ public class GameScreen extends Screen {
         if (portalId != null) {
             for (Entity entity : world.getEntities()) {
                 if (entity.getType() == EntityType.PORTAL_SPAWN) {
-                    Portal portal = (Portal) entity;
+                    PortalSpawn portalSpawn = (PortalSpawn) entity;
 
-                    if (portal.getId().equals(portalId)) {
-                        model.getControllable().setPosition(portal.getPosition());
+                    if (portalSpawn.getId().equals(portalId)) {
+                        model.getControllable().setPosition(portalSpawn.getPosition());
                         break;
                     }
                 }

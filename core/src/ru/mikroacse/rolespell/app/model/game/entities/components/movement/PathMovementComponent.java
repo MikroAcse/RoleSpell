@@ -89,7 +89,6 @@ public class PathMovementComponent extends MovementComponent {
             destination = newDestination;
         }
 
-
         if (destination == null) {
             return null;
         }
@@ -132,23 +131,23 @@ public class PathMovementComponent extends MovementComponent {
 
     public void setPath(Array<IntVector2> path) {
         this.path = path;
-        listeners.pathChanged(this, Listener.Event.PATH_SET, path);
+        listeners.pathChanged(this, Listener.Event.PATH_SET, this.path);
     }
 
     public void addToPath(Array<IntVector2> path) {
         this.path.addAll(path);
-        listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_ADDED, this.path);
     }
 
     public void addToPath(IntVector2 position) {
         path.add(position);
-        listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_ADDED, this.path);
 
     }
 
     public void clearPath() {
         path.clear();
-        listeners.pathChanged(this, Listener.Event.PATH_CLEARED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_CLEARED, this.path);
     }
 
     public boolean isPathEmpty() {

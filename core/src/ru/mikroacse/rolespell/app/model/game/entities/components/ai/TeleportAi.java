@@ -33,7 +33,7 @@ public class TeleportAi extends BehaviorAi {
         if (result) {
             // TODO: beautify
             ((GameScreen) RoleSpell.screens().getScreen(ScreenManager.BundledScreen.GAME))
-                    .setWorld(teleportBehavior.getPortal().getDestination(), teleportBehavior.getPortal().getId());
+                    .setWorld(teleportBehavior.getPortal().getDestination(), teleportBehavior.getPortal().getSpawn());
         }
 
         return result;
