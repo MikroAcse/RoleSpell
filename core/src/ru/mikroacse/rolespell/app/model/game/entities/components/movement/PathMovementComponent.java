@@ -73,7 +73,7 @@ public class PathMovementComponent extends MovementComponent {
                         false);
 
                 if (passableCells.size != 0) {
-                    // nearest cell to controllable entity
+                    // nearest cell to the entity
                     passableCells.sort((o1, o2) -> {
                         double d1 = o1.distance(getPosition());
                         double d2 = o2.distance(getPosition());

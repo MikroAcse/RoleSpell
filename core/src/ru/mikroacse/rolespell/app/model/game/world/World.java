@@ -120,6 +120,17 @@ public class World {
         }
     }
 
+    public void update(float delta) {
+        Array<Entity> entities = new Array<>(getEntities());
+
+        for (Entity entity : entities) {
+            entity.update(delta);
+        }
+
+        entities.clear();
+        entities.shrink();
+    }
+
     public void dropItem(Item item, int x, int y) {
         DroppedItem<Item> droppedItem = new DroppedItem<>(this, item, x, y);
 

@@ -26,11 +26,7 @@ public class GameModel {
     }
 
     public void update(float delta) {
-        Array<Entity> entities = new Array<>(world.getEntities());
-
-        for (Entity entity : entities) {
-            entity.update(delta);
-        }
+        world.update(delta);
     }
 
     public boolean tryAttack(int x, int y) {
