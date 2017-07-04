@@ -15,7 +15,7 @@ entities:
       hotbar: 2
     - item:
         parent: ultimate-sword
-        name: ULTRA SWORD!11
+        name: items.weapons.custom.ultra-sword.name
       index: 10
       hotbar: 1
       chance: 0.5

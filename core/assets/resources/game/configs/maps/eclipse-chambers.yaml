@@ -16,7 +16,7 @@ entities:
   ogremagi:
     parent: entity
     type: OGREMAGI
-    name: Ogremagi
+    name: entities.monsters.ogremagi.name
     inventory:
     - item: ultimate-sword
       chance: 0.5
@@ -31,7 +31,7 @@ entities:
 items:
   custom-sword:
     parent: ultimate-sword
-    name: Meme Sword
+    name: items.weapons.custom.meme-sword.name
     damage: 100.0
 
 # = PORTALS

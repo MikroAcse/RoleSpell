@@ -10,16 +10,16 @@ entities:
     type: NPC
   nina:
     parent: npc
-    name: Nina
+    name: entities.npc.nina.name
   zelda:
     parent: npc
-    name: Zelda
+    name: entities.npc.zelda.name
   elizabeth:
     parent: npc
-    name: Elizabeth
+    name: entities.npc.elizabeth.name
   lela:
     parent: npc
-    name: Lela
+    name: entities.npc.lela.name
   dropped-sword:
     parent: dropped-item
     item: wooden-sword

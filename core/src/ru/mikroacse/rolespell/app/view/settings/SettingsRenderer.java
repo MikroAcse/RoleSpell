@@ -49,7 +49,7 @@ public class SettingsRenderer extends Renderer {
 
         LabeledSlider musicSlider = createSlider("music_slider.label", SettingsAction.MUSIC);
         LabeledSlider soundsSlider = createSlider("sounds_slider.label", SettingsAction.SOUNDS);
-        backButton = createButton("go_to_menu", SettingsAction.GO_TO_MENU);
+        backButton = createButton("go_to_menu.label", SettingsAction.GO_TO_MENU);
 
         // TODO: universal listener
         backButton.addListener(new ClickListener() {
