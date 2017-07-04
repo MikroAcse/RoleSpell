@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import ru.mikroacse.rolespell.app.controller.Controller;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
+import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.settings.SettingsRenderer;
@@ -16,16 +17,12 @@ import static ru.mikroacse.rolespell.RoleSpell.screens;
 public class SettingsController extends Controller {
     private SettingsRenderer renderer;
 
-    private RendererListener rendererListener;
-
-    private SettingsRenderer.ActionListener actionListener;
-
     private SettingsAction action;
 
     public SettingsController(SettingsRenderer renderer) {
         this.renderer = renderer;
 
-        rendererListener = new RendererListener() {
+        RendererListener rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
                 if (action == null) {
@@ -43,13 +40,10 @@ public class SettingsController extends Controller {
             }
         };
 
-        actionListener = new SettingsRenderer.ActionListener() {
-            @Override
-            public void onAction(SettingsAction action) {
-                SettingsController.this.action = action;
+        SettingsRenderer.ActionListener actionListener = action -> {
+            SettingsController.this.action = action;
 
-                renderer.hide();
-            }
+            renderer.hide();
         };
 
         renderer.addListener(rendererListener);

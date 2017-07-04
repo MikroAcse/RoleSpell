@@ -20,16 +20,14 @@ public class TweenManager extends aurelienribon.tweenengine.TweenManager {
     }
 
     private void finishObjects(Object target, List<BaseTween<?>> objects) {
-        for (int i = 0, n = objects.size(); i < n; i++) {
-            BaseTween<?> baseTween = objects.get(i);
-
+        for (BaseTween<?> baseTween : objects) {
             if (baseTween instanceof Tween) {
-                Tween tween = (Tween) objects.get(i);
-                if (tween != null && tween.getTarget().equals(target)) {
+                Tween tween = (Tween) baseTween;
+                if (tween.getTarget().equals(target)) {
                     tween.update(tween.getFullDuration());
                 }
             } else if (baseTween instanceof Timeline) {
-                Timeline timeline = (Timeline) objects.get(i);
+                Timeline timeline = (Timeline) baseTween;
                 finishObjects(target, timeline.getChildren());
             }
         }

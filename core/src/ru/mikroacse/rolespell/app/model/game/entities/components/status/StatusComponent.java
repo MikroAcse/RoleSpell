@@ -26,12 +26,7 @@ public class StatusComponent extends Component {
 
         properties = new Array<>();
 
-        propertyListener = new Property.Listener() {
-            @Override
-            public void updated(Property property, double previousValue, double currentValue) {
-                listeners.propertyUpdated(StatusComponent.this, property, previousValue, currentValue);
-            }
-        };
+        propertyListener = (property, previousValue, currentValue) -> listeners.propertyUpdated(StatusComponent.this, property, previousValue, currentValue);
     }
 
     @Override
@@ -122,7 +117,7 @@ public class StatusComponent extends Component {
      * @return All status properties of given class.
      */
     public <T extends Property> Array<T> getProperties(Class<T> parameterClass) {
-        Array<T> result = new Array<T>();
+        Array<T> result = new Array<>();
 
         for (Property property : properties) {
             if (parameterClass.isInstance(property)) {

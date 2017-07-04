@@ -7,7 +7,6 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
@@ -29,9 +28,9 @@ public class GameModel {
         world.update(delta);
     }
 
-    public boolean tryAttack(int x, int y) {
+    public void tryAttack(int x, int y) {
         if (!world.getMap().isValidPosition(x, y)) {
-            return false;
+            return;
         }
 
         Array<Entity> entities = world.getEntitiesAt(x, y);
@@ -44,18 +43,17 @@ public class GameModel {
             attackAi.setTarget(entities.get(0));
         }
 
-        return true;
     }
 
-    public boolean tryRouteTo(int x, int y) {
+    public void tryRouteTo(int x, int y) {
         PathMovementComponent movement = controllable.getComponent(PathMovementComponent.class);
 
         // TODO: magic numbers
-        return movement.tryRouteTo(
+        movement.tryRouteTo(
                 new IntVector2(x, y),
                 Priority.HIGH,
                 10, 15,
-                0, 15) != null;
+                0, 15);
     }
 
     public void stopAttacking() {

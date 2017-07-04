@@ -6,5 +6,5 @@ package ru.mikroacse.rolespell.app.model.menu;
 public enum MenuAction {
     NEW_GAME,
     SETTINGS,
-    EXIT;
+    EXIT
 }

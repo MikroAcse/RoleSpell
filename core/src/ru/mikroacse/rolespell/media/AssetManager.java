@@ -99,32 +99,28 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
         }
     }
 
-    private void loadAssets(AssetBundle bundle, List<String> assets, String path, Class assetClass) {
+    private void loadAssets(AssetBundle bundle, List<String> assets, String path, Class<?> assetClass) {
         for (String asset : assets) {
             String assetPath = path + asset;
 
             // recursively load all files in a path (i.e. "files/*")
             if (asset.endsWith("*")) {
-                asset = asset.substring(0, asset.length() - 1);
-
                 FileHandle assetHandle = Gdx.files.internal(assetPath.substring(0, assetPath.length() - 1));
 
                 Array<FileHandle> subHandles = new Array<>();
                 FileUtil.getHandles(assetHandle, subHandles);
 
                 for (FileHandle subHandle : subHandles) {
-                    assetPath = subHandle.file().getPath();
-                    assetPath = assetPath.replaceAll("\\\\", "/");
+                    String subAssetPath = subHandle.file().getPath();
+                    subAssetPath = subAssetPath.replaceAll("\\\\", "/");
 
-                    asset = assetPath.replace(path, "");
+                    String assetName = FileUtil.getFilename(subAssetPath.replace(path, ""));
 
-                    bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
+                    bundle.loadAsset(assetName, subAssetPath, assetClass);
                 }
-
-                continue;
+            } else {
+                bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
             }
-
-            bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
         }
     }
 

@@ -12,12 +12,10 @@ import static ru.mikroacse.rolespell.RoleSpell.screens;
 public class LoaderController {
     private LoaderRenderer renderer;
 
-    private RendererListener rendererListener;
-
     public LoaderController(LoaderRenderer renderer) {
         this.renderer = renderer;
 
-        rendererListener = new RendererListener() {
+        RendererListener rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
                 screens().setWaited();

@@ -185,9 +185,9 @@ public class GameRenderer extends Renderer {
         return state;
     }
 
-    public boolean setState(State state) {
+    public void setState(State state) {
         if (this.state == state) {
-            return false;
+            return;
         }
 
         this.state = state;
@@ -221,7 +221,6 @@ public class GameRenderer extends Renderer {
                 break;
         }
 
-        return true;
     }
 
     public ItemView getDragItem() {

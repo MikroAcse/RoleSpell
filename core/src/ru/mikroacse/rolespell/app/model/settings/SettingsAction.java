@@ -6,5 +6,5 @@ package ru.mikroacse.rolespell.app.model.settings;
 public enum SettingsAction {
     GO_TO_MENU,
     MUSIC,
-    SOUNDS;
+    SOUNDS
 }

@@ -86,8 +86,8 @@ public class ConfigurationNode {
         List<Map<String, Object>> list = get(key);
         List<ConfigurationNode> result = new ArrayList<>();
 
-        for (int i = 0; i < list.size(); i++) {
-            result.add(new ConfigurationNode(list.get(i)));
+        for (Map<String, Object> map : list) {
+            result.add(new ConfigurationNode(map));
         }
 
         return result;

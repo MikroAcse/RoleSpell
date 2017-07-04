@@ -13,9 +13,6 @@ public class Inventory {
 
     private int selected;
 
-    private ItemListListener itemListListener;
-    private ItemListListener hotbarListener;
-
     private Listener listeners;
 
     public Inventory(int size, int hotbarSize) {
@@ -26,14 +23,14 @@ public class Inventory {
 
         selected = 0;
 
-        itemListListener = new ItemListListener() {
+        ItemListListener itemListListener = new ItemListListener() {
             @Override
             public void itemRemoved(ItemList itemList, Item item, int index) {
                 hotbar.removeItem(item);
             }
         };
 
-        hotbarListener = new ItemListListener() {
+        ItemListListener hotbarListener = new ItemListListener() {
             @Override
             public void itemSet(ItemList itemList, int index, Item item) {
                 if (index == selected) {

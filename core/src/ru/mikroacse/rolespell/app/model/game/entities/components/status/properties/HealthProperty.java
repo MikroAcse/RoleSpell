@@ -29,16 +29,15 @@ public class HealthProperty extends Property {
         return true;
     }
 
-    public boolean damage(double value) {
+    public void damage(double value) {
         if (getInterval().isMin()) {
-            return false;
+            return;
         }
 
         getInterval().subtract(value);
 
         lastTimeDamaged = System.currentTimeMillis();
 
-        return true;
     }
 
     public long getLastTimeDamaged() {

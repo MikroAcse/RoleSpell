@@ -74,12 +74,7 @@ public class MobController extends Component {
             }
         };
 
-        inventoryListener = new Inventory.Listener() {
-            @Override
-            public void selected(Inventory inventory, int index, Item item) {
-                reselectItem();
-            }
-        };
+        inventoryListener = (inventory, index, item) -> reselectItem();
     }
 
     public void reselectItem() {

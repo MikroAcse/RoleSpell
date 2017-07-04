@@ -1,7 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.SnapshotArray;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
@@ -83,8 +82,8 @@ public abstract class BehaviorAi extends Component {
     }
 
     @Override
-    public boolean action() {
-        return process(Trigger.ALL, null);
+    public void action() {
+        process(Trigger.ALL, null);
     }
 
     @Override

@@ -29,8 +29,7 @@ public abstract class Component {
         return false;
     }
 
-    public boolean action() {
-        return false;
+    public void action() {
     }
 
     public void dispose() {

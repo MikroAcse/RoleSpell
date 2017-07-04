@@ -14,7 +14,6 @@ import java.util.EnumSet;
  * Created by MikroAcse on 25.03.2017.
  */
 public class Npc extends Mob {
-    private CollisionAvoidingAi collisionAvoidingAi;
     private AttackAi attackAi;
 
     public Npc(World world, int x, int y) {
@@ -34,7 +33,7 @@ public class Npc extends Mob {
 
         // TODO: magic numbers everywhere
 
-        collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
+        CollisionAvoidingAi collisionAvoidingAi = new CollisionAvoidingAi(this, 1, 2, false);
         addComponent(collisionAvoidingAi);
     }
 }

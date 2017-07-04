@@ -126,11 +126,6 @@ public class GameStateProcessor extends StateProcessor {
     }
 
     @Override
-    public void resume() {
-        super.resume();
-    }
-
-    @Override
     public void pause() {
         super.pause();
 

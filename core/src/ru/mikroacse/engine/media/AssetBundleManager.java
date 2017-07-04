@@ -48,10 +48,7 @@ public abstract class AssetBundleManager<K, B extends AssetBundle<?>> {
     }
 
     public boolean isLoaded(K key) {
-        if (assets.containsKey(key)) {
-            return getBundle(key).isLoaded();
-        }
-        return false;
+        return assets.containsKey(key) && getBundle(key).isLoaded();
     }
 
     public void finishLoading(K key) {

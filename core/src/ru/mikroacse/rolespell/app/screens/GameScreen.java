@@ -12,7 +12,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.PortalSpawn;
 import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;

@@ -28,15 +28,14 @@ public class PathMovementComponent extends MovementComponent {
     }
 
     @Override
-    public boolean action() {
+    public void action() {
         if (path.size == 0) {
             priority = Priority.NEVER;
-            return false;
+            return;
         }
 
         moveTo(path.removeIndex(0), getType());
         listeners.pathChanged(this, Listener.Event.PATH_NEXT, path);
-        return true;
     }
 
     /**

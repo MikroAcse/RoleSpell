@@ -15,7 +15,7 @@ public class ListenerSupportFactory {
     public static <T extends Listener> T create(Class<T> listener) {
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]{ListenerSupport.class, listener},
-                new ListenerSupportFactory.ListenerInvocationHandler<T>(listener));
+                new ListenerSupportFactory.ListenerInvocationHandler<>(listener));
     }
 
     private static class ListenerInvocationHandler<T extends Listener> implements InvocationHandler {
@@ -35,7 +35,7 @@ public class ListenerSupportFactory {
                 if ("addListener".equals(methodName)) {
                     listeners.add((T) args[0]);
                 } else if ("removeListener".equals(methodName)) {
-                    listeners.remove(args[0]);
+                    listeners.remove((T) args[0]);
                 } else if ("clearListeners".equals(methodName)) {
                     listeners.clear();
                 }

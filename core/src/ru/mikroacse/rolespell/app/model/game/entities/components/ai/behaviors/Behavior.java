@@ -43,22 +43,13 @@ public abstract class Behavior implements Comparable<Behavior> {
 
         listeners = ListenerSupportFactory.create(Listener.class);
 
-        timerListener = new Timer.Listener() {
-            @Override
-            public void action(Timer timer) {
-                listeners.timer(Behavior.this);
-            }
-        };
+        timerListener = timer -> listeners.timer(Behavior.this);
 
         enabled = true;
     }
 
     public boolean update(float delta) {
-        if (!enabled || timer == null) {
-            return false;
-        }
-
-        return timer.update(delta);
+        return enabled && timer != null && timer.update(delta);
     }
 
     public abstract boolean process(Entity entity, Array<Entity> targets);
