@@ -4,7 +4,6 @@ import com.badlogic.gdx.Input;
 import ru.mikroacse.rolespell.app.controller.Controller;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.settings.SettingsAction;
-import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.settings.SettingsRenderer;

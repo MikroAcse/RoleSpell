@@ -2,7 +2,6 @@ package ru.mikroacse.rolespell.app.controller.menu;
 
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.menu.MenuAction;
-import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.RendererListener;
 import ru.mikroacse.rolespell.app.view.menu.MenuRenderer;

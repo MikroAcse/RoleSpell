@@ -100,8 +100,6 @@ public class InventoryStateProcessor extends StateProcessor {
                     drop(dragItem);
 
                     renderer.setDragItem(null);
-
-                    getController().setState(GameRenderer.State.GAME);
                     return;
                 }
             }

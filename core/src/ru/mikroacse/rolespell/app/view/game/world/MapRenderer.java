@@ -44,20 +44,20 @@ public class MapRenderer {
 
     public void drawBottomLayers() {
         renderLayers(new Map.Layer[]{
-                Map.Layer.BACKGROUND,
-                Map.Layer.LAYOUT,
-                Map.Layer.BUILDINGS,
-                Map.Layer.BUILDINGS_DECOR,
-                Map.Layer.BOTTOM,
-                Map.Layer.OBJECTS});
+            Map.Layer.BACKGROUND,
+            Map.Layer.LAYOUT,
+            Map.Layer.BUILDINGS,
+            Map.Layer.BUILDINGS_DECOR,
+            Map.Layer.BOTTOM,
+            Map.Layer.OBJECTS});
     }
 
     public void drawTopLayers() {
         renderLayers(new Map.Layer[]{
-                Map.Layer.ADDITIONAL,
-                Map.Layer.BUILDINGS_TOP,
-                Map.Layer.ROOFS,
-                Map.Layer.TOP});
+            Map.Layer.ADDITIONAL,
+            Map.Layer.BUILDINGS_TOP,
+            Map.Layer.ROOFS,
+            Map.Layer.TOP});
     }
 
     public void resize(int width, int height) {
