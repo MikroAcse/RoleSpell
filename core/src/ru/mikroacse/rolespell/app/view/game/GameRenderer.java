@@ -58,14 +58,16 @@ public class GameRenderer extends Renderer {
         addActor(hotbarView);
         addActor(statusView);
         addActor(cursor);
-
-        refreshWorld();
     }
 
     @Override
     public void draw() {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (worldRenderer.getMapRenderer() == null) {
+            return;
+        }
 
         MapRenderer mapRenderer = worldRenderer.getMapRenderer();
         Batch batch = getBatch();
@@ -185,9 +187,9 @@ public class GameRenderer extends Renderer {
         return state;
     }
 
-    public boolean setState(State state) {
+    public void setState(State state) {
         if (this.state == state) {
-            return false;
+            return;
         }
 
         this.state = state;
@@ -221,7 +223,6 @@ public class GameRenderer extends Renderer {
                 break;
         }
 
-        return true;
     }
 
     public ItemView getDragItem() {

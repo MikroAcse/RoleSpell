@@ -12,7 +12,7 @@ import ru.mikroacse.engine.tween.ActorAccessor;
 import ru.mikroacse.engine.tween.TweenManager;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
 import ru.mikroacse.rolespell.config.AppConfig;
-import ru.mikroacse.rolespell.config.Lang;
+import ru.mikroacse.rolespell.config.AppLang;
 import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.AssetManager;
 import ru.mikroacse.rolespell.media.Bundle;
@@ -23,8 +23,8 @@ public class RoleSpell extends Game {
     private static TweenManager tweenManager;
     private static AssetManager assetManager;
     private static ScreenManager screenManager;
-    private static AppConfig appConfig;
-    private static Lang lang;
+    private static AppConfig config;
+    private static AppLang lang;
 
     public static TweenManager tweens() {
         return tweenManager;
@@ -43,10 +43,10 @@ public class RoleSpell extends Game {
     }
 
     public static AppConfig config() {
-        return appConfig;
+        return config;
     }
 
-    public static Lang lang() {
+    public static AppLang lang() {
         return lang;
     }
 
@@ -76,22 +76,22 @@ public class RoleSpell extends Game {
         tweenManager = new TweenManager();
 
         try {
-            appConfig = new AppConfig();
+            config = new AppConfig();
         } catch (FileNotFoundException e) {
             System.err.println("App config not found!");
         }
 
-        lang = new Lang();
+        lang = new AppLang();
 
         // TODO: magic numbers (initial screen size)
         assetManager = new AssetManager(1280, 720);
 
         screenManager = new ScreenManager(this);
 
-        assetManager.loadBundle(Bundle.GLOBAL);
-        assetManager.finishLoading();
+        assetManager.loadBundle(Bundle.GLOBAL, true);
 
-        assetManager.loadBundle(Bundle.SETTINGS);
+        //assetManager.loadBundle(Bundle.SETTINGS);
+        assetManager.loadBundle(Bundle.GAME, true);
 
         screenManager.setScreen(ScreenManager.BundledScreen.GAME);
     }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.actors.MeasurableActor;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.tween.ActorAccessor;
@@ -49,7 +50,7 @@ public class SettingsRenderer extends Renderer {
 
         LabeledSlider musicSlider = createSlider("music_slider.label", SettingsAction.MUSIC);
         LabeledSlider soundsSlider = createSlider("sounds_slider.label", SettingsAction.SOUNDS);
-        backButton = createButton("go_to_menu", SettingsAction.GO_TO_MENU);
+        backButton = createButton("go_to_menu.label", SettingsAction.GO_TO_MENU);
 
         // TODO: universal listener
         backButton.addListener(new ClickListener() {
@@ -209,7 +210,7 @@ public class SettingsRenderer extends Renderer {
         return slider;
     }
 
-    public interface ActionListener extends ru.mikroacse.engine.listeners.Listener {
+    public interface ActionListener extends AbstractListener {
         void onAction(SettingsAction action);
     }
 }

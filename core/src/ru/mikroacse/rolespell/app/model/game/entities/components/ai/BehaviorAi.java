@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityListener;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
@@ -37,6 +38,9 @@ public abstract class BehaviorAi extends Component {
     private MovementComponent.Listener movementListener;
     private Behavior.Listener behaviorListener;
 
+    private EntityListener entityListener;
+    private WorldListener worldListener;
+
     /**
      * @param entity               Entity to which behavior is being applied
      * @param activationDistance   Global target activation distance (use 0 to customize it for every behavior)
@@ -56,16 +60,32 @@ public abstract class BehaviorAi extends Component {
 
         targetTypes = EntityType.ALL;
         blacklist = false;
+    }
 
-        // TODO: react on world change
-        World world = entity.getWorld();
+    public BehaviorAi(Entity entity, int deactivationDistance) {
+        this(entity, 0, deactivationDistance);
+    }
 
-        world.addListener(new WorldListener() {
+    @Override
+    protected void initListeners() {
+        entityListener = new EntityListener() {
+            @Override
+            public void worldChanged(Entity entity, World prev, World current) {
+                if (prev != null) {
+                    prev.removeListener(worldListener);
+                }
+                if (current != null) {
+                    current.addListener(worldListener);
+                }
+            }
+        };
+
+        worldListener = new WorldListener() {
             @Override
             public void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
             }
-        });
+        };
 
         movementListener = new MovementListener() {
             @Override
@@ -74,27 +94,19 @@ public abstract class BehaviorAi extends Component {
             }
         };
 
-        behaviorListener = new Behavior.Listener() {
-            @Override
-            public void timer(Behavior behavior) {
-                process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
-            }
-        };
-    }
-
-    public BehaviorAi(Entity entity, int deactivationDistance) {
-        this(entity, 0, deactivationDistance);
+        behaviorListener = behavior -> process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
     }
 
     @Override
-    public boolean action() {
-        return process(Trigger.ALL, null);
+    public void action() {
+        process(Trigger.ALL, null);
     }
 
     @Override
     public boolean update(float delta) {
         boolean updated = false;
 
+        // TODO: make a snapshot of array
         for (int i = behaviors.size - 1; i >= 0; i--) {
             updated |= behaviors.get(i).update(delta);
         }
@@ -161,7 +173,7 @@ public abstract class BehaviorAi extends Component {
                 return Double.compare(getDistance(o1), getDistance(o2));
             }
 
-            public double getDistance(Entity target) {
+            double getDistance(Entity target) {
                 IntVector2 position = entity.getPosition();
 
                 IntVector2 targetPosition = target.getPosition();
@@ -207,6 +219,19 @@ public abstract class BehaviorAi extends Component {
         return actionPerformed;
     }
 
+    @Override
+    protected void attachEntity(Entity entity) {
+        entity.addListener(entityListener);
+
+        // TODO: do not invoke events manually
+        entityListener.worldChanged(entity, null, entity.getWorld());
+    }
+
+    @Override
+    protected void detachEntity(Entity entity) {
+        entity.removeListener(entityListener);
+    }
+
     /**
      * Subscribes to specific target events.
      */
@@ -247,9 +272,9 @@ public abstract class BehaviorAi extends Component {
         attachTarget(target);
     }
 
-    public boolean removeTarget(Entity target) {
+    public void removeTarget(Entity target) {
         detachTarget(target);
-        return targets.removeValue(target, true);
+        targets.removeValue(target, true);
     }
 
     public void clearTargets() {
@@ -263,7 +288,7 @@ public abstract class BehaviorAi extends Component {
         behaviors.add(behavior);
         attachBehavior(behavior);
 
-        // TODO: move to list implementation?
+        // TODO: move to the list implementation?
         behaviors.sort();
         behaviors.sort(Collections.reverseOrder());
     }
@@ -277,10 +302,6 @@ public abstract class BehaviorAi extends Component {
         behaviors.forEach(this::detachBehavior);
 
         behaviors.clear();
-    }
-
-    public Array<Entity> getTargets() {
-        return targets;
     }
 
     public double getActivationDistance() {

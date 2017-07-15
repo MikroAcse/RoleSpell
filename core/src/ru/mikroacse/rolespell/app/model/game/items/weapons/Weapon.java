@@ -18,17 +18,19 @@ public class Weapon extends Item {
     private double attackDistance;
     private int limit;
 
-    public Weapon(ItemConfig config) {
-        super(config);
+    public Weapon() {
+        super();
     }
 
     @Override
-    protected void configure(ItemConfig config) {
+    public void setConfig(ItemConfig config) {
+        super.setConfig(config);
+
         attackTimer = TimerParser.parse(config.get("attack-timer"));
         damage = IntervalParser.parse(config.get("damage"));
 
-        attackDistance = (double) config.get("attack-distance");
-        limit = (int) config.get("limit");
+        attackDistance = config.get("attack-distance");
+        limit = config.get("limit");
     }
 
     public Timer getAttackTimer() {

@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status.properties;
 
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.Interval;
@@ -127,7 +128,7 @@ public abstract class Property implements Interval.Listener {
         return type;
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void updated(Property property, double previousValue, double currentValue);
     }
 }

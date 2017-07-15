@@ -60,25 +60,25 @@ public class CollisionAvoidingAi extends Component {
     }
 
     @Override
-    public boolean action() {
+    public void action() {
         Entity entity = getEntity();
         World world = entity.getWorld();
 
         if (world == null) {
-            return false;
+            return;
         }
 
         PathMovementComponent movement = entity.getComponent(PathMovementComponent.class);
 
         if (movement == null) {
-            return false;
+            return;
         }
 
         Array<Entity> entities = world.getEntitiesAt(movement.getPosition());
         entities.removeValue(entity, true);
 
         if (entities.size == 0) {
-            return false;
+            return;
         }
 
         IntVector2 position = stickToOrigin ? movement.getOrigin() : movement.getPosition();
@@ -103,7 +103,6 @@ public class CollisionAvoidingAi extends Component {
             }
         }
 
-        return destination != null;
     }
 
     @Override

@@ -14,20 +14,22 @@ public abstract class Item {
     private boolean throwable;
     private boolean pickable;
 
-    public Item(ItemConfig config) {
-        this.config = config;
+    public Item() {
 
-        name = config.getName();
-        type = config.getType();
-
-        throwable = config.isThrowable();
-        pickable = config.isPickable();
-
-        configure(config);
     }
 
-    protected void configure(ItemConfig config) {
+    public ItemConfig getConfig() {
+        return config;
+    }
 
+    public void setConfig(ItemConfig config) {
+        this.config = config;
+
+        name = config.getName(name);
+        type = config.getType(type);
+
+        throwable = config.isThrowable(throwable);
+        pickable = config.isPickable(pickable);
     }
 
     public String getName() {
@@ -44,9 +46,5 @@ public abstract class Item {
 
     public boolean isPickable() {
         return pickable;
-    }
-
-    public ItemConfig getConfig() {
-        return config;
     }
 }

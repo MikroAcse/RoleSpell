@@ -3,26 +3,32 @@ package ru.mikroacse.rolespell.app.model.game.world;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
-import ru.mikroacse.rolespell.media.Bundle;
-
-import static ru.mikroacse.rolespell.RoleSpell.bundle;
+import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 
 /**
  * Created by MikroAcse on 09-May-17.
  */
-public class Map {
+public class WorldMap {
     private String id;
 
+    private String name;
+
     private TiledMap map;
-    private ConfigurationNode config;
+    private MapConfig config;
 
-    public Map(TiledMap map, String id) {
+    public WorldMap(TiledMap map) {
         this.map = map;
-        this.id = id;
+    }
 
-        config = bundle(Bundle.GAME).getConfig("maps/" + id);
+    public MapConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(MapConfig config) {
+        this.config = config;
+
+        this.name = config.getName(name);
     }
 
     public IntVector2 getCellPosition(float x, float y) {
@@ -35,33 +41,33 @@ public class Map {
         return getWeight(getMeta(x, y));
     }
 
-    public double getWeight(Map.Meta meta) {
-        return config.getDouble("meta." + meta.name() + ".weight");
+    public double getWeight(WorldMap.Meta meta) {
+        return config.getWeight(meta, 0);
     }
 
     public boolean isPassable(int x, int y) {
         return isPassable(getMeta(x, y));
     }
 
-    public boolean isPassable(Map.Meta meta) {
-        return config.getBoolean("meta." + meta.name() + ".passable");
+    public boolean isPassable(WorldMap.Meta meta) {
+        return config.isPassable(meta, false);
     }
 
-    public Map.Meta getMeta(int x, int y) {
-        TiledMapTileLayer.Cell cell = getCell(Map.Layer.META, x, y);
+    public WorldMap.Meta getMeta(int x, int y) {
+        TiledMapTileLayer.Cell cell = getCell(WorldMap.Layer.META, x, y);
 
         if (cell == null) {
-            return Map.Meta.EMPTY;
+            return WorldMap.Meta.EMPTY;
         }
 
-        return Map.Meta.valueOf((String) cell.getTile().getProperties().get("type"));
+        return WorldMap.Meta.valueOf((String) cell.getTile().getProperties().get("type"));
     }
 
-    public Map.Meta getMeta(IntVector2 position) {
+    public WorldMap.Meta getMeta(IntVector2 position) {
         return getMeta(position.x, position.y);
     }
 
-    public TiledMapTileLayer.Cell getCell(Map.Layer layer, int x, int y) {
+    public TiledMapTileLayer.Cell getCell(WorldMap.Layer layer, int x, int y) {
         return getTileLayer(layer).getCell(x, y);
     }
 
@@ -111,8 +117,16 @@ public class Map {
         return map;
     }
 
-    public ConfigurationNode getConfig() {
-        return config;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -123,7 +137,7 @@ public class Map {
     }
 
     public enum Layer {
-        SPAWNERS, // object layer with entities/player spawn locations
+        ENTITIES, // object layer with entities/player spawn locations
         PORTALS, // object layer with portals spawn locations
         META, // objects layer for collisions/etc markup
         TOP,

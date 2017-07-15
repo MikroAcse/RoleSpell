@@ -14,6 +14,7 @@ import java.util.EnumSet;
  * Created by Vitaly Rudenko on 18-May-17.
  */
 public class TeleportAi extends BehaviorAi {
+    boolean tp = false;
     private TeleportBehavior teleportBehavior;
 
     public TeleportAi(Entity entity) {
@@ -32,10 +33,8 @@ public class TeleportAi extends BehaviorAi {
 
         if (result) {
             // TODO: beautify
-            System.out.println("teleporting to " + teleportBehavior.getPortal().getDestination());
-
             ((GameScreen) RoleSpell.screens().getScreen(ScreenManager.BundledScreen.GAME))
-                    .setWorld(teleportBehavior.getPortal().getDestination(), teleportBehavior.getPortal().getId());
+                    .setWorld(teleportBehavior.getPortal().getDestination(), teleportBehavior.getPortal().getSpawn());
         }
 
         return result;

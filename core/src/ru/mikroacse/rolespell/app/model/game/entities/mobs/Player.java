@@ -17,13 +17,11 @@ import java.util.EnumSet;
  * Created by MikroAcse on 22.03.2017.
  */
 public class Player extends Mob {
-    private AttackAi attackAi;
-    private PickupAi pickupAi;
 
     private InventoryComponent inventory;
 
     public Player(World world, int x, int y) {
-        super(EntityType.PLAYER, world, null, x, y, 8f);
+        super(EntityType.PLAYER, world, x, y, 8f);
 
         getParameters().add(Parameter.VULNERABLE);
 
@@ -48,7 +46,7 @@ public class Player extends Mob {
                 new Interval(10.0, 50.0),
                 2));
 
-        attackAi = new AttackAi(this, new Timer(1.0));
+        AttackAi attackAi = new AttackAi(this, new Timer(1.0));
         addComponent(attackAi);
 
         attackAi.setTargetSelectors(EnumSet.of(BehaviorAi.TargetSelector.CUSTOM));
@@ -56,7 +54,7 @@ public class Player extends Mob {
         attackAi.setTargetTypes(EnumSet.of(EntityType.NPC));
         attackAi.setBlacklist(true);
 
-        pickupAi = new PickupAi(this);
+        PickupAi pickupAi = new PickupAi(this);
         addComponent(pickupAi);
 
         addComponent(new TeleportAi(this));

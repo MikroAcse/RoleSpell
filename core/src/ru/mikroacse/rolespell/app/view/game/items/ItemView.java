@@ -3,7 +3,6 @@ package ru.mikroacse.rolespell.app.view.game.items;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
-import ru.mikroacse.rolespell.media.AssetBundle;
 import ru.mikroacse.rolespell.media.Bundle;
 
 import static ru.mikroacse.rolespell.RoleSpell.bundle;
@@ -25,9 +24,7 @@ public class ItemView extends Image {
     }
 
     public static Texture getItemTexture(Item item) {
-        AssetBundle bundle = bundle(Bundle.GAME);
-
-        return bundle.getTexture(item.getConfig().getTexture());
+        return bundle(Bundle.GAME).getTexture(item.getConfig().getTexture(null));
     }
 
     public Item getItem() {

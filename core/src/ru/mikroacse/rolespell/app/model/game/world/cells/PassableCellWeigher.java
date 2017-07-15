@@ -2,8 +2,8 @@ package ru.mikroacse.rolespell.app.model.game.world.cells;
 
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.world.Map;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
 
 /**
  * Created by MikroAcse on 28.03.2017.
@@ -17,7 +17,7 @@ public class PassableCellWeigher extends CellWeigher {
 
     @Override
     public double weigh(World world, int x, int y) {
-        Map map = world.getMap();
+        WorldMap map = world.getMap();
 
         if (!map.isPassable(x, y)) {
             return -1;

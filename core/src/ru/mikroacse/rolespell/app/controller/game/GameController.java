@@ -28,7 +28,6 @@ public class GameController extends Controller {
 
     private GameStateProcessor gameState;
     private InventoryStateProcessor inventoryState;
-    private QuestsStateProcessor questsState;
 
     public GameController(GameRenderer renderer, GameModel model) {
         this.renderer = renderer;
@@ -36,7 +35,7 @@ public class GameController extends Controller {
 
         gameState = new GameStateProcessor(this);
         inventoryState = new InventoryStateProcessor(this);
-        questsState = new QuestsStateProcessor(this);
+        QuestsStateProcessor questsState = new QuestsStateProcessor(this);
 
         stateProcessors = new HashMap<>();
         stateProcessors.put(State.GAME, gameState);
@@ -44,11 +43,18 @@ public class GameController extends Controller {
         stateProcessors.put(State.QUESTS, questsState);
 
         setState(State.GAME);
+
+        model.addListener(new GameModel.Listener() {
+            @Override
+            public void worldChanged(String prevId, String currentId) {
+                renderer.refreshWorld();
+            }
+        });
     }
 
     @Override
     public void update(float delta) {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
 
         if (input.getButton(Input.Keys.ESCAPE).justReleased) {
             screens().setScreen(BundledScreen.MENU);

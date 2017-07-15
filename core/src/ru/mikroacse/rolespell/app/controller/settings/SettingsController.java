@@ -16,16 +16,12 @@ import static ru.mikroacse.rolespell.RoleSpell.screens;
 public class SettingsController extends Controller {
     private SettingsRenderer renderer;
 
-    private RendererListener rendererListener;
-
-    private SettingsRenderer.ActionListener actionListener;
-
     private SettingsAction action;
 
     public SettingsController(SettingsRenderer renderer) {
         this.renderer = renderer;
 
-        rendererListener = new RendererListener() {
+        RendererListener rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
                 if (action == null) {
@@ -43,13 +39,10 @@ public class SettingsController extends Controller {
             }
         };
 
-        actionListener = new SettingsRenderer.ActionListener() {
-            @Override
-            public void onAction(SettingsAction action) {
-                SettingsController.this.action = action;
+        SettingsRenderer.ActionListener actionListener = action -> {
+            SettingsController.this.action = action;
 
-                renderer.hide();
-            }
+            renderer.hide();
         };
 
         renderer.addListener(rendererListener);
@@ -60,7 +53,7 @@ public class SettingsController extends Controller {
     public void update(float delta) {
         super.update(delta);
 
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
 
         // logic
         if (input.getButton(Input.Keys.ESCAPE).justReleased) {

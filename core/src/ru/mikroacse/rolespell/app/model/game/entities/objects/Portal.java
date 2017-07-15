@@ -4,6 +4,7 @@ import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.MovementComponent;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
@@ -12,15 +13,12 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 public class Portal extends Entity {
     private MovementComponent movement;
 
+    private String spawn;
     private String destination;
-    private String id;
 
-    private boolean spawn;
+    public Portal(World world, String destination, String spawn, int x, int y) {
+        super(EntityType.PORTAL, world);
 
-    public Portal(World world, String destination, String id, boolean spawn, String name, int x, int y) {
-        super(EntityType.PORTAL, world, name);
-
-        this.id = id;
         this.destination = destination;
         this.spawn = spawn;
 
@@ -28,20 +26,24 @@ public class Portal extends Entity {
         addComponent(movement);
     }
 
-    public Portal(World world, String destination, String id, boolean spawn, String name) {
-        this(world, destination, id, spawn, name, 0, 0);
+    public Portal(World world, int x, int y) {
+        this(world, null, null, x, y);
+    }
+
+    @Override
+    public void setConfig(EntityConfig config) {
+        super.setConfig(config);
+
+        destination = config.get("destination", destination);
+        spawn = config.get("spawn", spawn);
+    }
+
+    public String getSpawn() {
+        return spawn;
     }
 
     public String getDestination() {
         return destination;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public boolean isSpawn() {
-        return spawn;
     }
 
     @Override
@@ -62,5 +64,13 @@ public class Portal extends Entity {
     @Override
     public IntVector2 getOrigin() {
         return movement.getOrigin();
+    }
+
+    @Override
+    public String toString() {
+        return "Portal{" +
+                "spawn='" + spawn + '\'' +
+                ", destination='" + destination + '\'' +
+                '}';
     }
 }

@@ -20,10 +20,7 @@ public abstract class TimerComponent extends Component {
 
     @Override
     public boolean update(float delta) {
-        if (timer == null) {
-            return false;
-        }
-        return timer.update(delta);
+        return timer != null && timer.update(delta);
     }
 
     protected void action(Timer timer) {

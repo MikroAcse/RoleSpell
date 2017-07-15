@@ -2,25 +2,27 @@ package ru.mikroacse.engine.config;
 
 import ru.mikroacse.engine.config.providers.ConfigurationProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * Created by MikroAcse on 24.06.2017.
+ * Immutable configuration based on UnmodifiableMap.
  */
 public class ConfigurationNode {
     private Map<String, Object> map;
 
-    public ConfigurationNode(ConfigurationProvider provider) {
-        this.map = provider.get();
-    }
-
     public ConfigurationNode(Map<String, Object> map) {
-        this.map = map;
+        this.map = Collections.unmodifiableMap(map);
     }
 
-    public <T> T get(String key, Class<T> tClass) {
+    public ConfigurationNode(ConfigurationProvider provider) {
+        this(provider.get());
+    }
+
+    public ConfigurationNode(ConfigurationNode node) {
+        this(node.getMap());
+    }
+
+    public <T> T get(String key) throws ClassCastException, NullPointerException {
         if (map.containsKey(key)) {
             return (T) map.get(key);
         }
@@ -47,11 +49,15 @@ public class ConfigurationNode {
         throw new NullPointerException("Node doesn't have such key: " + key);
     }
 
-    public Object get(String key) {
-        return get(key, Object.class);
+    public <T> T get(String key, T defaultValue) {
+        try {
+            return get(key);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
-    public boolean has(String key) {
+    public boolean contains(String key) {
         try {
             get(key);
         } catch (Exception e) {
@@ -61,114 +67,47 @@ public class ConfigurationNode {
         return true;
     }
 
-    public <T> T getOrDefault(String key, Class<T> tClass, T defaultValue) {
-        try {
-            return get(key, tClass);
-        } catch (Exception e) {
-            return defaultValue;
-        }
+    public ConfigurationNode extractNode(String key) {
+        return new ConfigurationNode((Map) get(key));
     }
 
-    public Object getOrDefault(String key, Object defaultValue) {
-        return getOrDefault(key, Object.class, defaultValue);
-    }
-
-    public ConfigurationNode getNode(String key) {
-        return new ConfigurationNode(get(key, Map.class));
-    }
-
-    public ConfigurationNode getNodeOrNull(String key) {
-        if (has(key)) {
-            return getNode(key);
+    public ConfigurationNode extractNodeOrNull(String key) {
+        if (contains(key)) {
+            return extractNode(key);
         }
 
         return null;
     }
 
-    public boolean getBoolean(String key) {
-        return get(key, boolean.class);
-    }
-
-    public boolean getBoolean(String key, boolean defaultValue) {
-        if (has(key)) {
-            return getBoolean(key);
-        }
-
-        return defaultValue;
-    }
-
-    public String getString(String key) {
-        return get(key, String.class);
-    }
-
-    public String getString(String key, String defaultValue) {
-        return getOrDefault(key, String.class, defaultValue);
-    }
-
-    public int getInt(String key) {
-        return get(key, int.class);
-    }
-
-    public int getInt(String key, int defaultValue) {
-        if (has(key)) {
-            return getInt(key);
-        }
-
-        return defaultValue;
-    }
-
-    public float getFloat(String key) {
-        return get(key, float.class);
-    }
-
-    public float getFloat(String key, float defaultValue) {
-        if (has(key)) {
-            return getFloat(key);
-        }
-
-        return defaultValue;
-    }
-
-    public double getDouble(String key) {
-        return get(key, double.class);
-    }
-
-    public double getDouble(String key, double defaultValue) {
-        if (has(key)) {
-            return getDouble(key);
-        }
-
-        return defaultValue;
-    }
-
-    public <T> List<T> getList(String key) {
-        return get(key, ArrayList.class);
-    }
-
-    public <T> List<T> getListOrNull(String key) {
-        return has(key) ? getList(key) : null;
-    }
-
-    public List<ConfigurationNode> getNodeList(String key) {
-        List<Map<String, Object>> list = getList(key);
+    public List<ConfigurationNode> extractNodeList(String key) {
+        List<Map<String, Object>> list = get(key);
         List<ConfigurationNode> result = new ArrayList<>();
 
-        for (int i = 0; i < list.size(); i++) {
-            result.add(new ConfigurationNode(list.get(i)));
+        for (Map<String, Object> map : list) {
+            result.add(new ConfigurationNode(map));
         }
 
         return result;
     }
 
-    public List<ConfigurationNode> getNodeListOrNull(String key) {
+    public List<ConfigurationNode> extractNodeListOrNull(String key) {
         try {
-            return getNodeList(key);
+            return extractNodeList(key);
         } catch (Exception e) {
             return null;
         }
     }
 
+    public Set<String> keySet() {
+        return map.keySet();
+    }
+
     public Map<String, Object> getMap() {
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigurationNode" + map;
     }
 }

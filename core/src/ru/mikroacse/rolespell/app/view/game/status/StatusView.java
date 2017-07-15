@@ -18,8 +18,6 @@ public class StatusView extends Group implements MeasurableActor {
     private static final int PROPERTY_HEIGHT = 24;
     private static final int PROPERTY_OFFSET = 5;
 
-    private Image background;
-
     private StatusComponent status;
     private Array<PropertyView> propertyViews;
 
@@ -32,7 +30,7 @@ public class StatusView extends Group implements MeasurableActor {
         pm.setColor(0x00000077);
         pm.fill();
 
-        background = new Image(new Texture(pm));
+        Image background = new Image(new Texture(pm));
 
         pm.dispose();
 
@@ -83,7 +81,7 @@ public class StatusView extends Group implements MeasurableActor {
                 continue;
             }
 
-            PropertyView propertyView = new PropertyView((Property) property);
+            PropertyView propertyView = new PropertyView(property);
             propertyViews.add(propertyView);
 
             addActor(propertyView);

@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.controllers;
 
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -74,12 +75,7 @@ public class MobController extends Component {
             }
         };
 
-        inventoryListener = new Inventory.Listener() {
-            @Override
-            public void selected(Inventory inventory, int index, Item item) {
-                reselectItem();
-            }
-        };
+        inventoryListener = (inventory, index, item) -> reselectItem();
     }
 
     public void reselectItem() {
@@ -109,17 +105,14 @@ public class MobController extends Component {
 
             attackAi.setAttackTimer(weapon.getAttackTimer());
 
-            System.out.println("weapon: " + weapon.getName());
-            System.out.println("timer: " + weapon.getAttackTimer());
-
             damage.resume();
         } else {
-            System.out.println("damage paused");
             damage.pause();
         }
     }
 
     public void die() {
+        // TODO: remove
         if (getEntity().getType() == EntityType.PLAYER) {
             System.out.println("Player nearly died");
             return;
@@ -209,7 +202,7 @@ public class MobController extends Component {
         DEAD
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         // MovementComponent.ActionListener
         void positionChanged(MobController controller, int prevX, int prevY, IntVector2 current);
 

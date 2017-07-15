@@ -23,8 +23,13 @@ import java.util.List;
  * Created by MikroAcse on 08.07.2016.
  */
 public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
-    public static final String ASSETS_DIRECTORY = "";
-    public static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
+    private static final String ASSETS_DIRECTORY = "";
+
+    public static final String APP_CONFIG = ASSETS_DIRECTORY + "config.yaml";
+
+    public static final String LANGUAGE_BUNDLE = ASSETS_DIRECTORY + "languages/bundle";
+
+    private static final String BUNDLE_DIRECTORY = ASSETS_DIRECTORY + "resources/%s/";
 
     public AssetManager(int initialWidth, int initialHeight) {
         super(initialWidth, initialHeight);
@@ -32,19 +37,18 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
     @Override
     public void loadBundle(Bundle bundle, boolean sync) {
-        Gdx.app.log("LOADING", "loading bundle: " + bundle);
+        ConfigurationNode config;
 
-        ConfigurationNode config = null;
         try {
             FileReader configReader = new FileReader(getBundleMainConfigPath(bundle));
 
             config = new ConfigurationNode(new YamlProvider(configReader));
         } catch (FileNotFoundException e) {
-            System.out.println("No bundle configuration found! (" + bundle.getName() + ")");
+            System.err.println("No bundle configuration found! (" + bundle.getName() + ")");
             return;
         }
 
-        ConfigurationNode files = config.getNode("files");
+        ConfigurationNode files = config.extractNode("files");
 
         AssetBundle assetBundle = getBundle(bundle);
 
@@ -56,35 +60,35 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
         // TODO: beautify
 
-        List<String> textures = files.getListOrNull("textures");
+        List<String> textures = files.get("textures", null);
         if (textures != null)
             loadAssets(assetBundle, textures, getBundleTexturePath(bundle), Texture.class);
 
-        List<String> sounds = files.getListOrNull("sounds");
+        List<String> sounds = files.get("sounds", null);
         if (sounds != null)
             loadAssets(assetBundle, sounds, getBundleSoundPath(bundle), Sound.class);
 
-        List<String> music = files.getListOrNull("music");
+        List<String> music = files.get("music", null);
         if (music != null)
             loadAssets(assetBundle, music, getBundleMusicPath(bundle), Music.class);
 
-        List<String> fonts = files.getListOrNull("fonts");
+        List<String> fonts = files.get("fonts", null);
         if (fonts != null)
             loadAssets(assetBundle, fonts, getBundleFontPath(bundle), BitmapFont.class);
 
-        List<String> maps = files.getListOrNull("maps");
+        List<String> maps = files.get("maps", null);
         if (maps != null)
             loadAssets(assetBundle, maps, getBundleMapPath(bundle), TiledMap.class);
 
-        List<String> atlases = files.getListOrNull("atlases");
+        List<String> atlases = files.get("atlases", null);
         if (atlases != null)
             loadAssets(assetBundle, atlases, getBundleAtlasPath(bundle), TextureAtlas.class);
 
-        List<String> shaders = files.getListOrNull("shaders");
+        List<String> shaders = files.get("shaders", null);
         if (shaders != null)
             loadAssets(assetBundle, shaders, getBundleShaderPath(bundle), ShaderProgram.class);
 
-        List<String> configs = files.getListOrNull("configs");
+        List<String> configs = files.get("configs", null);
         if (configs != null)
             loadAssets(assetBundle, configs, getBundleConfigPath(bundle), ConfigurationNode.class);
 
@@ -93,32 +97,28 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
         }
     }
 
-    private void loadAssets(AssetBundle bundle, List<String> assets, String path, Class assetClass) {
+    private void loadAssets(AssetBundle bundle, List<String> assets, String path, Class<?> assetClass) {
         for (String asset : assets) {
             String assetPath = path + asset;
 
             // recursively load all files in a path (i.e. "files/*")
             if (asset.endsWith("*")) {
-                asset = asset.substring(0, asset.length() - 1);
-
                 FileHandle assetHandle = Gdx.files.internal(assetPath.substring(0, assetPath.length() - 1));
 
                 Array<FileHandle> subHandles = new Array<>();
                 FileUtil.getHandles(assetHandle, subHandles);
 
                 for (FileHandle subHandle : subHandles) {
-                    assetPath = subHandle.file().getPath();
-                    assetPath = assetPath.replaceAll("\\\\", "/");
+                    String subAssetPath = subHandle.file().getPath();
+                    subAssetPath = subAssetPath.replaceAll("\\\\", "/");
 
-                    asset = assetPath.replace(path, "");
+                    String assetName = FileUtil.getFilename(subAssetPath.replace(path, ""));
 
-                    bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
+                    bundle.loadAsset(assetName, subAssetPath, assetClass);
                 }
-
-                continue;
+            } else {
+                bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
             }
-
-            bundle.loadAsset(FileUtil.getFilename(asset), assetPath, assetClass);
         }
     }
 

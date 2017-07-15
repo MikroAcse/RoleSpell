@@ -25,7 +25,7 @@ public class SettingsScreen extends Screen {
 
         input = new InputMultiplexer();
         input.addProcessor(renderer);
-        input.addProcessor(InputAdapter.getInstance());
+        input.addProcessor(InputAdapter.instance);
     }
 
     @Override
@@ -41,7 +41,6 @@ public class SettingsScreen extends Screen {
         renderer.hide();
 
         Gdx.input.setInputProcessor(null);
-        System.out.println("paused");
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.tween.ActorAccessor;
@@ -208,7 +209,7 @@ public class MenuRenderer extends Renderer {
         return buttons;
     }
 
-    public interface ActionListener extends ru.mikroacse.engine.listeners.Listener {
+    public interface ActionListener extends AbstractListener {
         void onAction(MenuAction action);
     }
 }

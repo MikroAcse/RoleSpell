@@ -37,7 +37,7 @@ public class YamlConfigurationLoader extends AsynchronousAssetLoader<Configurati
         return null;
     }
 
-    class YamlParameter extends AssetLoaderParameters<ConfigurationNode> {
+    static class YamlParameter extends AssetLoaderParameters<ConfigurationNode> {
 
     }
 }

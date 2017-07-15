@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.Array;
  * Created by MikroAcse on 07.08.2016.
  */
 public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderLoader.ShaderParameter> {
-    private ShaderProgram shader;
     private String vertProgram;
     private String fragProgram;
 
@@ -39,7 +38,7 @@ public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderL
     @Override
     public ShaderProgram loadSync(AssetManager manager, String fileName, FileHandle file, ShaderParameter parameter) {
         ShaderProgram.pedantic = false;
-        shader = new ShaderProgram(vertProgram, fragProgram);
+        ShaderProgram shader = new ShaderProgram(vertProgram, fragProgram);
         return shader;
     }
 
@@ -48,7 +47,7 @@ public class ShaderLoader extends AsynchronousAssetLoader<ShaderProgram, ShaderL
         return null;
     }
 
-    class ShaderParameter extends AssetLoaderParameters<ShaderProgram> {
+    static class ShaderParameter extends AssetLoaderParameters<ShaderProgram> {
 
     }
 }

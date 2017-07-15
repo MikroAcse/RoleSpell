@@ -12,17 +12,13 @@ import static ru.mikroacse.rolespell.RoleSpell.screens;
  * Created by Vitaly Rudenko on 06-Jun-17.
  */
 public class MenuController {
-    private MenuRenderer renderer;
-
-    private RendererListener rendererListener;
-    private MenuRenderer.ActionListener actionListener;
 
     private MenuAction action;
 
     public MenuController(MenuRenderer renderer) {
-        this.renderer = renderer;
+        MenuRenderer renderer1 = renderer;
 
-        rendererListener = new RendererListener() {
+        RendererListener rendererListener = new RendererListener() {
             @Override
             public void onHidden() {
                 if (action == null) {
@@ -46,14 +42,10 @@ public class MenuController {
             }
         };
 
-        actionListener = new MenuRenderer.ActionListener() {
-            @Override
-            public void onAction(MenuAction action) {
-                ;
-                MenuController.this.action = action;
+        MenuRenderer.ActionListener actionListener = action -> {
+            MenuController.this.action = action;
 
-                renderer.hide();
-            }
+            renderer.hide();
         };
 
         renderer.addListener(rendererListener);

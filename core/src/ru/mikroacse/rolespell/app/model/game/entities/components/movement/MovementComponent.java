@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.movement;
 
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -136,7 +137,7 @@ public class MovementComponent extends TimerComponent {
         BOTH
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void originChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current);
 
         void positionChanged(MovementComponent movement, int prevX, int prevY, IntVector2 current);

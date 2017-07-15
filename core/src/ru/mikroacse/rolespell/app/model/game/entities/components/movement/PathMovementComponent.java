@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.movement;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -28,15 +29,14 @@ public class PathMovementComponent extends MovementComponent {
     }
 
     @Override
-    public boolean action() {
+    public void action() {
         if (path.size == 0) {
             priority = Priority.NEVER;
-            return false;
+            return;
         }
 
         moveTo(path.removeIndex(0), getType());
         listeners.pathChanged(this, Listener.Event.PATH_NEXT, path);
-        return true;
     }
 
     /**
@@ -73,7 +73,7 @@ public class PathMovementComponent extends MovementComponent {
                         false);
 
                 if (passableCells.size != 0) {
-                    // nearest cell to controllable entity
+                    // nearest cell to the entity
                     passableCells.sort((o1, o2) -> {
                         double d1 = o1.distance(getPosition());
                         double d2 = o2.distance(getPosition());
@@ -88,7 +88,6 @@ public class PathMovementComponent extends MovementComponent {
 
             destination = newDestination;
         }
-
 
         if (destination == null) {
             return null;
@@ -132,23 +131,23 @@ public class PathMovementComponent extends MovementComponent {
 
     public void setPath(Array<IntVector2> path) {
         this.path = path;
-        listeners.pathChanged(this, Listener.Event.PATH_SET, path);
+        listeners.pathChanged(this, Listener.Event.PATH_SET, this.path);
     }
 
     public void addToPath(Array<IntVector2> path) {
         this.path.addAll(path);
-        listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_ADDED, this.path);
     }
 
     public void addToPath(IntVector2 position) {
         path.add(position);
-        listeners.pathChanged(this, Listener.Event.PATH_ADDED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_ADDED, this.path);
 
     }
 
     public void clearPath() {
         path.clear();
-        listeners.pathChanged(this, Listener.Event.PATH_CLEARED, path);
+        listeners.pathChanged(this, Listener.Event.PATH_CLEARED, this.path);
     }
 
     public boolean isPathEmpty() {
@@ -166,7 +165,7 @@ public class PathMovementComponent extends MovementComponent {
         this.priority = priority;
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void pathChanged(PathMovementComponent movement, Event event, Array<IntVector2> path);
 
         enum Event {

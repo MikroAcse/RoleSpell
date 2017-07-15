@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.inventory;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
@@ -39,7 +40,7 @@ public class ItemList {
     /**
      * Removes appearances of an item in the list.
      */
-    public boolean removeItem(Item removableItem) {
+    public void removeItem(Item removableItem) {
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
 
@@ -47,33 +48,28 @@ public class ItemList {
                 items[i] = null;
 
                 listeners.itemRemoved(this, item, i);
-                return true;
+                return;
             }
         }
 
-        return false;
     }
 
-    public boolean swapItems(int index1, int index2) {
+    public void swapItems(int index1, int index2) {
         Item temp = items[index1];
 
         setItem(index1, items[index2]);
         setItem(index2, temp);
 
         listeners.itemsSwapped(this, index1, index2);
-
-        return true;
     }
 
-    public boolean swapItems(Item item1, Item item2) {
+    public void swapItems(Item item1, Item item2) {
         int index1 = indexOf(item1);
         int index2 = indexOf(item2);
 
         if (index1 != -1 && index2 != -1) {
-            return swapItems(index1, index2);
+            swapItems(index1, index2);
         }
-
-        return false;
     }
 
     public void setItem(int index, Item item) {
@@ -169,7 +165,7 @@ public class ItemList {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void itemAdded(ItemList itemList, int index);
 
         void itemRemoved(ItemList itemList, Item item, int index);

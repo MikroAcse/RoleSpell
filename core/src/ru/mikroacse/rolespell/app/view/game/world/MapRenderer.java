@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.world.Map;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
 
 /**
  * Created by MikroAcse on 02-May-17.
@@ -14,9 +14,9 @@ public class MapRenderer {
     private final OrthographicCamera camera;
 
     private OrthogonalTiledMapRenderer mapRenderer;
-    private Map map;
+    private WorldMap map;
 
-    public MapRenderer(Map map) {
+    public MapRenderer(WorldMap map) {
         this.map = map;
 
         mapRenderer = new OrthogonalTiledMapRenderer(map.getMap());
@@ -43,31 +43,31 @@ public class MapRenderer {
     }
 
     public void drawBottomLayers() {
-        renderLayers(new Map.Layer[]{
-                Map.Layer.BACKGROUND,
-                Map.Layer.LAYOUT,
-                Map.Layer.BUILDINGS,
-                Map.Layer.BUILDINGS_DECOR,
-                Map.Layer.BOTTOM,
-                Map.Layer.OBJECTS});
+        renderLayers(new WorldMap.Layer[]{
+                WorldMap.Layer.BACKGROUND,
+                WorldMap.Layer.LAYOUT,
+                WorldMap.Layer.BUILDINGS,
+                WorldMap.Layer.BUILDINGS_DECOR,
+                WorldMap.Layer.BOTTOM,
+                WorldMap.Layer.OBJECTS});
     }
 
     public void drawTopLayers() {
-        renderLayers(new Map.Layer[]{
-                Map.Layer.ADDITIONAL,
-                Map.Layer.BUILDINGS_TOP,
-                Map.Layer.ROOFS,
-                Map.Layer.TOP});
+        renderLayers(new WorldMap.Layer[]{
+                WorldMap.Layer.ADDITIONAL,
+                WorldMap.Layer.BUILDINGS_TOP,
+                WorldMap.Layer.ROOFS,
+                WorldMap.Layer.TOP});
     }
 
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
     }
 
-    private void renderLayers(Map.Layer[] layers) {
+    private void renderLayers(WorldMap.Layer[] layers) {
         mapRenderer.getBatch().begin();
 
-        for (Map.Layer layer : layers) {
+        for (WorldMap.Layer layer : layers) {
             mapRenderer.renderTileLayer(map.getTileLayer(layer));
         }
 

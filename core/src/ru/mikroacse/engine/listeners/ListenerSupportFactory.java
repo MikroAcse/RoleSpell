@@ -12,13 +12,13 @@ public class ListenerSupportFactory {
     private ListenerSupportFactory() {
     }
 
-    public static <T extends Listener> T create(Class<T> listener) {
+    public static <T extends AbstractListener> T create(Class<T> listener) {
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]{ListenerSupport.class, listener},
-                new ListenerSupportFactory.ListenerInvocationHandler<T>(listener));
+                new ListenerSupportFactory.ListenerInvocationHandler<>(listener));
     }
 
-    private static class ListenerInvocationHandler<T extends Listener> implements InvocationHandler {
+    private static class ListenerInvocationHandler<T extends AbstractListener> implements InvocationHandler {
         private final Class<T> listenerClass;
 
         private final List<T> listeners = Collections.synchronizedList(new ArrayList<T>());
@@ -30,12 +30,13 @@ public class ListenerSupportFactory {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName();
+            String fullMethodName = method.getDeclaringClass().getName() + "#" + methodName;
 
             if (method.getDeclaringClass().equals(ListenerSupport.class)) {
                 if ("addListener".equals(methodName)) {
                     listeners.add((T) args[0]);
                 } else if ("removeListener".equals(methodName)) {
-                    listeners.remove(args[0]);
+                    listeners.remove((T) args[0]);
                 } else if ("clearListeners".equals(methodName)) {
                     listeners.clear();
                 }
@@ -43,15 +44,15 @@ public class ListenerSupportFactory {
             }
 
             if (method.getDeclaringClass().equals(listenerClass)) {
-                if (currentEvents.contains(methodName)) {
-                    throw new Exception("Cyclic event invocation detected: " + methodName);
+                if (currentEvents.contains(fullMethodName)) {
+                    System.err.println("Cyclic event invocation detected: " + fullMethodName);
                 }
-                currentEvents.add(methodName);
+                currentEvents.add(fullMethodName);
                 for (int i = listeners.size() - 1; i >= 0; i--) {
                     T listener = listeners.get(i);
                     method.invoke(listener, args);
                 }
-                currentEvents.remove(methodName);
+                currentEvents.remove(fullMethodName);
                 return null;
             }
 

@@ -13,7 +13,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.Moveme
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.properties.HealthProperty;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.Portal;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
 import ru.mikroacse.rolespell.app.view.game.entities.EntityView;
@@ -196,7 +195,8 @@ public class WorldRenderer extends Group {
 
         // add new views and names
         for (Entity entity : world.getEntities()) {
-            if (entity.getType() == EntityType.PORTAL && ((Portal) entity).isSpawn()) {
+            // TODO: somehow exclude undrawable entity types
+            if (entity.getType() == EntityType.PORTAL_SPAWN) {
                 continue;
             }
 
@@ -231,7 +231,9 @@ public class WorldRenderer extends Group {
     }
 
     public void resizeViewport(int width, int height) {
-        mapRenderer.resize(width, height);
+        if (mapRenderer != null) {
+            mapRenderer.resize(width, height);
+        }
     }
 
     private void attachWorld(World world) {

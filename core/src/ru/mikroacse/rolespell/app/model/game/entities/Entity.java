@@ -1,46 +1,64 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.ConfigurationNode;
+import ru.mikroacse.engine.listeners.AbstractListener;
+import ru.mikroacse.engine.listeners.ListenerSupport;
+import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 import java.util.EnumSet;
 
-/**
- * Created by MikroAcse on 23.03.2017.
- */
 public abstract class Entity {
+    private Listener listeners;
+
     private World world;
     private EntityType type;
 
     private String id;
-
     private String name;
 
-    private ConfigurationNode config;
+    private boolean shared;
+    private EntityConfig config;
 
     private Array<Component> components;
     private EnumSet<Parameter> parameters;
 
     public Entity(EntityType type, World world) {
-        this(type, world, null);
-    }
-
-    public Entity(EntityType type, World world, String name) {
         this.type = type;
         this.world = world;
-        this.name = name;
+
+        listeners = ListenerSupportFactory.create(Listener.class);
 
         components = new Array<>();
         parameters = Parameter.NONE;
-
-        preInit();
     }
 
-    protected void preInit() {
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
+    }
 
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+    }
+
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
+    }
+
+    public EntityConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(EntityConfig config) {
+        this.config = config;
+
+        type = config.getType(type);
+        name = config.getName(name);
+
+        shared = config.isShared(false);
     }
 
     /**
@@ -65,16 +83,14 @@ public abstract class Entity {
         }
     }
 
-    public boolean addComponent(Component component) {
+    protected void addComponent(Component component) {
         if (component.isSingle()) {
             if (hasComponent(component.getClass())) {
                 System.err.println("Trying to add more than one instance of a single component to an entity.");
-                return false;
             }
         }
 
         components.add(component);
-        return true;
     }
 
     /**
@@ -106,7 +122,7 @@ public abstract class Entity {
      * @return All entity components of given class.
      */
     public <T extends Component> Array<T> getComponents(Class<T> componentClass) {
-        Array<T> result = new Array<T>();
+        Array<T> result = new Array<>();
 
         for (Component component : components) {
             if (componentClass.isInstance(component)) {
@@ -121,21 +137,12 @@ public abstract class Entity {
         return parameters;
     }
 
-    public void setParameters(EnumSet<Parameter> parameters) {
+    protected void setParameters(EnumSet<Parameter> parameters) {
         this.parameters = parameters;
     }
 
     public boolean hasParameter(Parameter parameter) {
         return parameters.contains(parameter);
-    }
-
-    public boolean hasParameters(EnumSet<Parameter> parameters) {
-        for (Parameter parameter : parameters) {
-            if (!parameters.contains(parameter)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public EntityType getType() {
@@ -147,7 +154,11 @@ public abstract class Entity {
     }
 
     public void setWorld(World world) {
+        World prev = this.world;
+
         this.world = world;
+
+        listeners.worldChanged(this, prev, world);
     }
 
     public String getName() {
@@ -182,14 +193,6 @@ public abstract class Entity {
         setOrigin(position.x, position.y);
     }
 
-    public ConfigurationNode getConfig() {
-        return config;
-    }
-
-    public void setConfig(ConfigurationNode config) {
-        this.config = config;
-    }
-
     public String getId() {
         return id;
     }
@@ -198,13 +201,18 @@ public abstract class Entity {
         this.id = id;
     }
 
+    public boolean isShared() {
+        return shared;
+    }
+
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" +
+        return "Entity{" +
                 "world=" + world +
                 ", type=" + type +
-                ", id=" + id +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", shared=" + shared +
                 '}';
     }
 
@@ -213,5 +221,9 @@ public abstract class Entity {
         VULNERABLE; // can be attacked
 
         public static final EnumSet<Parameter> NONE = EnumSet.noneOf(Parameter.class);
+    }
+
+    public interface Listener extends AbstractListener {
+        void worldChanged(Entity entity, World prev, World current);
     }
 }

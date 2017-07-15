@@ -1,5 +1,6 @@
 package ru.mikroacse.engine.util;
 
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
@@ -116,7 +117,7 @@ public class Timer {
                 '}';
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void action(Timer timer);
     }
 }

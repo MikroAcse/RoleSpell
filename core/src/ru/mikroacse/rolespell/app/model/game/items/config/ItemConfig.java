@@ -1,90 +1,61 @@
 package ru.mikroacse.rolespell.app.model.game.items.config;
 
 import ru.mikroacse.engine.config.ConfigurationNode;
+import ru.mikroacse.engine.config.RecursiveConfigurationNode;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.ItemType;
+
+import java.util.Map;
 
 /**
  * Created by Vitaly Rudenko on 28-May-17.
  */
-public class ItemConfig {
-    ItemConfig parent;
+public class ItemConfig extends RecursiveConfigurationNode<ItemConfig> {
+    private String parent;
 
-    String name;
-    ItemType type;
-    String texture;
+    public ItemConfig(Map<String, Object> map, String parent) {
+        super(map);
 
-    boolean throwable;
-    boolean pickable;
-
-    ConfigurationNode parameters;
-
-    ItemConfig() {
-
+        this.parent = parent;
     }
 
-    /**
-     * Looks through item config and its parents for configuration node,
-     * which contains needed key.
-     *
-     * @return Configuration node, which contains needed key.
-     */
-    public ConfigurationNode find(String key) {
-        ItemConfig config = this;
-
-        while (config.getParameters() != null && !config.getParameters().has(key)) {
-            config = config.parent;
-
-            if (config == null) {
-                return null;
-            }
-        }
-
-        return config.getParameters();
+    public ItemConfig(Map<String, Object> map) {
+        super(map);
     }
 
-    public Object get(String key) {
-        return find(key).get(key);
+    public ItemConfig(ConfigurationNode node) {
+        super(node);
     }
 
-    public String getName() {
-        return name;
+    public String getName(String defaultValue) {
+        return get("name", defaultValue);
     }
 
-    public ItemType getType() {
-        return type;
+    public ItemType getType(ItemType defaultValue) {
+        String type = get("type", null);
+
+        return type != null ? ItemType.valueOf(type) : defaultValue;
     }
 
-    public String getTexture() {
-        return texture;
+    public String getTexture(String defaultValue) {
+        return get("texture", defaultValue);
     }
 
-    public boolean isThrowable() {
-        return throwable;
+    public boolean isThrowable(boolean defaultValue) {
+        return get("throwable", defaultValue);
     }
 
-    public boolean isPickable() {
-        return pickable;
+    public boolean isPickable(boolean defaultValue) {
+        return get("pickable", defaultValue);
     }
 
-    public ConfigurationNode getParameters() {
-        return parameters;
-    }
-
+    @Override
     public ItemConfig getParent() {
-        return parent;
+        return ItemRepository.instance.get(parent);
     }
 
-    public ItemConfig copy() {
-        ItemConfig result = new ItemConfig();
-
-        result.name = name;
-        result.type = type;
-        result.texture = texture;
-        result.throwable = throwable;
-        result.pickable = pickable;
-        result.parent = parent;
-        result.parameters = parameters;
-
-        return result;
+    @Override
+    public boolean hasParent() {
+        return parent != null;
     }
 }

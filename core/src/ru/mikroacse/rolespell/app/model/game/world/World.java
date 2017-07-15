@@ -1,8 +1,8 @@
 package ru.mikroacse.rolespell.app.model.game.world;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -34,7 +34,7 @@ import ru.mikroacse.rolespell.parsers.MapParser;
  */
 // TODO: refactor
 public class World {
-    private Map map;
+    private WorldMap map;
     private Array<Entity> entities;
 
     private MobListener mobListener;
@@ -45,7 +45,7 @@ public class World {
 
     private Player player;
 
-    public World(Map map) {
+    public World(WorldMap map) {
         this.map = map;
 
         listeners = ListenerSupportFactory.create(Listener.class);
@@ -105,25 +105,27 @@ public class World {
     private void initialize() {
         entities = new Array<>();
 
-        entities.addAll(MapParser.getEntities(this, map));
-        entities.addAll(MapParser.getPortals(this, map));
+        entities.addAll(MapParser.getEntities(this, map, WorldMap.Layer.ENTITIES));
+        entities.addAll(MapParser.getEntities(this, map, WorldMap.Layer.PORTALS));
 
         for (Entity entity : entities) {
-            if (entity.getType() == EntityType.PLAYER) {
-                if (player != null) {
-                    System.out.println("World: player entity already exists!");
-                }
-
-                player = (Player) entity;
-            }
-
             attachEntity(entity);
         }
     }
 
+    public void update(float delta) {
+        Array<Entity> entities = new Array<>(getEntities());
+
+        for (Entity entity : entities) {
+            entity.update(delta);
+        }
+
+        entities.clear();
+        entities.shrink();
+    }
+
     public void dropItem(Item item, int x, int y) {
-        DroppedItem<Item> droppedItem = new DroppedItem<>(this, item);
-        droppedItem.setPosition(x, y);
+        DroppedItem<Item> droppedItem = new DroppedItem<>(this, item, x, y);
 
         addEntity(droppedItem);
     }
@@ -157,7 +159,7 @@ public class World {
                 height + radius * 2);
 
         // TODO: don't create new path finder and cell checker every time
-        PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(Map.Meta.PATH)));
+        PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(WorldMap.Meta.PATH)));
 
         CellWeigher cellWeigher = new PassableCellWeigher(true) {
             @Override
@@ -190,7 +192,7 @@ public class World {
     public Array<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
                                               boolean reverse) {
         return getCells(
-                Map.Layer.META,
+                WorldMap.Layer.META,
                 new PassableCellWeigher(checkEntities),
                 x, y,
                 minRadius, maxRadius,
@@ -202,7 +204,7 @@ public class World {
      * TODO: make this circular
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public Array<IntVector2> getCells(Map.Layer layer, CellWeigher checker, int x, int y, int minRadius, int maxRadius,
+    public Array<IntVector2> getCells(WorldMap.Layer layer, CellWeigher checker, int x, int y, int minRadius, int maxRadius,
                                       boolean reverse) {
         Array<IntVector2> result = new Array<>();
         int radius = minRadius;
@@ -220,8 +222,6 @@ public class World {
                     if (!map.isValidPosition(cellX, cellY)) {
                         continue;
                     }
-
-                    TiledMapTileLayer.Cell cell = map.getCell(layer, cellX, cellY);
 
                     if (checker.weigh(this, cellX, cellY) != Double.POSITIVE_INFINITY) {
                         result.add(new IntVector2(cellX, cellY));
@@ -292,6 +292,14 @@ public class World {
     }
 
     private void attachEntity(Entity entity) {
+        if (entity.getType() == EntityType.PLAYER) {
+            if (player != null) {
+                System.err.println("World: player entity already exists!");
+            }
+
+            player = (Player) entity;
+        }
+
         entity.setWorld(this);
 
         if (entity.hasComponent(MobController.class)) {
@@ -331,21 +339,19 @@ public class World {
         listeners.entityAdded(this, entity);
     }
 
-    public boolean removeEntity(Entity entity) {
+    public void removeEntity(Entity entity) {
         if (entities.removeValue(entity, true)) {
             detachEntity(entity);
 
             listeners.entityRemoved(this, entity);
-            return true;
         }
-        return false;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public Map getMap() {
+    public WorldMap getMap() {
         return map;
     }
 
@@ -356,7 +362,7 @@ public class World {
                 '}';
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         // MobController.ActionListener
         void mobDied(World world, MobController controller);
 

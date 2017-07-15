@@ -38,15 +38,11 @@ public class Language {
      * If bundle doesn't have the key, its value returned.
      */
     public String get(String key, Object... args) {
-        String result = null;
-
         try {
-            result = bundle.format(key, (Object[]) args);
+            return bundle.format(key, (Object[]) args);
         } catch (MissingResourceException e) {
             return key;
         }
-
-        return result;
     }
 
     public I18NBundle getBundle() {

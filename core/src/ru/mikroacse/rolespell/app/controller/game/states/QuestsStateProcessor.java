@@ -15,7 +15,7 @@ public class QuestsStateProcessor extends StateProcessor {
 
     @Override
     public void process() {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 

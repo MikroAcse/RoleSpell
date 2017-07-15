@@ -39,7 +39,7 @@ public class JsonLoader extends AsynchronousAssetLoader<JsonValue, JsonLoader.Js
         return null;
     }
 
-    class JsonParameter extends AssetLoaderParameters<JsonValue> {
+    static class JsonParameter extends AssetLoaderParameters<JsonValue> {
 
     }
 }

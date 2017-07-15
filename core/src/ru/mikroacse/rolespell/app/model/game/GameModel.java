@@ -1,92 +1,69 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
-import ru.mikroacse.engine.config.ConfigurationNode;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Priority;
-import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
-import ru.mikroacse.rolespell.app.model.game.entities.components.inventory.InventoryComponent;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.world.World;
-import ru.mikroacse.rolespell.media.Bundle;
+import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
 public class GameModel {
-    private Entity controllable;
-    private Entity observable;
-    private World world;
-
     private Listener listeners;
 
     public GameModel() {
         listeners = ListenerSupportFactory.create(Listener.class);
 
-        ItemRepository itemRepository = ItemRepository.getInstance();
-
-        ConfigurationNode items = RoleSpell.bundle(Bundle.GAME).getConfig("items");
-
-        for (String key : items.getMap().keySet()) {
-            itemRepository.addItemConfig(key, items.getNode(key));
-        }
+        WorldManager.instance.addListener(new WorldManager.Listener() {
+            @Override
+            public void worldChanged(String prevId, String currentId) {
+                listeners.worldChanged(prevId, currentId);
+            }
+        });
     }
 
     public void update(float delta) {
-        Array<Entity> entities = new Array<>(world.getEntities());
-
-        for (Entity entity : entities) {
-            entity.update(delta);
-        }
+        WorldManager.instance.getCurrentWorld().update(delta);
     }
 
-    public boolean tryAttack(int x, int y) {
+    public void tryAttack(int x, int y) {
+        World world = WorldManager.instance.getCurrentWorld();
+
         if (!world.getMap().isValidPosition(x, y)) {
-            return false;
+            return;
         }
 
         Array<Entity> entities = world.getEntitiesAt(x, y);
 
-        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+        AttackAi attackAi = getControllable().getComponent(AttackAi.class);
 
         if (entities.size == 0) {
             attackAi.clearTargets();
         } else {
             attackAi.setTarget(entities.get(0));
         }
-
-        return true;
     }
 
-    public boolean tryPickup(Entity entity) {
-        // TODO: magic number (maximum pickup distance)
-        if (controllable.getPosition().distance(entity.getPosition()) > 2) {
-            return false;
-        }
-
-        InventoryComponent inventory = controllable.getComponent(InventoryComponent.class);
-
-        return inventory.pickup(entity);
-    }
-
-    public boolean tryRouteTo(int x, int y) {
-        PathMovementComponent movement = controllable.getComponent(PathMovementComponent.class);
+    public void tryRouteTo(int x, int y) {
+        PathMovementComponent movement = getControllable().getComponent(PathMovementComponent.class);
 
         // TODO: magic numbers
-        return movement.tryRouteTo(
+        movement.tryRouteTo(
                 new IntVector2(x, y),
                 Priority.HIGH,
                 10, 15,
-                0, 15) != null;
+                0, 15);
     }
 
     public void stopAttacking() {
-        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+        AttackAi attackAi = getControllable().getComponent(AttackAi.class);
 
         attackAi.clearTargets();
     }
@@ -103,44 +80,21 @@ public class GameModel {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
-    private void attachWorld(World world) {
-        observable = world.getPlayer();
-        controllable = world.getPlayer();
-    }
-
-    private void detachWorld(World world) {
-
-    }
-
+    // TODO: optimize
     public Entity getControllable() {
-        return controllable;
+        return WorldManager.instance.getCurrentWorld().getPlayer();
     }
 
+    // TODO: optimize
     public Entity getObservable() {
-        return observable;
+        return WorldManager.instance.getCurrentWorld().getPlayer();
     }
 
     public World getWorld() {
-        return world;
+        return WorldManager.instance.getCurrentWorld();
     }
 
-    public void setWorld(World world) {
-        World previous = this.world;
-
-        if (this.world != null) {
-            detachWorld(this.world);
-        }
-
-        this.world = world;
-
-        if (world != null) {
-            attachWorld(world);
-        }
-
-        listeners.worldChanged(this, previous, world);
-    }
-
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void worldChanged(GameModel model, World previous, World current);
+    public interface Listener extends AbstractListener {
+        void worldChanged(String prevId, String currentId);
     }
 }

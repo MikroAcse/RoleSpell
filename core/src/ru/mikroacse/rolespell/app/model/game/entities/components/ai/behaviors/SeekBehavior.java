@@ -11,7 +11,6 @@ import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMo
  * Move towards a target (land near target)
  */
 public class SeekBehavior extends Behavior {
-    private int randomDistance;
 
     public SeekBehavior(Priority priority, Timer timer, double activationDistance) {
         super(priority, false, Trigger.ALL);
@@ -20,7 +19,7 @@ public class SeekBehavior extends Behavior {
         setActivationDistance(activationDistance);
 
         // TODO: magic number
-        randomDistance = 2;
+        int randomDistance = 2;
     }
 
     public SeekBehavior(Priority priority, Timer timer, double activationDistance, double deactivationDistance) {

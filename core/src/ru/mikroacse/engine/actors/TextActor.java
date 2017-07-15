@@ -1,9 +1,5 @@
 package ru.mikroacse.engine.actors;
 
-/**
- * Created by MikroAcse on 11.07.2016.
- */
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;

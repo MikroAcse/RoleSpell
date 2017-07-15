@@ -2,7 +2,6 @@ package ru.mikroacse.rolespell.app.model.game.entities.components.status.propert
 
 import ru.mikroacse.engine.util.Interval;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.status.StatusComponent;
 
 /**
@@ -25,9 +24,6 @@ public class DamageProperty extends Property {
         StatusComponent status = entity.getComponent(StatusComponent.class);
         HealthProperty health = status.getProperty(HealthProperty.class);
 
-        if (entity.getType() == EntityType.OGREMAGI) {
-            System.out.println(getValue());
-        }
         health.damage(getValue());
         return true;
     }

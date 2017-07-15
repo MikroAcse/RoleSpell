@@ -2,9 +2,9 @@ package ru.mikroacse.rolespell.parsers;
 
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
+import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.ItemType;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
-import ru.mikroacse.rolespell.app.model.game.items.config.ItemRepository;
 
 import java.util.Map;
 
@@ -16,18 +16,29 @@ public class ItemParser {
         ItemConfig itemConfig;
 
         if (value instanceof String) {
-            itemConfig = repository.getItemConfig((String) value);
+            itemConfig = repository.get((String) value);
 
         } else if (value instanceof Map) {
-            itemConfig = repository.parseItemConfig(new ConfigurationNode((Map) value));
+            Map map = (Map) value;
+
+            itemConfig = new ItemConfig(map, (String) map.get("parent"));
 
         } else if (value instanceof ConfigurationNode) {
-            itemConfig = repository.parseItemConfig((ConfigurationNode) value);
+            ConfigurationNode node = (ConfigurationNode) value;
 
+            itemConfig = new ItemConfig(node.getMap(), node.get("parent", null));
         } else {
             throw new IllegalArgumentException("Can parse only strings or nodes.");
         }
 
-        return ItemType.create(itemConfig);
+        return create(itemConfig);
+    }
+
+    public static Item create(ItemConfig config) {
+        Item item = ItemType.create(config.getType(ItemType.ITEM));
+
+        item.setConfig(config);
+
+        return item;
     }
 }

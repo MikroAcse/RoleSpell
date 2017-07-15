@@ -2,6 +2,7 @@ package ru.mikroacse.rolespell.config;
 
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.config.providers.YamlProvider;
+import ru.mikroacse.rolespell.media.AssetManager;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,6 +12,6 @@ import java.io.FileReader;
  */
 public final class AppConfig extends ConfigurationNode {
     public AppConfig() throws FileNotFoundException {
-        super(new YamlProvider(new FileReader("config.yaml")));
+        super(new YamlProvider(new FileReader(AssetManager.APP_CONFIG)));
     }
 }

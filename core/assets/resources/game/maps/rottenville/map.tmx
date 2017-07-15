@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="75" height="50" tilewidth="16" tileheight="16" nextobjectid="27">
+<map version="1.0" tiledversion="1.0.1" orientation="orthogonal" renderorder="left-up" width="75" height="50" tilewidth="16" tileheight="16" nextobjectid="27">
  <tileset firstgid="1" name="tileset" tilewidth="16" tileheight="16" spacing="4" tilecount="1767" columns="57">
   <image source="tileset.png" width="1136" height="616"/>
   <terraintypes>
@@ -659,7 +659,22 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,1768,0,0,0,0,1768,0,0,0,0,0,0,0,1768,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="SPAWNERS">
+ <objectgroup name="PORTALS">
+  <properties>
+   <property name="destination" value="dungeon"/>
+  </properties>
+  <object id="20" name="Eclipse Chambers Teleport" x="1072" y="704" width="16" height="16">
+   <properties>
+    <property name="id" value="rottenville-eclipse-chambers"/>
+   </properties>
+  </object>
+  <object id="21" name="Eclipse Chambers Teleport Spawn" x="1072" y="720" width="16" height="16">
+   <properties>
+    <property name="id" value="rottenville-eclipse-chambers-spawn"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="ENTITIES">
   <object id="2" name="Elizabeth" x="288" y="240" width="16" height="16">
    <properties>
     <property name="id" value="elizabeth"/>
@@ -683,22 +698,6 @@
   <object id="8" name="Player" x="1024" y="608" width="16" height="16">
    <properties>
     <property name="id" value="player"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup name="PORTALS">
-  <properties>
-   <property name="destination" value="dungeon"/>
-  </properties>
-  <object id="20" name="Eclipse Chambers Teleport" x="1072" y="704" width="16" height="16">
-   <properties>
-    <property name="id" value="eclipse-chambers"/>
-   </properties>
-  </object>
-  <object id="21" name="Eclipse Chambers Teleport Spawn" x="1072" y="720" width="16" height="16">
-   <properties>
-    <property name="id" value="eclipse-chambers"/>
-    <property name="spawn" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
