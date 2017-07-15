@@ -2,6 +2,7 @@ package ru.mikroacse.rolespell.app.model.game.world;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -33,7 +34,7 @@ import ru.mikroacse.rolespell.parsers.MapParser;
  */
 // TODO: refactor
 public class World {
-    private Map map;
+    private WorldMap map;
     private Array<Entity> entities;
 
     private MobListener mobListener;
@@ -44,7 +45,7 @@ public class World {
 
     private Player player;
 
-    public World(Map map) {
+    public World(WorldMap map) {
         this.map = map;
 
         listeners = ListenerSupportFactory.create(Listener.class);
@@ -104,18 +105,10 @@ public class World {
     private void initialize() {
         entities = new Array<>();
 
-        entities.addAll(MapParser.getEntities(this, map, Map.Layer.ENTITIES));
-        entities.addAll(MapParser.getEntities(this, map, Map.Layer.PORTALS));
+        entities.addAll(MapParser.getEntities(this, map, WorldMap.Layer.ENTITIES));
+        entities.addAll(MapParser.getEntities(this, map, WorldMap.Layer.PORTALS));
 
         for (Entity entity : entities) {
-            if (entity.getType() == EntityType.PLAYER) {
-                if (player != null) {
-                    System.err.println("World: player entity already exists!");
-                }
-
-                player = (Player) entity;
-            }
-
             attachEntity(entity);
         }
     }
@@ -166,7 +159,7 @@ public class World {
                 height + radius * 2);
 
         // TODO: don't create new path finder and cell checker every time
-        PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(Map.Meta.PATH)));
+        PathFinder pathFinder = new PathFinder(new ManhattanDistance(map.getWeight(WorldMap.Meta.PATH)));
 
         CellWeigher cellWeigher = new PassableCellWeigher(true) {
             @Override
@@ -199,7 +192,7 @@ public class World {
     public Array<IntVector2> getPassableCells(int x, int y, boolean checkEntities, int minRadius, int maxRadius,
                                               boolean reverse) {
         return getCells(
-                Map.Layer.META,
+                WorldMap.Layer.META,
                 new PassableCellWeigher(checkEntities),
                 x, y,
                 minRadius, maxRadius,
@@ -211,7 +204,7 @@ public class World {
      * TODO: make this circular
      */
     // TODO: MAKE THIS BEAUTIFUL
-    public Array<IntVector2> getCells(Map.Layer layer, CellWeigher checker, int x, int y, int minRadius, int maxRadius,
+    public Array<IntVector2> getCells(WorldMap.Layer layer, CellWeigher checker, int x, int y, int minRadius, int maxRadius,
                                       boolean reverse) {
         Array<IntVector2> result = new Array<>();
         int radius = minRadius;
@@ -299,6 +292,14 @@ public class World {
     }
 
     private void attachEntity(Entity entity) {
+        if (entity.getType() == EntityType.PLAYER) {
+            if (player != null) {
+                System.err.println("World: player entity already exists!");
+            }
+
+            player = (Player) entity;
+        }
+
         entity.setWorld(this);
 
         if (entity.hasComponent(MobController.class)) {
@@ -350,7 +351,7 @@ public class World {
         return player;
     }
 
-    public Map getMap() {
+    public WorldMap getMap() {
         return map;
     }
 
@@ -361,7 +362,7 @@ public class World {
                 '}';
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         // MobController.ActionListener
         void mobDied(World world, MobController controller);
 

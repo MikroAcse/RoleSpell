@@ -51,7 +51,7 @@ public class ItemConfig extends RecursiveConfigurationNode<ItemConfig> {
 
     @Override
     public ItemConfig getParent() {
-        return ItemRepository.instance().get(parent);
+        return ItemRepository.instance.get(parent);
     }
 
     @Override

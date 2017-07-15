@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.status;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
@@ -137,7 +138,7 @@ public class StatusComponent extends Component {
 
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void propertyUpdated(StatusComponent status, Property property, double previousValue, double currentValue);
 
         void propertyAdded(StatusComponent status, Property property);

@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.Priority;
@@ -136,7 +137,7 @@ public abstract class Behavior implements Comparable<Behavior> {
         public static final EnumSet<Trigger> ALL = EnumSet.allOf(Trigger.class);
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void timer(Behavior behavior);
     }
 }

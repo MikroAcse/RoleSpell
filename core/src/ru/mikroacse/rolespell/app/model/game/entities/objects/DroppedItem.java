@@ -36,7 +36,7 @@ public class DroppedItem<T extends Item> extends Entity {
         super.setConfig(config);
 
         if (config.contains("item")) {
-            item = (T) ItemParser.parse(config.get("item"), ItemRepository.instance());
+            item = (T) ItemParser.parse(config.get("item"), ItemRepository.instance);
         }
     }
 

@@ -3,7 +3,7 @@ entities:
     type: PLAYER
     # count: 1
 
-    # entity will be created only once for all maps
+    # entity will be created only once and reused in other maps
     shared: true
 
     inventory:

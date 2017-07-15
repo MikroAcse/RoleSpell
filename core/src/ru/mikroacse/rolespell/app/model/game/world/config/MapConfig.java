@@ -2,10 +2,13 @@ package ru.mikroacse.rolespell.app.model.game.world.config;
 
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.config.RecursiveConfigurationNode;
-import ru.mikroacse.rolespell.app.model.game.world.Map.Meta;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap.Meta;
 import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ASUS on 29.06.2017.
@@ -37,16 +40,16 @@ public class MapConfig extends RecursiveConfigurationNode<MapConfig> {
         return get("name", defaultValue);
     }
 
-    public ConfigurationNode getEntities() {
-        return extractNodeOrNull("entities");
+    public Set<String> getEntities() {
+        return keySet("entities");
     }
 
-    public ConfigurationNode getPortals() {
-        return extractNodeOrNull("portals");
+    public Set<String> getPortals() {
+        return keySet("portals");
     }
 
-    public ConfigurationNode getItems() {
-        return extractNodeOrNull("items");
+    public Set<String> getItems() {
+        return keySet("items");
     }
 
     public double getWeight(Meta meta, double defaultValue) {
@@ -59,7 +62,7 @@ public class MapConfig extends RecursiveConfigurationNode<MapConfig> {
 
     @Override
     public MapConfig getParent() {
-        return MapRepository.instance().get(parent);
+        return MapRepository.instance.get(parent);
     }
 
     @Override

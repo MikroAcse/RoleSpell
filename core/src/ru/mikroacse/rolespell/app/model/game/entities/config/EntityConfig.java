@@ -38,7 +38,7 @@ public class EntityConfig extends RecursiveConfigurationNode<EntityConfig> {
 
     @Override
     public EntityConfig getParent() {
-        return EntityRepository.instance().get(parent);
+        return EntityRepository.instance.get(parent);
     }
 
     @Override

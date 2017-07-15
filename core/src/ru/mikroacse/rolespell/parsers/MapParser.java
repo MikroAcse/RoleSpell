@@ -6,7 +6,9 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
-import ru.mikroacse.rolespell.app.model.game.world.Map;
+import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
+import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
 import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
@@ -15,7 +17,7 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 public class MapParser {
     // TODO: make not static?
 
-    public static Array<Entity> getEntities(World world, Map map, Map.Layer layer) {
+    public static Array<Entity> getEntities(World world, WorldMap map, WorldMap.Layer layer) {
         Array<Entity> entities = new Array<>();
 
         for (MapObject mapObject : map.getLayer(layer).getObjects()) {
@@ -43,7 +45,21 @@ public class MapParser {
             return null;
         }
 
-        Entity entity = EntityParser.create(EntityRepository.instance().get(id), world, x, y);
+        EntityConfig config = EntityRepository.instance.get(id);
+        Entity entity = null;
+
+        if(config.isShared(false)) {
+            entity = WorldManager.instance.takeSharedEntity(id);
+
+            if(entity != null) {
+                entity.setWorld(world);
+                entity.setPosition(x, y);
+
+                return entity;
+            }
+        }
+
+        entity = EntityParser.create(config, world, x, y);
 
         if (entity != null) {
             entity.setId(id);

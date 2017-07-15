@@ -37,8 +37,6 @@ public class AssetManager extends AssetBundleManager<Bundle, AssetBundle> {
 
     @Override
     public void loadBundle(Bundle bundle, boolean sync) {
-        System.out.println("Loading resources bundle: " + bundle);
-
         ConfigurationNode config;
 
         try {

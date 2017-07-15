@@ -21,7 +21,7 @@ class InventoryParser {
                 }
             }
 
-            Item item = ItemParser.parse(itemConfig.get("item"), ItemRepository.instance());
+            Item item = ItemParser.parse(itemConfig.get("item"), ItemRepository.instance);
 
             if (itemConfig.contains("index")) {
                 inventory.getItems().setItem(itemConfig.get("index"), item);

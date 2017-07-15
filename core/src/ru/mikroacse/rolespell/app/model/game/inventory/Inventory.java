@@ -1,5 +1,6 @@
 package ru.mikroacse.rolespell.app.model.game.inventory;
 
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.items.Item;
@@ -86,7 +87,7 @@ public class Inventory {
         listeners.selected(this, selected, hotbar.getItem(selected));
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void selected(Inventory inventory, int index, Item item);
     }
 }

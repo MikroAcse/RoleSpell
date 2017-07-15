@@ -27,9 +27,13 @@ public class GameStateProcessor extends StateProcessor {
 
     @Override
     public void process() {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
+
+        if(model.getWorld() == null) {
+            return;
+        }
 
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
@@ -101,7 +105,7 @@ public class GameStateProcessor extends StateProcessor {
     }
 
     private void processHotbar() {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 

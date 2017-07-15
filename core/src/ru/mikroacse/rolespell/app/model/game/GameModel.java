@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -9,44 +10,49 @@ import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.AttackAi;
 import ru.mikroacse.rolespell.app.model.game.entities.components.movement.PathMovementComponent;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
 
 /**
  * Created by MikroAcse on 22.03.2017.
  */
 public class GameModel {
-    private Entity controllable;
-    private Entity observable;
-    private World world;
-
     private Listener listeners;
 
     public GameModel() {
         listeners = ListenerSupportFactory.create(Listener.class);
+
+        WorldManager.instance.addListener(new WorldManager.Listener() {
+            @Override
+            public void worldChanged(String prevId, String currentId) {
+                listeners.worldChanged(prevId, currentId);
+            }
+        });
     }
 
     public void update(float delta) {
-        world.update(delta);
+        WorldManager.instance.getCurrentWorld().update(delta);
     }
 
     public void tryAttack(int x, int y) {
+        World world = WorldManager.instance.getCurrentWorld();
+
         if (!world.getMap().isValidPosition(x, y)) {
             return;
         }
 
         Array<Entity> entities = world.getEntitiesAt(x, y);
 
-        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+        AttackAi attackAi = getControllable().getComponent(AttackAi.class);
 
         if (entities.size == 0) {
             attackAi.clearTargets();
         } else {
             attackAi.setTarget(entities.get(0));
         }
-
     }
 
     public void tryRouteTo(int x, int y) {
-        PathMovementComponent movement = controllable.getComponent(PathMovementComponent.class);
+        PathMovementComponent movement = getControllable().getComponent(PathMovementComponent.class);
 
         // TODO: magic numbers
         movement.tryRouteTo(
@@ -57,7 +63,7 @@ public class GameModel {
     }
 
     public void stopAttacking() {
-        AttackAi attackAi = controllable.getComponent(AttackAi.class);
+        AttackAi attackAi = getControllable().getComponent(AttackAi.class);
 
         attackAi.clearTargets();
     }
@@ -74,45 +80,21 @@ public class GameModel {
         ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
-    private void attachWorld(World world) {
-        observable = world.getPlayer();
-        controllable = world.getPlayer();
-    }
-
-    private void detachWorld(World world) {
-        observable = null;
-        controllable = null;
-    }
-
+    // TODO: optimize
     public Entity getControllable() {
-        return controllable;
+        return WorldManager.instance.getCurrentWorld().getPlayer();
     }
 
+    // TODO: optimize
     public Entity getObservable() {
-        return observable;
+        return WorldManager.instance.getCurrentWorld().getPlayer();
     }
 
     public World getWorld() {
-        return world;
+        return WorldManager.instance.getCurrentWorld();
     }
 
-    public void setWorld(World world) {
-        World previous = this.world;
-
-        if (this.world != null) {
-            detachWorld(this.world);
-        }
-
-        this.world = world;
-
-        if (world != null) {
-            attachWorld(world);
-        }
-
-        listeners.worldChanged(this, previous, world);
-    }
-
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
-        void worldChanged(GameModel model, World previous, World current);
+    public interface Listener extends AbstractListener {
+        void worldChanged(String prevId, String currentId);
     }
 }

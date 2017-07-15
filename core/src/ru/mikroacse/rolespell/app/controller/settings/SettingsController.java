@@ -53,7 +53,7 @@ public class SettingsController extends Controller {
     public void update(float delta) {
         super.update(delta);
 
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
 
         // logic
         if (input.getButton(Input.Keys.ESCAPE).justReleased) {

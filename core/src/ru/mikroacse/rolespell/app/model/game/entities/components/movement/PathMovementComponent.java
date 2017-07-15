@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.model.game.entities.components.movement;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
@@ -164,7 +165,7 @@ public class PathMovementComponent extends MovementComponent {
         this.priority = priority;
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void pathChanged(PathMovementComponent movement, Event event, Array<IntVector2> path);
 
         enum Event {

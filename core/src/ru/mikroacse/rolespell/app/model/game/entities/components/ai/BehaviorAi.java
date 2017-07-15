@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.engine.util.Timer;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
+import ru.mikroacse.rolespell.app.model.game.entities.EntityListener;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
@@ -37,6 +38,9 @@ public abstract class BehaviorAi extends Component {
     private MovementComponent.Listener movementListener;
     private Behavior.Listener behaviorListener;
 
+    private EntityListener entityListener;
+    private WorldListener worldListener;
+
     /**
      * @param entity               Entity to which behavior is being applied
      * @param activationDistance   Global target activation distance (use 0 to customize it for every behavior)
@@ -56,16 +60,28 @@ public abstract class BehaviorAi extends Component {
 
         targetTypes = EntityType.ALL;
         blacklist = false;
+    }
 
-        // TODO: react on world change
-        World world = entity.getWorld();
+    @Override
+    protected void initListeners() {
+        entityListener = new EntityListener() {
+            @Override
+            public void worldChanged(Entity entity, World prev, World current) {
+                if(prev != null) {
+                    prev.removeListener(worldListener);
+                }
+                if(current != null) {
+                    current.addListener(worldListener);
+                }
+            }
+        };
 
-        world.addListener(new WorldListener() {
+        worldListener = new WorldListener() {
             @Override
             public void positionChanged(World world, MovementComponent movement, int prevX, int prevY, IntVector2 current) {
                 process(EnumSet.of(Trigger.MOVEMENT), null);
             }
-        });
+        };
 
         movementListener = new MovementListener() {
             @Override
@@ -201,6 +217,19 @@ public abstract class BehaviorAi extends Component {
         }
 
         return actionPerformed;
+    }
+
+    @Override
+    protected void attachEntity(Entity entity) {
+        entity.addListener(entityListener);
+
+        // TODO: do not invoke events manually
+        entityListener.worldChanged(entity, null, entity.getWorld());
+    }
+
+    @Override
+    protected void detachEntity(Entity entity) {
+        entity.removeListener(entityListener);
     }
 
     /**

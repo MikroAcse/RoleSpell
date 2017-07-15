@@ -11,7 +11,7 @@ import java.util.Map;
 public class InputAdapter extends com.badlogic.gdx.InputAdapter {
     public static final int CLICK_TIMEOUT = 250;
 
-    private static final InputAdapter instance = new InputAdapter();
+    public static final InputAdapter instance = new InputAdapter();
 
     private Map<Integer, Button> buttons;
 
@@ -21,10 +21,6 @@ public class InputAdapter extends com.badlogic.gdx.InputAdapter {
         buttons = new HashMap<>();
 
         update();
-    }
-
-    public static InputAdapter getInstance() {
-        return instance;
     }
 
     @Override

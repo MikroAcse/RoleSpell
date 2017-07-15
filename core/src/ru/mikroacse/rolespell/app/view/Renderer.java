@@ -1,6 +1,7 @@
 package ru.mikroacse.rolespell.app.view;
 
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import ru.mikroacse.engine.listeners.AbstractListener;
 import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 
@@ -55,7 +56,7 @@ public abstract class Renderer extends com.badlogic.gdx.scenes.scene2d.Stage {
         this.busy = busy;
     }
 
-    public interface Listener extends ru.mikroacse.engine.listeners.Listener {
+    public interface Listener extends AbstractListener {
         void onHidden();
 
         void onShown();

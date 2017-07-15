@@ -25,7 +25,7 @@ public class SettingsScreen extends Screen {
 
         input = new InputMultiplexer();
         input.addProcessor(renderer);
-        input.addProcessor(InputAdapter.getInstance());
+        input.addProcessor(InputAdapter.instance);
     }
 
     @Override

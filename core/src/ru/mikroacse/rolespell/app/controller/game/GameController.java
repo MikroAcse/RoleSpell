@@ -8,6 +8,7 @@ import ru.mikroacse.rolespell.app.controller.game.states.QuestsStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.StateProcessor;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
+import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;
@@ -43,11 +44,18 @@ public class GameController extends Controller {
         stateProcessors.put(State.QUESTS, questsState);
 
         setState(State.GAME);
+
+        model.addListener(new GameModel.Listener() {
+            @Override
+            public void worldChanged(String prevId, String currentId) {
+                renderer.refreshWorld();
+            }
+        });
     }
 
     @Override
     public void update(float delta) {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
 
         if (input.getButton(Input.Keys.ESCAPE).justReleased) {
             screens().setScreen(BundledScreen.MENU);

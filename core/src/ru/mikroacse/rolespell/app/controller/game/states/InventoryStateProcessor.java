@@ -27,7 +27,7 @@ public class InventoryStateProcessor extends StateProcessor {
 
     @Override
     public void process() {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
@@ -130,7 +130,7 @@ public class InventoryStateProcessor extends StateProcessor {
     }
 
     private void drop(Item item) {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
 
         GameRenderer renderer = getController().getRenderer();
 
@@ -161,7 +161,7 @@ public class InventoryStateProcessor extends StateProcessor {
     }
 
     private void updateDrag() {
-        InputAdapter input = InputAdapter.getInstance();
+        InputAdapter input = InputAdapter.instance;
         GameRenderer renderer = getController().getRenderer();
 
         int mouseX = input.getMouseX();

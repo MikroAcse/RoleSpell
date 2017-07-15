@@ -10,7 +10,7 @@ import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 /**
  * Created by MikroAcse on 09-May-17.
  */
-public class Map {
+public class WorldMap {
     private String id;
 
     private String name;
@@ -18,11 +18,11 @@ public class Map {
     private TiledMap map;
     private MapConfig config;
 
-    public Map(TiledMap map) {
+    public WorldMap(TiledMap map) {
         this.map = map;
     }
 
-    public ConfigurationNode getConfig() {
+    public MapConfig getConfig() {
         return config;
     }
 
@@ -42,7 +42,7 @@ public class Map {
         return getWeight(getMeta(x, y));
     }
 
-    public double getWeight(Map.Meta meta) {
+    public double getWeight(WorldMap.Meta meta) {
         return config.getWeight(meta, 0);
     }
 
@@ -50,25 +50,25 @@ public class Map {
         return isPassable(getMeta(x, y));
     }
 
-    public boolean isPassable(Map.Meta meta) {
+    public boolean isPassable(WorldMap.Meta meta) {
         return config.isPassable(meta, false);
     }
 
-    public Map.Meta getMeta(int x, int y) {
-        TiledMapTileLayer.Cell cell = getCell(Map.Layer.META, x, y);
+    public WorldMap.Meta getMeta(int x, int y) {
+        TiledMapTileLayer.Cell cell = getCell(WorldMap.Layer.META, x, y);
 
         if (cell == null) {
-            return Map.Meta.EMPTY;
+            return WorldMap.Meta.EMPTY;
         }
 
-        return Map.Meta.valueOf((String) cell.getTile().getProperties().get("type"));
+        return WorldMap.Meta.valueOf((String) cell.getTile().getProperties().get("type"));
     }
 
-    public Map.Meta getMeta(IntVector2 position) {
+    public WorldMap.Meta getMeta(IntVector2 position) {
         return getMeta(position.x, position.y);
     }
 
-    public TiledMapTileLayer.Cell getCell(Map.Layer layer, int x, int y) {
+    public TiledMapTileLayer.Cell getCell(WorldMap.Layer layer, int x, int y) {
         return getTileLayer(layer).getCell(x, y);
     }
 

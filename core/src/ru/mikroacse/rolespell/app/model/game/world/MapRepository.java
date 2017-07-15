@@ -7,9 +7,5 @@ import ru.mikroacse.rolespell.config.ConfigurationRepository;
  * Created by MikroAcse on 29.06.2017.
  */
 public class MapRepository extends ConfigurationRepository<String, MapConfig> {
-    private static MapRepository instance = new MapRepository();
-
-    public static MapRepository instance() {
-        return instance;
-    }
+    public static final MapRepository instance = new MapRepository();
 }

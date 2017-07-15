@@ -1,6 +1,9 @@
 package ru.mikroacse.rolespell.app.model.game.entities;
 
 import com.badlogic.gdx.utils.Array;
+import ru.mikroacse.engine.listeners.AbstractListener;
+import ru.mikroacse.engine.listeners.ListenerSupport;
+import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.entities.components.Component;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
@@ -9,6 +12,8 @@ import ru.mikroacse.rolespell.app.model.game.world.World;
 import java.util.EnumSet;
 
 public abstract class Entity {
+    private Listener listeners;
+
     private World world;
     private EntityType type;
 
@@ -25,8 +30,22 @@ public abstract class Entity {
         this.type = type;
         this.world = world;
 
+        listeners = ListenerSupportFactory.create(Listener.class);
+
         components = new Array<>();
         parameters = Parameter.NONE;
+    }
+
+    public void addListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        ((ListenerSupport<Listener>) listeners).removeListener(listener);
+    }
+
+    public void clearListeners() {
+        ((ListenerSupport<Listener>) listeners).clearListeners();
     }
 
     public EntityConfig getConfig() {
@@ -135,7 +154,11 @@ public abstract class Entity {
     }
 
     public void setWorld(World world) {
+        World prev = this.world;
+
         this.world = world;
+
+        listeners.worldChanged(this, prev, world);
     }
 
     public String getName() {
@@ -198,5 +221,9 @@ public abstract class Entity {
         VULNERABLE; // can be attacked
 
         public static final EnumSet<Parameter> NONE = EnumSet.noneOf(Parameter.class);
+    }
+
+    public interface Listener extends AbstractListener {
+        void worldChanged(Entity entity, World prev, World current);
     }
 }

@@ -2,10 +2,7 @@ package ru.mikroacse.engine.config;
 
 import ru.mikroacse.engine.config.providers.ConfigurationProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Immutable configuration based on UnmodifiableMap.
@@ -99,6 +96,10 @@ public class ConfigurationNode {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public Set<String> keySet() {
+        return map.keySet();
     }
 
     public Map<String, Object> getMap() {

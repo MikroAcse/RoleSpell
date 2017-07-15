@@ -58,14 +58,16 @@ public class GameRenderer extends Renderer {
         addActor(hotbarView);
         addActor(statusView);
         addActor(cursor);
-
-        refreshWorld();
     }
 
     @Override
     public void draw() {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if(worldRenderer.getMapRenderer() == null) {
+            return;
+        }
 
         MapRenderer mapRenderer = worldRenderer.getMapRenderer();
         Batch batch = getBatch();

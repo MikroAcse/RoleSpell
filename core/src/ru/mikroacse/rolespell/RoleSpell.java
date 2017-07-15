@@ -88,10 +88,10 @@ public class RoleSpell extends Game {
 
         screenManager = new ScreenManager(this);
 
-        assetManager.loadBundle(Bundle.GLOBAL);
-        assetManager.finishLoading();
+        assetManager.loadBundle(Bundle.GLOBAL, true);
 
-        assetManager.loadBundle(Bundle.SETTINGS);
+        //assetManager.loadBundle(Bundle.SETTINGS);
+        assetManager.loadBundle(Bundle.GAME, true);
 
         screenManager.setScreen(ScreenManager.BundledScreen.GAME);
     }

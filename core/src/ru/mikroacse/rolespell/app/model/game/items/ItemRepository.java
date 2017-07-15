@@ -7,9 +7,5 @@ import ru.mikroacse.rolespell.config.ConfigurationRepository;
  * Created by Vitaly Rudenko on 28-May-17.
  */
 public class ItemRepository extends ConfigurationRepository<String, ItemConfig> {
-    private static ItemRepository instance = new ItemRepository();
-
-    public static ItemRepository instance() {
-        return instance;
-    }
+    public static final ItemRepository instance = new ItemRepository();
 }

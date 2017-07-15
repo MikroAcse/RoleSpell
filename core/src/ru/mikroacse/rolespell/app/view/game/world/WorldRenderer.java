@@ -231,7 +231,9 @@ public class WorldRenderer extends Group {
     }
 
     public void resizeViewport(int width, int height) {
-        mapRenderer.resize(width, height);
+        if(mapRenderer != null) {
+            mapRenderer.resize(width, height);
+        }
     }
 
     private void attachWorld(World world) {
