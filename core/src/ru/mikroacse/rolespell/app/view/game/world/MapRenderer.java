@@ -44,20 +44,20 @@ public class MapRenderer {
 
     public void drawBottomLayers() {
         renderLayers(new WorldMap.Layer[]{
-            WorldMap.Layer.BACKGROUND,
-            WorldMap.Layer.LAYOUT,
-            WorldMap.Layer.BUILDINGS,
-            WorldMap.Layer.BUILDINGS_DECOR,
-            WorldMap.Layer.BOTTOM,
-            WorldMap.Layer.OBJECTS});
+                WorldMap.Layer.BACKGROUND,
+                WorldMap.Layer.LAYOUT,
+                WorldMap.Layer.BUILDINGS,
+                WorldMap.Layer.BUILDINGS_DECOR,
+                WorldMap.Layer.BOTTOM,
+                WorldMap.Layer.OBJECTS});
     }
 
     public void drawTopLayers() {
         renderLayers(new WorldMap.Layer[]{
-            WorldMap.Layer.ADDITIONAL,
-            WorldMap.Layer.BUILDINGS_TOP,
-            WorldMap.Layer.ROOFS,
-            WorldMap.Layer.TOP});
+                WorldMap.Layer.ADDITIONAL,
+                WorldMap.Layer.BUILDINGS_TOP,
+                WorldMap.Layer.ROOFS,
+                WorldMap.Layer.TOP});
     }
 
     public void resize(int width, int height) {

@@ -3,7 +3,6 @@ package ru.mikroacse.rolespell.app.model.game.world;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.util.IntVector2;
 import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 

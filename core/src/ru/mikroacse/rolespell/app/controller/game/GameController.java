@@ -8,7 +8,6 @@ import ru.mikroacse.rolespell.app.controller.game.states.QuestsStateProcessor;
 import ru.mikroacse.rolespell.app.controller.game.states.StateProcessor;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
-import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.screens.ScreenManager.BundledScreen;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer.State;

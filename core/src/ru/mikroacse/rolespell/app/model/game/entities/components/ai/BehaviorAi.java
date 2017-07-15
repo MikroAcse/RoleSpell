@@ -62,15 +62,19 @@ public abstract class BehaviorAi extends Component {
         blacklist = false;
     }
 
+    public BehaviorAi(Entity entity, int deactivationDistance) {
+        this(entity, 0, deactivationDistance);
+    }
+
     @Override
     protected void initListeners() {
         entityListener = new EntityListener() {
             @Override
             public void worldChanged(Entity entity, World prev, World current) {
-                if(prev != null) {
+                if (prev != null) {
                     prev.removeListener(worldListener);
                 }
-                if(current != null) {
+                if (current != null) {
                     current.addListener(worldListener);
                 }
             }
@@ -91,10 +95,6 @@ public abstract class BehaviorAi extends Component {
         };
 
         behaviorListener = behavior -> process(EnumSet.of(Trigger.TIMER), behavior.getTimer());
-    }
-
-    public BehaviorAi(Entity entity, int deactivationDistance) {
-        this(entity, 0, deactivationDistance);
     }
 
     @Override

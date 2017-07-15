@@ -5,7 +5,6 @@ import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.Behavior;
 import ru.mikroacse.rolespell.app.model.game.entities.components.ai.behaviors.TeleportBehavior;
-import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
 import ru.mikroacse.rolespell.app.screens.GameScreen;
 import ru.mikroacse.rolespell.app.screens.ScreenManager;
 
@@ -15,6 +14,7 @@ import java.util.EnumSet;
  * Created by Vitaly Rudenko on 18-May-17.
  */
 public class TeleportAi extends BehaviorAi {
+    boolean tp = false;
     private TeleportBehavior teleportBehavior;
 
     public TeleportAi(Entity entity) {
@@ -26,8 +26,6 @@ public class TeleportAi extends BehaviorAi {
         teleportBehavior = new TeleportBehavior();
         addBehavior(teleportBehavior);
     }
-
-    boolean tp = false;
 
     @Override
     public boolean process(EnumSet<Behavior.Trigger> triggers, Timer timer) {

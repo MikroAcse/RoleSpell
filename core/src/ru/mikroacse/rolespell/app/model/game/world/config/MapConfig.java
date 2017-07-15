@@ -2,11 +2,9 @@ package ru.mikroacse.rolespell.app.model.game.world.config;
 
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.engine.config.RecursiveConfigurationNode;
-import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
-import ru.mikroacse.rolespell.app.model.game.world.WorldMap.Meta;
 import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap.Meta;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

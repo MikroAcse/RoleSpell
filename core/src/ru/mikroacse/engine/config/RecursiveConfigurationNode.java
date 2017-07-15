@@ -38,10 +38,10 @@ public abstract class RecursiveConfigurationNode<P extends RecursiveConfiguratio
     public <T> T get(String key) {
         Object result;
 
-        if(useCache && cache.containsKey(key)) {
+        if (useCache && cache.containsKey(key)) {
             result = cache.get(key);
 
-            if(result != null) {
+            if (result != null) {
                 return (T) result;
             }
 
@@ -54,14 +54,14 @@ public abstract class RecursiveConfigurationNode<P extends RecursiveConfiguratio
             if (hasParent()) {
                 result = getParent().get(key);
             } else {
-                if(useCache) {
+                if (useCache) {
                     cache.put(key, null);
                 }
                 throw e;
             }
         }
 
-        if(useCache) {
+        if (useCache) {
             cache.put(key, result);
         }
 
@@ -70,14 +70,14 @@ public abstract class RecursiveConfigurationNode<P extends RecursiveConfiguratio
 
     @Override
     public <T> T get(String key, T defaultValue) {
-        if(useCache && cache.containsKey(key) && cache.get(key) == null) {
+        if (useCache && cache.containsKey(key) && cache.get(key) == null) {
             return defaultValue;
         }
 
         try {
             return get(key);
         } catch (Exception e) {
-            if(useCache) {
+            if (useCache) {
                 cache.put(key, null);
             }
             return defaultValue;
@@ -92,7 +92,7 @@ public abstract class RecursiveConfigurationNode<P extends RecursiveConfiguratio
         while (config != null) {
             Map<String, Object> node = config.get(nodeKey, null);
 
-            if(node != null) {
+            if (node != null) {
                 entities.addAll(((Map) node).keySet());
             }
 

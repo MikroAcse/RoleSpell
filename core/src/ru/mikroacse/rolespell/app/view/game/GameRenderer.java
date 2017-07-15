@@ -65,7 +65,7 @@ public class GameRenderer extends Renderer {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(worldRenderer.getMapRenderer() == null) {
+        if (worldRenderer.getMapRenderer() == null) {
             return;
         }
 

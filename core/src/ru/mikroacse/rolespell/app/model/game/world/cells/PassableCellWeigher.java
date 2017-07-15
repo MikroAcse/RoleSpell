@@ -2,8 +2,8 @@ package ru.mikroacse.rolespell.app.model.game.world.cells;
 
 import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
 import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
 
 /**
  * Created by MikroAcse on 28.03.2017.

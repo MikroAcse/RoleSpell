@@ -24,9 +24,7 @@ import ru.mikroacse.rolespell.app.view.settings.ui.LabeledSlider;
 import ru.mikroacse.rolespell.app.view.settings.ui.SettingsButton;
 import ru.mikroacse.rolespell.media.Bundle;
 
-import static ru.mikroacse.rolespell.RoleSpell.bundle;
-import static ru.mikroacse.rolespell.RoleSpell.lang;
-import static ru.mikroacse.rolespell.RoleSpell.tweens;
+import static ru.mikroacse.rolespell.RoleSpell.*;
 
 /**
  * Created by Vitaly Rudenko on 06-Jun-17.

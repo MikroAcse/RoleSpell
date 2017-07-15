@@ -9,16 +9,15 @@ import ru.mikroacse.engine.listeners.ListenerSupport;
 import ru.mikroacse.engine.listeners.ListenerSupportFactory;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
-import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
-import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
-import ru.mikroacse.rolespell.app.model.game.entities.objects.PortalSpawn;
 import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
 import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 import ru.mikroacse.rolespell.media.Bundle;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static ru.mikroacse.rolespell.RoleSpell.bundle;
 
@@ -39,28 +38,6 @@ public class WorldManager {
         worlds = new HashMap<>();
 
         currentId = null;
-    }
-
-    /**
-     * @param id New world's id.
-     * @return Previous world's id.
-     */
-    public String setWorld(String id) {
-        String prevId = currentId;
-
-        if(prevId != null) {
-            detachWorld(prevId);
-        }
-
-        currentId = id;
-
-        if(currentId != null) {
-            attachWorld(currentId);
-        }
-
-        listeners.worldChanged(prevId, currentId);
-
-        return prevId;
     }
 
     // TODO: Bad?
@@ -95,9 +72,31 @@ public class WorldManager {
         }
     }
 
+    /**
+     * @param id New world's id.
+     * @return Previous world's id.
+     */
+    public String setWorld(String id) {
+        String prevId = currentId;
+
+        if (prevId != null) {
+            detachWorld(prevId);
+        }
+
+        currentId = id;
+
+        if (currentId != null) {
+            attachWorld(currentId);
+        }
+
+        listeners.worldChanged(prevId, currentId);
+
+        return prevId;
+    }
+
     public boolean hasSharedEntity(String id) {
         for (Entity sharedEntity : sharedEntities) {
-            if(sharedEntity.getId().equals(id)) {
+            if (sharedEntity.getId().equals(id)) {
                 return true;
             }
         }
@@ -107,7 +106,7 @@ public class WorldManager {
 
     public Entity takeSharedEntity(String id) {
         for (Entity sharedEntity : sharedEntities) {
-            if(sharedEntity.getId().equals(id)) {
+            if (sharedEntity.getId().equals(id)) {
                 sharedEntities.removeValue(sharedEntity, true);
 
                 return sharedEntity;
@@ -144,7 +143,7 @@ public class WorldManager {
 
         World world = getWorld(id);
 
-        if(world != null) {
+        if (world != null) {
             System.out.println("Already existing world");
 
             MapConfig config = world.getMap().getConfig();
@@ -155,7 +154,7 @@ public class WorldManager {
 
                 System.out.println("Entity: " + entityId + " : " + entityConfig.isShared(false));
 
-                if(entityConfig.isShared(false)) {
+                if (entityConfig.isShared(false)) {
                     System.out.println("Taking shared entity: " + hasSharedEntity(entityId));
 
                     world.addEntity(takeSharedEntity(entityId));
@@ -180,7 +179,7 @@ public class WorldManager {
         for (int i = entities.size - 1; i >= 0; i--) {
             Entity entity = entities.get(i);
 
-            if(entity.isShared()) {
+            if (entity.isShared()) {
                 entity.remove();
 
                 sharedEntities.add(entity);

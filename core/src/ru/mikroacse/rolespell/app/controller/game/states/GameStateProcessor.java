@@ -31,7 +31,7 @@ public class GameStateProcessor extends StateProcessor {
         GameRenderer renderer = getController().getRenderer();
         GameModel model = getController().getModel();
 
-        if(model.getWorld() == null) {
+        if (model.getWorld() == null) {
             return;
         }
 

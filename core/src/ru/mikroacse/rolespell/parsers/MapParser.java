@@ -7,9 +7,9 @@ import com.badlogic.gdx.utils.Array;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
+import ru.mikroacse.rolespell.app.model.game.world.World;
 import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
 import ru.mikroacse.rolespell.app.model.game.world.WorldMap;
-import ru.mikroacse.rolespell.app.model.game.world.World;
 
 /**
  * Created by MikroAcse on 11-May-17.
@@ -48,10 +48,10 @@ public class MapParser {
         EntityConfig config = EntityRepository.instance.get(id);
         Entity entity = null;
 
-        if(config.isShared(false)) {
+        if (config.isShared(false)) {
             entity = WorldManager.instance.takeSharedEntity(id);
 
-            if(entity != null) {
+            if (entity != null) {
                 entity.setWorld(world);
                 entity.setPosition(x, y);
 

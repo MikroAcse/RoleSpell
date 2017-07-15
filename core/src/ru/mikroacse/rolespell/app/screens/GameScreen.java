@@ -1,28 +1,24 @@
 package ru.mikroacse.rolespell.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import ru.mikroacse.engine.config.ConfigurationNode;
 import ru.mikroacse.rolespell.RoleSpell;
 import ru.mikroacse.rolespell.app.controller.game.GameController;
 import ru.mikroacse.rolespell.app.controller.shared.InputAdapter;
 import ru.mikroacse.rolespell.app.model.game.GameModel;
 import ru.mikroacse.rolespell.app.model.game.entities.Entity;
-import ru.mikroacse.rolespell.app.model.game.entities.EntityRepository;
 import ru.mikroacse.rolespell.app.model.game.entities.EntityType;
 import ru.mikroacse.rolespell.app.model.game.entities.components.controllers.MobController;
-import ru.mikroacse.rolespell.app.model.game.entities.config.EntityConfig;
 import ru.mikroacse.rolespell.app.model.game.entities.objects.PortalSpawn;
 import ru.mikroacse.rolespell.app.model.game.items.ItemRepository;
 import ru.mikroacse.rolespell.app.model.game.items.config.ItemConfig;
-import ru.mikroacse.rolespell.app.model.game.world.*;
+import ru.mikroacse.rolespell.app.model.game.world.MapRepository;
+import ru.mikroacse.rolespell.app.model.game.world.World;
+import ru.mikroacse.rolespell.app.model.game.world.WorldListener;
+import ru.mikroacse.rolespell.app.model.game.world.WorldManager;
 import ru.mikroacse.rolespell.app.model.game.world.config.MapConfig;
 import ru.mikroacse.rolespell.app.view.game.GameRenderer;
 import ru.mikroacse.rolespell.media.Bundle;
-
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import static ru.mikroacse.rolespell.RoleSpell.assets;
 import static ru.mikroacse.rolespell.RoleSpell.bundle;
