@@ -1,5 +1,5 @@
 # RoleSpell Pre-Alpha [![Stories in Ready](https://badge.waffle.io/MikroAcse/RoleSpell.svg?label=ready&title=Ready)](http://waffle.io/MikroAcse/RoleSpell) [![Stories in Progress](https://badge.waffle.io/MikroAcse/RoleSpell.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/MikroAcse/RoleSpell)
-RoleSpell is simple 2D RPG game made in Java with LibGDX.
+RoleSpell is simple 2D RPG made in Java with LibGDX.
 
 ![](https://raw.githubusercontent.com/MikroAcse/RoleSpell/master/screenshots/screencap.gif)
 
